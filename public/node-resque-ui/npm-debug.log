@@ -25,7 +25,7 @@
 14 verbose stack     at maybeClose (internal/child_process.js:850:16)
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:215:5)
 15 verbose pkgid actionhero@14.0.3
-16 verbose cwd /Users/evan/PROJECTS/actionhero/public/node-resque-ui
+16 verbose cwd /Users/evan/PROJECTS/actionhero/public/ah-resque-ui
 17 error Darwin 15.5.0
 18 error argv "/Users/evan/.nvm/versions/node/v5.9.1/bin/node" "/Users/evan/.nvm/versions/node/v5.9.1/bin/npm" "start"
 19 error node v5.9.1

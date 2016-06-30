@@ -1,6 +1,6 @@
 app.controller('pageController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
 
-  $rootScope.action($scope, {}, '/api/node-resque-ui:packageDetails', 'GET', function(data){
+  $rootScope.action($scope, {}, '/api/ah-resque-ui:packageDetails', 'GET', function(data){
     $rootScope.packageDetails = data.packageDetails;
   });
 
@@ -11,7 +11,7 @@ app.controller('pageController', ['$scope', '$rootScope', '$location', function(
     parts.shift(); /// throw away the first one
 
     if(parts.length === 0 || parts.length === 1 && parts[0] === ''){
-      window.location.href = '/node-resque-ui/#/overview';
+      window.location.href = '/ah-resque-ui/#/overview';
     }
 
     var simplePathParts = [];
