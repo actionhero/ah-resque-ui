@@ -1,0 +1,46 @@
+<div ng-controller="resque">
+
+  <h1>Resque Overview</h1>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Queues ({{ counts.queues }})</h2>
+
+      <table class="table table-striped table-hover ">
+        <thead>
+          <tr>
+            <th>Queue Name</th>
+            <th>Jobs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(q, obj) in queues">
+            <td>{{ q }}</td>
+            <td>{{ obj.length }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-8">
+      <h2>Workers ({{ counts.workers }})</h2>
+
+      <table class="table table-striped table-hover ">
+        <thead>
+          <tr>
+            <th>Worker Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(name, worker) in workers">
+            <td>{{ name }}</td>
+            <td ng-if="worker.status">{{ worker.status }}</td>
+            <td ng-if="!worker.status">working on {{ worker.queue }}#{{ worker.payload['class'] }} for {{ worker.delta }}s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+</div>

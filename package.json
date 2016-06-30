@@ -1,0 +1,21 @@
+{
+  "author": "Evan Tahler <evantahler@gmail.com>",
+  "name": "ah-resque-ui",
+  "description": "A resque administration website for actionhero",  "version": "14.0.3",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/evantahler/ah-resque-ui.git"
+  },
+  "keywords": [
+    "resque",
+    "ui",
+    "website",
+    "tasks",
+    "background",
+    "job"
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  }
+}
