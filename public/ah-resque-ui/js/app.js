@@ -33,7 +33,7 @@ app.run(['$rootScope', '$http', function($rootScope, $http){
     }
   }
 
-  $rootScope.refreshing = '0';
+  $rootScope.refreshing = '5';
   $rootScope.now = new Date();
   $rootScope.$watch('refreshing', loop);
 
@@ -82,6 +82,45 @@ app.run(['$rootScope', '$http', function($rootScope, $http){
         $('button').prop('disabled', false);
       }, 500);
     });
+  };
+
+  $rootScope.genratePagination = function(currentPage, perPage, totalRecords){
+    var pageCount = 9; // should be an odd number
+    currentPage = parseInt(currentPage);
+    var currentId = currentPage * perPage;
+    var i;
+
+    var pagination = {
+      showBack    : (currentId - (Math.ceil(pageCount/2) * perPage) <= 0) ? false : true,
+      showForward : (currentId + (Math.ceil(pageCount/2) * perPage) >= totalRecords) ? false : true,
+      firstPage   : 0,
+      lastPage    : Math.ceil(totalRecords / perPage) - 1,
+      pages: []
+    };
+
+    pagination.pages.push({
+      page: currentPage, active: true,
+    });
+
+    // forward
+    for (i = 1; i < Math.ceil(pageCount/2); i++) {
+      if((currentPage + i) * perPage < totalRecords){
+        pagination.pages.push({
+          page: (currentPage + i), active: false,
+        });
+      }
+    }
+
+    // backwards
+    for (i = 1; i < Math.ceil(pageCount/2); i++) {
+      if((currentPage - i) >= 0){
+        pagination.pages.unshift({
+          page: (currentPage - i), active: false,
+        });
+      }
+    }
+
+    return pagination;
   };
 
   $rootScope.$on('$routeChangeSuccess', function (event, current, previous){

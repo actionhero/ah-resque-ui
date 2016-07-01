@@ -18,8 +18,8 @@
 
       <ul class="nav navbar-nav">
         <li ng-class="getNavigationHighlight('overview')"><a href="/ah-resque-ui/#/overview">overview</a></li>
-        <li ng-class="getNavigationHighlight('working')"><a href="/ah-resque-ui/#/working">working</a></li>
         <li ng-class="getNavigationHighlight('failed')"><a href="/ah-resque-ui/#/failed">failed</a></li>
+        <li ng-class="getNavigationHighlight('working')"><a href="/ah-resque-ui/#/working">working</a></li>
         <li ng-class="getNavigationHighlight('queues')"><a href="/ah-resque-ui/#/queues">queues</a></li>
         <li ng-class="getNavigationHighlight('workers')"><a href="/ah-resque-ui/#/workers">workers</a></li>
         <li ng-class="getNavigationHighlight('stats')"><a href="/ah-resque-ui/#/stats">stats</a></li>
@@ -28,7 +28,8 @@
       </ul>
 
       <form class="navbar-form navbar-right" role="search">
-        <div class="form-group">
+        <label for="refresher" class="control-label">Refresh Interval:</label>
+        <div id="refresher" class="form-group">
           <select id="refreshing" class="form-control" ng-model="$root.refreshing">
             <option value="0">no refresh</option>
             <option value="1">1s</option>

@@ -1,5 +1,13 @@
-app.controller('resque', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
-  $scope.counts = {};
+app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', function($scope, $rootScope, $location, $routeParams){
+  $scope.counts = {
+    queues: 0,
+    workers: 0,
+    failed: 0,
+  };
+
+  $scope.pagination = {};
+  $scope.perPage = 100;
+  $scope.currentPage = $routeParams.page || 0;
 
   $scope.loadDetails = function(){
     $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueDetails', 'GET', function(data){
@@ -20,8 +28,45 @@ app.controller('resque', ['$scope', '$rootScope', '$location', function($scope, 
     });
   }
 
+  $scope.loadFailedCount = function(){
+    $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueFailedCount', 'GET', function(data){
+      $scope.counts.failed = data.failedCount;
+      $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.counts.failed);
+    });
+  }
+
+  $scope.loadFailed = function(){
+    $rootScope.action($scope, {
+      start: ($scope.currentPage * $scope.perPage),
+      stop: (($scope.currentPage * $scope.perPage) + ($scope.perPage - 1))
+    }, '/api/ah-resque-ui/resqueFailed', 'GET', function(data){
+      $scope.failed = data.failed;
+    });
+  }
+
+  $scope.renderFailureStack = function(index){
+    $scope.focusedException = $scope.failed[index];
+    $scope.focusedException.renderedStack = $scope.focusedException.backtrace.join('\r\n')
+    $("#failureDetailsModal").modal();
+  }
+
+  /* ----------- RUN ----------- */
+
   var run = function(){
-    $scope.loadDetails();
+    var path = $location.$$path;
+    path = path.split('/')[1];
+
+    if(['overview'].indexOf(path) >= 0){
+      $scope.loadDetails();
+    }
+
+    if(['overview', 'failed'].indexOf(path) >= 0){
+      $scope.loadFailedCount();
+    }
+
+    if(['failed'].indexOf(path) >= 0){
+      $scope.loadFailed();
+    }
   };
 
   $scope.$on('tick', run);
