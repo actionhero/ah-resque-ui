@@ -1,6 +1,6 @@
 app.controller('pageController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location){
 
-  $rootScope.action($scope, {}, '/api/ah-resque-ui:packageDetails', 'GET', function(data){
+  $rootScope.action($scope, {}, '/api/ah-resque-ui/packageDetails', 'GET', function(data){
     $rootScope.packageDetails = data.packageDetails;
   });
 

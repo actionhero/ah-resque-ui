@@ -4,7 +4,7 @@
   <div class="col-md-6">
     <p class="text-muted">ah-resque-ui: version {{ $root.packageDetails.packageJSON.version }}</p>
     <p class="text-muted">redis connection:  {{ $root.packageDetails.redis[1] }}:{{ $root.packageDetails.redis[0] }}</p>
-    <p class="text-muted">last tick:  {{ $root.now }}</p>
+    <p class="text-muted">last tick:  {{ $root.now.toLocaleDateString() }}  {{ $root.now.toLocaleTimeString() }}</p>
   </div>
 
   <div class="col-md-6">

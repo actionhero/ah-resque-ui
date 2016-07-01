@@ -2,7 +2,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', function($scope, 
   $scope.counts = {};
 
   $scope.loadDetails = function(){
-    $rootScope.action($scope, {}, '/api/ah-resque-ui:resqueDetails', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueDetails', 'GET', function(data){
       $scope.queues = data.resqueDetails.queues;
       $scope.workers = data.resqueDetails.workers;
       $scope.counts.queues = Object.keys($scope.queues).length;
