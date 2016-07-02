@@ -1,4 +1,5 @@
 var path = require('path');
+var async = require('async');
 var packageJSON = require(path.normalize(__dirname + path.sep + '..' + path.sep + 'package.json'));
 
 exports.packageDetails = {
@@ -63,5 +64,97 @@ exports.resqueFailed = {
       data.response.failed = failed;
       next(error);
     });
+  }
+};
+
+exports.removeFailed = {
+  name: 'ah-resque-ui:removeFailed',
+  description: 'I remove a failed job',
+  outputExample: {},
+
+  inputs:{
+    id:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+    }
+  },
+
+  run: function(api, data, next){
+    api.tasks.failed(data.params.id, data.params.id, function(error, failed){
+      if(error){ return next(error); }
+      if(!failed){ return next(new Error('failed job not found')); }
+      api.tasks.removeFailed(failed[0], next);
+    });
+  }
+};
+
+exports.removeAllFailed = {
+  name: 'ah-resque-ui:removeAllFailed',
+  description: 'I remove all failed jobs',
+  outputExample: {},
+
+  run: function(api, data, next){
+    var failedJob;
+    var act = function(done){
+      api.tasks.failed(0, 0, function(error, failed){
+        if(error){ return done(error); }
+        failedJob = failed[0];
+        if(!failed || failed.length === 0){ return done(); }
+        api.tasks.removeFailed(failedJob, done);
+      });
+    }
+
+    var check = function(){
+      return !(failedJob === undefined)
+    }
+
+    async.doWhilst(act, check, next);
+  }
+};
+
+exports.retryAndRemoveFailed = {
+  name: 'ah-resque-ui:retryAndRemoveFailed',
+  description: 'I retry a failed job',
+  outputExample: {},
+
+  inputs:{
+    id:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+    }
+  },
+
+  run: function(api, data, next){
+    api.tasks.failed(data.params.id, data.params.id, function(error, failed){
+      if(error){ return next(error); }
+      if(!failed){ return next(new Error('failed job not found')); }
+      api.tasks.retryAndRemoveFailed(failed[0], next);
+    });
+  }
+};
+
+exports.retryAndRemoveAllFailed = {
+  name: 'ah-resque-ui:retryAndRemoveAllFailed',
+  description: 'I retry all failed jobs',
+  outputExample: {},
+
+  run: function(api, data, next){
+    var failedJob;
+    var act = function(done){
+      api.tasks.failed(0, 0, function(error, failed){
+        console.log("-------")
+        console.log(failed)
+        if(error){ return done(error); }
+        failedJob = failed[0];
+        if(!failed || failed.length === 0){ return done(); }
+        api.tasks.retryAndRemoveFailed(failedJob, done);
+      });
+    }
+
+    var check = function(){
+      return !(failedJob === undefined)
+    }
+
+    async.doWhilst(act, check, next);
   }
 };

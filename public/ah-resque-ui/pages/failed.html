@@ -2,6 +2,11 @@
 
   <h1>Failed Jobs ({{ counts.failed }})</h1>
 
+  <p>
+    <button ng-click="retryAllFailedJobs($index)" class="btn btn-sm btn-warning">Retry All</button>
+    <button ng-click="removeAllFailedJobs($index)" class="btn btn-sm btn-danger">Remove All</button>
+  </p>
+
   <div class="row">
     <div class="col-md-12">
 
@@ -14,6 +19,8 @@
             <th>Queue</th>
             <th>Worker</th>
             <th>Arguments</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -30,7 +37,8 @@
               <ul>
                 <li ng-repeat="a in f.payload.args">{{ a }}</li>
               </ul>
-            <!-- <td><pre>{{ f.backtrace }}</pre></td> -->
+            <td><button ng-click="retryFailedJob($index)" class="btn btn-xs btn-warning">Retry</button></td>
+            <td><button ng-click="removeFailedJob($index)" class="btn btn-xs btn-danger">Remove</button></td>
           </tr>
         </tbody>
       </table>

@@ -5,9 +5,13 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     failed: 0,
   };
 
+  /* ----------- Pagination ----------- */
+
   $scope.pagination = {};
   $scope.perPage = 100;
   $scope.currentPage = $routeParams.page || 0;
+
+  /* ----------- Overview ----------- */
 
   $scope.loadDetails = function(){
     $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueDetails', 'GET', function(data){
@@ -26,14 +30,16 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
       });
 
     });
-  }
+  };
+
+  /* ----------- Failures ----------- */
 
   $scope.loadFailedCount = function(){
     $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueFailedCount', 'GET', function(data){
       $scope.counts.failed = data.failedCount;
       $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.counts.failed);
     });
-  }
+  };
 
   $scope.loadFailed = function(){
     $rootScope.action($scope, {
@@ -42,13 +48,41 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     }, '/api/ah-resque-ui/resqueFailed', 'GET', function(data){
       $scope.failed = data.failed;
     });
-  }
+  };
+
+  $scope.removeFailedJob = function(index){
+    $rootScope.action($scope, {
+      id: index
+    }, '/api/ah-resque-ui/removeFailed', 'POST', function(data){
+      run();
+    });
+  };
+
+  $scope.retryFailedJob = function(index){
+    $rootScope.action($scope, {
+      id: index
+    }, '/api/ah-resque-ui/retryAndRemoveFailed', 'POST', function(data){
+      run();
+    });
+  };
+
+  $scope.removeAllFailedJobs = function(index){
+    $rootScope.action($scope, {}, '/api/ah-resque-ui/removeAllFailed', 'POST', function(data){
+      run();
+    });
+  };
+
+  $scope.retryAllFailedJobs = function(index){
+    $rootScope.action($scope, {}, '/api/ah-resque-ui/retryAndRemoveAllFailed', 'POST', function(data){
+      run();
+    });
+  };
 
   $scope.renderFailureStack = function(index){
     $scope.focusedException = $scope.failed[index];
     $scope.focusedException.renderedStack = $scope.focusedException.backtrace.join('\r\n')
     $("#failureDetailsModal").modal();
-  }
+  };
 
   /* ----------- RUN ----------- */
 
