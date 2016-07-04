@@ -78,10 +78,14 @@ describe('ah-resque-ui', function(){
     });
   });
 
+  it('resque:forceCleanWorker')
+
   describe('with jobs', function(){
-    before(function(done){ api.tasks.enqueue('testTask', {a: 1}, 'testQueue', done) });
-    before(function(done){ api.tasks.enqueue('testTask', {b: 2}, 'testQueue', done) });
-    before(function(done){ api.tasks.enqueue('testTask', {c: 3}, 'testQueue', done) });
+    beforeEach(function(done){ api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(){ done(); }); });
+
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {a: 1}, 'testQueue', done) });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {b: 2}, 'testQueue', done) });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {c: 3}, 'testQueue', done) });
 
     it('resque:resqueDetails', function(done){
       api.specHelper.runAction('resque:resqueDetails', function(response){
@@ -101,7 +105,28 @@ describe('ah-resque-ui', function(){
       });
     });
 
-    it('resque:forceCleanWorker')
+    it('resque:queued (good)', function(done){
+      api.specHelper.runAction('resque:queued', {queue: 'testQueue'}, function(response){
+        response.jobs.length.should.equal(3);
+        done();
+      });
+    });
+
+    it('resque:queued (bad)', function(done){
+      api.specHelper.runAction('resque:queued', {queue: 'xxx'}, function(response){
+        response.jobs.length.should.equal(0);
+        done();
+      });
+    });
+
+    it('resque:delQueue', function(done){
+      api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(response){
+        api.specHelper.runAction('resque:queued', {queue: 'testQueue'}, function(response){
+          response.jobs.length.should.equal(0);
+          done();
+        })
+      });
+    });
   });
 
   describe('with failed jobs', function(){
