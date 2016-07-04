@@ -33,8 +33,13 @@ describe('ah-resque-ui', function(){
     api.specHelper.runAction('resque:packageDetails', function(response){
       response.packageDetails.packageJSON.version.should.equal(pkg.version);
       response.packageDetails.packageJSON.license.should.equal('Apache-2.0');
-      response.packageDetails.redis[0].should.equal(6379);
-      response.packageDetails.redis[1].should.equal('127.0.0.1');
+      if(process.env.FAKEREDIS === 'false'){
+        response.packageDetails.redis[0].port.should.equal(6379);
+        response.packageDetails.redis[0].host.should.equal('127.0.0.1');
+      }else{
+        response.packageDetails.redis[0].should.equal(6379);
+        response.packageDetails.redis[1].should.equal('127.0.0.1');
+      }
       done();
     });
   });
