@@ -12,11 +12,12 @@ exports.default = {
   routes: function(api){
     return {
       get: [
-        { path: '/resque/packageDetails',       action: 'resque:packageDetails'       },
-        { path: '/resque/resqueDetails',        action: 'resque:resqueDetails'        },
-        { path: '/resque/loadWorkerQueues',     action: 'resque:loadWorkerQueues'     },
-        { path: '/resque/resqueFailedCount',    action: 'resque:resqueFailedCount'    },
-        { path: '/resque/resqueFailed',         action: 'resque:resqueFailed'         },
+        { path: '/resque/packageDetails',       action: 'resque:packageDetails'    },
+        { path: '/resque/resqueDetails',        action: 'resque:resqueDetails'     },
+        { path: '/resque/loadWorkerQueues',     action: 'resque:loadWorkerQueues'  },
+        { path: '/resque/resqueFailedCount',    action: 'resque:resqueFailedCount' },
+        { path: '/resque/resqueFailed',         action: 'resque:resqueFailed'      },
+        { path: '/resque/delayedjobs',          action: 'resque:delayedjobs'       },
       ],
 
       post: [
@@ -25,6 +26,8 @@ exports.default = {
         { path: '/resque/removeAllFailed',         action: 'resque:removeAllFailed'         },
         { path: '/resque/retryAndRemoveAllFailed', action: 'resque:retryAndRemoveAllFailed' },
         { path: '/resque/forceCleanWorker',        action: 'resque:forceCleanWorker'        },
+        { path: '/resque/delDelayed',              action: 'resque:delDelayed'              },
+        { path: '/resque/runDelayed',              action: 'resque:runDelayed'              },
       ]
     }
   }

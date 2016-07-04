@@ -85,7 +85,7 @@ exports.resqueFailed = {
     stop:{
       required: true,
       formatter: function(p){ return parseInt(p); },
-      default: 100
+      default: 99
     }
   },
 
@@ -184,5 +184,115 @@ exports.retryAndRemoveAllFailed = {
     }
 
     async.doWhilst(act, check, next);
+  }
+};
+
+exports.delayedjobs = {
+  name: 'resque:delayedjobs',
+  description: 'I return paginated lists of delayedjobs',
+  outputExample: {},
+
+  inputs:{
+    start:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+      default: 0
+    },
+    stop:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+      default: 99
+    }
+  },
+
+  run: function(api, data, next){
+    var jobs = [];
+    var timestamps = [];
+    var delayedjobs = {};
+
+    api.tasks.timestamps(function(error, allTimestmps){
+      if(error){ next(error); }
+      if(allTimestmps.length === 0){ return next(); }
+
+      for (var i = 0; i < allTimestmps.length; i++) {
+        if(i >= data.params.start && i <= data.params.stop){ timestamps.push(allTimestmps[i]); }
+      }
+
+      timestamps.forEach(function(timestamp){
+        jobs.push(function(done){
+          api.tasks.delayedAt(timestamp, function(error, delayed){
+            delayedjobs[timestamp] = delayed;
+            done(error);
+          });
+        });
+      });
+
+      async.series(jobs, function(error){
+        data.response.delayedjobs = delayedjobs;
+        data.response.timestampsCount = allTimestmps.length;
+        next(error);
+      });
+    });
+  }
+};
+
+exports.delDelayed = {
+  name: 'resque:delDelayed',
+  description: 'I delete a delayed job',
+  outputExample: {},
+
+  inputs:{
+    timestamp:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+    },
+    count:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+    },
+  },
+
+  run: function(api, data, next){
+    api.tasks.delayedAt(data.params.timestamp, function(error, delayed){
+      if(error){ return next(error); }
+      if(delayed.length === 0 || !delayed[data.params.count]){
+        return next(new Error('delayed job not found'));
+      }
+
+      var job = delayed[data.params.count];
+      api.tasks.delDelayed(job.queue, job.class, job.args, next);
+    });
+  }
+};
+
+exports.runDelayed = {
+  name: 'resque:runDelayed',
+  description: 'I run a delayed job now',
+  outputExample: {},
+
+  inputs:{
+    timestamp:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+    },
+    count:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+    },
+  },
+
+  run: function(api, data, next){
+    api.tasks.delayedAt(data.params.timestamp, function(error, delayed){
+      if(error){ return next(error); }
+      if(delayed.length === 0 || !delayed[data.params.count]){
+        return next(new Error('delayed job not found'));
+      }
+
+      var job = delayed[data.params.count];
+      api.tasks.delDelayed(job.queue, job.class, job.args, function(error){
+        if(error){ return next(error); }
+        api.tasks.enqueue(job.class, job.args, job.queue, next);
+      });
+    });
   }
 };

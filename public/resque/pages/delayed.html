@@ -1,0 +1,54 @@
+<div ng-controller="resque">
+
+  <h1>Delayed Jobs</h1>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div class="panel panel-primary" ng-repeat="t in timestamps">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ t.date.toString() }}</h3>
+        </div>
+        <div class="panel-body">
+
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <td><strong>Class</strong></td>
+                <td><strong>Queue</strong></td>
+                <td><strong>Arguments</strong></td>
+                <td>&nbsp;</td>
+                <td>&nbsp;</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="job in delayedjobs[t.key]">
+                <td>{{ job.class }}</td>
+                <td>{{ job.queue }}</td>
+                <td>
+                  <ul>
+                    <li ng-repeat="a in job.args">{{ a }}</li>
+                  </ul>
+                </td>
+                <td width="100"><button ng-click="runDelayed(t.key, $index)" class="btn btn-xs btn-warning">Run Now</button></td>
+                <td width="100"><button ng-click="delDelayed(t.key, $index)" class="btn btn-xs btn-danger">Remove</button></td>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+      <ul class="pagination pagination-sm" ng-if="timestamps.length > 0">
+        <li ng-class="pagination.showBack ? '' : 'disabled'" ><a href="resque/#/delayed/{{ pagination.firstPage }}">&laquo;</a></li>
+
+        <li ng-repeat="p in pagination.pages" ng-class="p.active ? 'active' : ''">
+          <a href="/resque/#/delayed/{{ p.page }}">{{ p.page }}</a>
+        </li>
+
+        <li ng-class="pagination.showForward ? '' : 'disabled'"><a href="/resque/#/delayed/{{ pagination.lastPage }}">&raquo;</a></li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>

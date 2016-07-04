@@ -3,6 +3,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     queues: 0,
     workers: 0,
     failed: 0,
+    timestamps: 0,
   };
 
   /* ----------- Pagination ----------- */
@@ -128,6 +129,48 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     }
   };
 
+  /* ----------- Delayed ----------- */
+
+  $scope.loadDelayedJobs = function(){
+    $rootScope.action($scope, {
+      start: ($scope.currentPage * $scope.perPage),
+      stop: (($scope.currentPage * $scope.perPage) + ($scope.perPage - 1))
+    }, '/api/resque/delayedjobs', 'GET', function(data){
+      $scope.counts.timestamps = data.timestampsCount;
+      $scope.delayedjobs = data.delayedjobs;
+      $scope.timestamps = [];
+
+      if(data.delayedjobs){
+        Object.keys(data.delayedjobs).forEach(function(t){
+          $scope.timestamps.push({
+            date: new Date(parseInt(t)),
+            key: t,
+          });
+        });
+      }
+
+      $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.counts.timestamps);
+    });
+  };
+
+  $scope.delDelayed = function(timestamp, count){
+    $rootScope.action($scope, {
+      timestamp: timestamp,
+      count: count,
+    }, '/api/resque/delDelayed', 'POST', function(data){
+      run();
+    });
+  };
+
+  $scope.runDelayed = function(timestamp, count){
+    $rootScope.action($scope, {
+      timestamp: timestamp,
+      count: count,
+    }, '/api/resque/runDelayed', 'POST', function(data){
+      run();
+    });
+  };
+
   /* ----------- Failures ----------- */
 
   $scope.loadFailedCount = function(){
@@ -197,6 +240,10 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
 
     if(['failed'].indexOf(path) >= 0){
       $scope.loadFailed();
+    }
+
+    if(['delayed'].indexOf(path) >= 0){
+      $scope.loadDelayedJobs();
     }
 
     if(['workers'].indexOf(path) >= 0){
