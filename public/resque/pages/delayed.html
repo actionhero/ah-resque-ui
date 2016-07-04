@@ -24,7 +24,7 @@
             <tbody>
               <tr ng-repeat="job in delayedjobs[t.key]">
                 <td>{{ job.class }}</td>
-                <td>{{ job.queue }}</td>
+                <td><a href="/resque/#/queue/{{ job.queue }}">{{ job.queue }}</a></td>
                 <td>
                   <ul>
                     <li ng-repeat="a in job.args">{{ a }}</li>

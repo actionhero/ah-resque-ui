@@ -76,9 +76,56 @@ exports.resqueFailedCount = {
   }
 };
 
+exports.queued = {
+  name: 'resque:queued',
+  description: 'I list enqueued jobs',
+  middleware: ['ah-resque-ui-proxy-middleware'],
+  outputExample: {},
+
+  inputs:{
+    queue: {
+      required: true
+    },
+    start:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+      default: 0
+    },
+    stop:{
+      required: true,
+      formatter: function(p){ return parseInt(p); },
+      default: 99
+    }
+  },
+
+  run: function(api, data, next){
+    api.tasks.queued(data.params.queue, data.params.start, data.params.stop, function(error, jobs){
+      data.response.jobs = jobs;
+      next(error);
+    });
+  }
+};
+
+exports.delQueue = {
+  name: 'resque:delQueue',
+  description: 'I delete a queue',
+  middleware: ['ah-resque-ui-proxy-middleware'],
+  outputExample: {},
+
+  inputs:{
+    queue: {
+      required: true
+    }
+  },
+
+  run: function(api, data, next){
+    api.tasks.delQueue(data.params.queue, next);
+  }
+};
+
 exports.resqueFailed = {
   name: 'resque:resqueFailed',
-  description: 'I return a count of failed jobs',
+  description: 'I return failed jobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 

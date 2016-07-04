@@ -46,11 +46,16 @@ exports.specHelper = {
     process.env.PROJECT_ROOT = self.testDir;
     self.actionhero.start(function(error, a){
       self.api = a;
+      self.api.resque.multiWorker.options.minTaskProcessors = 1;
+      self.api.resque.multiWorker.options.maxTaskProcessors = 1;
       callback();
     });
   },
 
   stop: function(callback){
-    this.actionhero.stop(callback);
+    var self = this;
+    self.api.resque.multiWorker.options.minTaskProcessors = 1;
+    self.api.resque.multiWorker.options.maxTaskProcessors = 1;
+    self.actionhero.stop(callback);
   },
 };

@@ -15,6 +15,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   /* ----------- Overview ----------- */
 
   $scope.chart;
+  $scope.queue = $routeParams.queue;
 
   $scope.loadDetails = function(){
     $rootScope.action($scope, {}, '/api/resque/resqueDetails', 'GET', function(data){
@@ -94,6 +95,31 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
       series: series,
     });
   };
+
+  /* ----------- Queue ----------- */
+
+  $scope.loadQueued = function(){
+    $rootScope.action($scope, {
+      queue: $scope.queue,
+      start: ($scope.currentPage * $scope.perPage),
+      stop: (($scope.currentPage * $scope.perPage) + ($scope.perPage - 1))
+    }, '/api/resque/queued', 'GET', function(data){
+      $scope.jobs = data.jobs;
+
+      $rootScope.action($scope, {}, '/api/resque/resqueDetails', 'GET', function(data){
+        $scope.queues = data.resqueDetails.queues;
+        $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.queues[$scope.queue].length);
+      });
+    });
+  };
+
+  $scope.delQueue = function(){
+    $rootScope.action($scope, {
+      queue: $scope.queue,
+    }, '/api/resque/delQueue', 'POST', function(data){
+      $location.path('/overview');
+    });
+  }
 
   /* ----------- Workers ----------- */
 
@@ -236,6 +262,10 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
 
     if(['overview', 'failed'].indexOf(path) >= 0){
       $scope.loadFailedCount();
+    }
+
+    if(['queue'].indexOf(path) >= 0){
+      $scope.loadQueued();
     }
 
     if(['failed'].indexOf(path) >= 0){

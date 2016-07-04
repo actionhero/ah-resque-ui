@@ -36,7 +36,7 @@
             <td><strong>{{ counts.failed }}</strong></td>
           </tr>
           <tr ng-repeat="(q, obj) in queues">
-            <td>{{ q }}</td>
+            <td><a href="/resque/#/queue/{{ q }}">{{ q }}</a></td>
             <td>{{ obj.length }}</td>
           </tr>
         </tbody>

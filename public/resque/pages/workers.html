@@ -21,7 +21,7 @@
             <td>{{ w.host }}</td>
             <td>
               <ul>
-                <li ng-repeat="q in w.queues">{{ q }}</li>
+                <li ng-repeat="q in w.queues"><a href="/resque/#/queue/{{ q }}">{{ q }}</a></li>
               </ul>
             </td>
             <td><span ng-class="w.worker.delta > 0 ? 'text-success' : ''">{{ w.worker.statusString }}</span></td>

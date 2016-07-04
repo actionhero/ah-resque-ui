@@ -22,6 +22,7 @@ exports.default = {
       get: [
         { path: '/resque/packageDetails',       action: 'resque:packageDetails'    },
         { path: '/resque/resqueDetails',        action: 'resque:resqueDetails'     },
+        { path: '/resque/queued',               action: 'resque:queued'            },
         { path: '/resque/loadWorkerQueues',     action: 'resque:loadWorkerQueues'  },
         { path: '/resque/resqueFailedCount',    action: 'resque:resqueFailedCount' },
         { path: '/resque/resqueFailed',         action: 'resque:resqueFailed'      },
@@ -34,6 +35,7 @@ exports.default = {
         { path: '/resque/removeAllFailed',         action: 'resque:removeAllFailed'         },
         { path: '/resque/retryAndRemoveAllFailed', action: 'resque:retryAndRemoveAllFailed' },
         { path: '/resque/forceCleanWorker',        action: 'resque:forceCleanWorker'        },
+        { path: '/resque/delQueue',                action: 'resque:delQueue'                },
         { path: '/resque/delDelayed',              action: 'resque:delDelayed'              },
         { path: '/resque/runDelayed',              action: 'resque:runDelayed'              },
       ]
@@ -119,3 +121,7 @@ module.exports = {
 Now you can apply the `logged-in-session` middleware to your actions to protect them.  
 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = 'logged-in-session'`
+
+## Testing
+
+On OSX, you may need to manually simulate the `link` action in test project preperation.  There's something fishy about how OSX links `/tmp` to `/private/tmp` that confuses out linker.

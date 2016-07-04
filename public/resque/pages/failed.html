@@ -31,7 +31,7 @@
               <a ng-click="renderFailureStack($index)"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
               <strong>{{ f.exception }}: {{ f.error }}</strong>
             </td>
-            <td><span class="text-success">{{ f.queue }}</span></td>
+            <td><span class="text-success"><a href="/resque/#/queue/{{ f.queue }}">{{ f.queue }}</a></span></td>
             <td>{{ f.worker }}</td>
             <td>
               <ul>
