@@ -5,6 +5,7 @@ var packageJSON = require(path.normalize(__dirname + path.sep + '..' + path.sep 
 exports.packageDetails = {
   name: 'resque:packageDetails',
   description: 'I return the resque package metadata',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   run: function(api, data, next){
@@ -18,6 +19,7 @@ exports.packageDetails = {
 exports.resqueDetails = {
   name: 'resque:resqueDetails',
   description: 'I return the results of api.tasks.details',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   run: function(api, data, next){
@@ -31,6 +33,7 @@ exports.resqueDetails = {
 exports.loadWorkerQueues = {
   name: 'resque:loadWorkerQueues',
   description: 'I return the results of api.tasks.workers',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   run: function(api, data, next){
@@ -44,6 +47,7 @@ exports.loadWorkerQueues = {
 exports.forceCleanWorker = {
   name: 'resque:forceCleanWorker',
   description: 'I remove a worker from resque',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs: {
@@ -61,6 +65,7 @@ exports.forceCleanWorker = {
 exports.resqueFailedCount = {
   name: 'resque:resqueFailedCount',
   description: 'I return a count of failed jobs',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   run: function(api, data, next){
@@ -74,6 +79,7 @@ exports.resqueFailedCount = {
 exports.resqueFailed = {
   name: 'resque:resqueFailed',
   description: 'I return a count of failed jobs',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs:{
@@ -100,6 +106,7 @@ exports.resqueFailed = {
 exports.removeFailed = {
   name: 'resque:removeFailed',
   description: 'I remove a failed job',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs:{
@@ -121,6 +128,7 @@ exports.removeFailed = {
 exports.removeAllFailed = {
   name: 'resque:removeAllFailed',
   description: 'I remove all failed jobs',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   run: function(api, data, next){
@@ -145,6 +153,7 @@ exports.removeAllFailed = {
 exports.retryAndRemoveFailed = {
   name: 'resque:retryAndRemoveFailed',
   description: 'I retry a failed job',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs:{
@@ -166,6 +175,7 @@ exports.retryAndRemoveFailed = {
 exports.retryAndRemoveAllFailed = {
   name: 'resque:retryAndRemoveAllFailed',
   description: 'I retry all failed jobs',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   run: function(api, data, next){
@@ -190,6 +200,7 @@ exports.retryAndRemoveAllFailed = {
 exports.delayedjobs = {
   name: 'resque:delayedjobs',
   description: 'I return paginated lists of delayedjobs',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs:{
@@ -239,6 +250,7 @@ exports.delayedjobs = {
 exports.delDelayed = {
   name: 'resque:delDelayed',
   description: 'I delete a delayed job',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs:{
@@ -268,6 +280,7 @@ exports.delDelayed = {
 exports.runDelayed = {
   name: 'resque:runDelayed',
   description: 'I run a delayed job now',
+  middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
 
   inputs:{
