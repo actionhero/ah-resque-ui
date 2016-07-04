@@ -20,6 +20,13 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "async": "^2.0.0-rc.6"
+    "async": "1.x.x"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3",
+    "should": "^9.0.2"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
