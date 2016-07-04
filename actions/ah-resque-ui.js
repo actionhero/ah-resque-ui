@@ -142,8 +142,6 @@ exports.retryAndRemoveAllFailed = {
     var failedJob;
     var act = function(done){
       api.tasks.failed(0, 0, function(error, failed){
-        console.log("-------")
-        console.log(failed)
         if(error){ return done(error); }
         failedJob = failed[0];
         if(!failed || failed.length === 0){ return done(); }

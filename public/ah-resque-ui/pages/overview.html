@@ -2,7 +2,22 @@
 
   <h1>Resque Overview</h1>
 
-  <pre>chart goes here</pre>
+  <div class="row">
+    <div class="col-md-3">
+      <h3>Stats:</h3>
+      <table class="table table-hover ">
+        <tbody>
+          <tr ng-repeat="(k, v) in stats" ng-if="k.indexOf(':') < 0">
+            <td>{{ k }}</td>
+            <td>{{ v }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-9">
+      <div id="overviewChart" style="min-width: 310px; height: 300px; margin: 0 auto"></div>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-md-4">

@@ -13,12 +13,25 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
 
   /* ----------- Overview ----------- */
 
+  $scope.chart;
+
   $scope.loadDetails = function(){
     $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueDetails', 'GET', function(data){
       $scope.queues = data.resqueDetails.queues;
       $scope.workers = data.resqueDetails.workers;
+      $scope.stats = data.resqueDetails.stats;
       $scope.counts.queues = Object.keys($scope.queues).length;
       $scope.counts.workers = Object.keys($scope.workers).length;
+
+      if($scope.chart){
+        Object.keys($scope.queues).forEach(function(q){
+          $scope.chart.series.forEach(function(s){
+            if(s.name === q){
+              s.addPoint([new Date().getTime(), $scope.queues[q].length]);
+            }
+          });
+        });
+      }
 
       Object.keys($scope.workers).forEach(function(wname){
         var worker = $scope.workers[wname];
@@ -29,6 +42,52 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
         }
       });
 
+    });
+  };
+
+  $scope.renderOverviewChart = function(){
+    if($scope.chart){ return; }
+    if(!$scope.queues){ return setTimeout($scope.renderOverviewChart, 500); }
+
+    var series = [];
+    Object.keys($scope.queues).forEach(function(q){
+      series.push({
+        name: q,
+        data: [{x: new Date(), y:0}],
+      });
+    });
+
+    $('#overviewChart').highcharts({
+      chart: {
+        type: 'spline',
+        animation: Highcharts.svg, // don't animate in old IE
+        events: {
+          load: function(){ $scope.chart = this; }
+        }
+      },
+      title: null,
+      xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150
+      },
+      yAxis: {
+        title: {
+          text: 'Queue Length'
+        },
+        plotLines: [{
+          value: 0,
+          width: 1,
+          color: '#808080'
+        }]
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'left',
+        verticalAlign: 'top',
+        floating: true,
+      },
+      exporting: {enabled: false},
+      series: series,
     });
   };
 
@@ -92,6 +151,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
 
     if(['overview'].indexOf(path) >= 0){
       $scope.loadDetails();
+      $scope.renderOverviewChart();
     }
 
     if(['overview', 'failed'].indexOf(path) >= 0){
