@@ -2,7 +2,7 @@
 <html ng-app="app">
   <head>
 
-    <title>ah-resque-ui</title>
+    <title>ActionHero Resque UI</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -18,16 +18,16 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
 
     <!-- App -->
-    <script src="/ah-resque-ui/js/routes.js"></script>
-    <script src="/ah-resque-ui/js/app.js"></script>
-    <script src="/ah-resque-ui/js/controllers/page.js"></script>
-    <script src="/ah-resque-ui/js/controllers/resque.js"></script>
+    <script src="/resque/js/routes.js"></script>
+    <script src="/resque/js/app.js"></script>
+    <script src="/resque/js/controllers/page.js"></script>
+    <script src="/resque/js/controllers/resque.js"></script>
 
   </head>
 
   <body ng-controller="pageController">
     <header id="nav-container" class="container">
-      <div ng-include="'/ah-resque-ui/pages/nav.html'"></div>
+      <div ng-include="'/resque/pages/nav.html'"></div>
     </header>
 
     <div id="main" class="container">
@@ -35,7 +35,7 @@
     </div>
 
     <footer id="footer-container" class="container">
-      <div ng-include="'/ah-resque-ui/pages/footer.html'"></div>
+      <div ng-include="'/resque/pages/footer.html'"></div>
     </footer>
   </body>
 </html>

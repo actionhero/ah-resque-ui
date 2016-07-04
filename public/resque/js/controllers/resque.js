@@ -16,7 +16,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   $scope.chart;
 
   $scope.loadDetails = function(){
-    $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueDetails', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/resque/resqueDetails', 'GET', function(data){
       $scope.queues = data.resqueDetails.queues;
       $scope.workers = data.resqueDetails.workers;
       $scope.stats = data.resqueDetails.stats;
@@ -33,15 +33,18 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
         });
       }
 
-      Object.keys($scope.workers).forEach(function(wname){
-        var worker = $scope.workers[wname];
+      Object.keys($scope.workers).forEach(function(workerName){
+        var worker = $scope.workers[workerName];
         if(typeof worker === 'string'){
-          $scope.workers[wname] = {status: worker};
+          $scope.workers[workerName] = {
+            status: worker,
+            statusString: worker,
+          };
         }else{
           worker.delta = Math.round((new Date().getTime() - new Date(worker.run_at).getTime()) / 1000);
+          worker.statusString = 'working on ' + worker.queue + '#' + worker.payload['class'] + ' for ' + worker.delta + 's';
         }
       });
-
     });
   };
 
@@ -91,10 +94,44 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     });
   };
 
+  /* ----------- Workers ----------- */
+
+  $scope.loadWorkerQueues = function(){
+    if(!$scope.workers){ return setTimeout($scope.loadWorkerQueues, 500); }
+
+    $rootScope.action($scope, {}, '/api/resque/loadWorkerQueues', 'GET', function(data){
+      // $scope.workerQueues = data.workerQueues;
+      $scope.workerQueues = [];
+      Object.keys(data.workerQueues).forEach(function(workerName){
+        var parts = workerName.split(':');
+        var id = parts.pop();
+        var host = parts.join(':');
+        var queues = data.workerQueues[workerName].split(',');
+
+        var worker = {};
+        if($scope.workers && $scope.workers[workerName]){
+          worker = $scope.workers[workerName]
+        }
+
+        $scope.workerQueues.push({
+          id:id, host:host, queues:queues, worker:worker, workerName:workerName
+        });
+      });
+    });
+  };
+
+  $scope.forceCleanWorker = function(workerName){
+    if(confirm('Are you sure?')){
+      $rootScope.action($scope, {workerName: workerName}, '/api/resque/forceCleanWorker', 'POST', function(data){
+        run();
+      });
+    }
+  };
+
   /* ----------- Failures ----------- */
 
   $scope.loadFailedCount = function(){
-    $rootScope.action($scope, {}, '/api/ah-resque-ui/resqueFailedCount', 'GET', function(data){
+    $rootScope.action($scope, {}, '/api/resque/resqueFailedCount', 'GET', function(data){
       $scope.counts.failed = data.failedCount;
       $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.counts.failed);
     });
@@ -104,7 +141,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     $rootScope.action($scope, {
       start: ($scope.currentPage * $scope.perPage),
       stop: (($scope.currentPage * $scope.perPage) + ($scope.perPage - 1))
-    }, '/api/ah-resque-ui/resqueFailed', 'GET', function(data){
+    }, '/api/resque/resqueFailed', 'GET', function(data){
       $scope.failed = data.failed;
     });
   };
@@ -112,7 +149,7 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   $scope.removeFailedJob = function(index){
     $rootScope.action($scope, {
       id: index
-    }, '/api/ah-resque-ui/removeFailed', 'POST', function(data){
+    }, '/api/resque/removeFailed', 'POST', function(data){
       run();
     });
   };
@@ -120,19 +157,19 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   $scope.retryFailedJob = function(index){
     $rootScope.action($scope, {
       id: index
-    }, '/api/ah-resque-ui/retryAndRemoveFailed', 'POST', function(data){
+    }, '/api/resque/retryAndRemoveFailed', 'POST', function(data){
       run();
     });
   };
 
   $scope.removeAllFailedJobs = function(index){
-    $rootScope.action($scope, {}, '/api/ah-resque-ui/removeAllFailed', 'POST', function(data){
+    $rootScope.action($scope, {}, '/api/resque/removeAllFailed', 'POST', function(data){
       run();
     });
   };
 
   $scope.retryAllFailedJobs = function(index){
-    $rootScope.action($scope, {}, '/api/ah-resque-ui/retryAndRemoveAllFailed', 'POST', function(data){
+    $rootScope.action($scope, {}, '/api/resque/retryAndRemoveAllFailed', 'POST', function(data){
       run();
     });
   };
@@ -160,6 +197,11 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
 
     if(['failed'].indexOf(path) >= 0){
       $scope.loadFailed();
+    }
+
+    if(['workers'].indexOf(path) >= 0){
+      $scope.loadWorkerQueues();
+      $scope.loadDetails();
     }
   };
 

@@ -123,6 +123,11 @@ app.run(['$rootScope', '$http', function($rootScope, $http){
     return pagination;
   };
 
+  Highcharts.setOptions(
+    {global: { useUTC: false },
+    credits: { enabled: false } }
+  );
+
   $rootScope.$on('$routeChangeSuccess', function (event, current, previous){
     $rootScope.pageTitle = current.$$route.pageTitle;
   });

@@ -3,8 +3,8 @@ var async = require('async');
 var packageJSON = require(path.normalize(__dirname + path.sep + '..' + path.sep + 'package.json'));
 
 exports.packageDetails = {
-  name: 'ah-resque-ui:packageDetails',
-  description: 'I return the ah-resque-ui package metadata',
+  name: 'resque:packageDetails',
+  description: 'I return the resque package metadata',
   outputExample: {},
 
   run: function(api, data, next){
@@ -16,7 +16,7 @@ exports.packageDetails = {
 };
 
 exports.resqueDetails = {
-  name: 'ah-resque-ui:resqueDetails',
+  name: 'resque:resqueDetails',
   description: 'I return the results of api.tasks.details',
   outputExample: {},
 
@@ -28,8 +28,38 @@ exports.resqueDetails = {
   }
 };
 
+exports.loadWorkerQueues = {
+  name: 'resque:loadWorkerQueues',
+  description: 'I return the results of api.tasks.workers',
+  outputExample: {},
+
+  run: function(api, data, next){
+    api.tasks.workers(function(error, workerQueues){
+      data.response.workerQueues = workerQueues;
+      next(error);
+    });
+  }
+};
+
+exports.forceCleanWorker = {
+  name: 'resque:forceCleanWorker',
+  description: 'I remove a worker from resque',
+  outputExample: {},
+
+  inputs: {
+    workerName:{ required: true}
+  },
+
+  run: function(api, data, next){
+    api.resque.queue.forceCleanWorker(data.params.workerName, function(error, generatedErrorPayload){
+      data.response.generatedErrorPayload = generatedErrorPayload;
+      next(error);
+    });
+  }
+};
+
 exports.resqueFailedCount = {
-  name: 'ah-resque-ui:resqueFailedCount',
+  name: 'resque:resqueFailedCount',
   description: 'I return a count of failed jobs',
   outputExample: {},
 
@@ -42,7 +72,7 @@ exports.resqueFailedCount = {
 };
 
 exports.resqueFailed = {
-  name: 'ah-resque-ui:resqueFailed',
+  name: 'resque:resqueFailed',
   description: 'I return a count of failed jobs',
   outputExample: {},
 
@@ -68,7 +98,7 @@ exports.resqueFailed = {
 };
 
 exports.removeFailed = {
-  name: 'ah-resque-ui:removeFailed',
+  name: 'resque:removeFailed',
   description: 'I remove a failed job',
   outputExample: {},
 
@@ -89,7 +119,7 @@ exports.removeFailed = {
 };
 
 exports.removeAllFailed = {
-  name: 'ah-resque-ui:removeAllFailed',
+  name: 'resque:removeAllFailed',
   description: 'I remove all failed jobs',
   outputExample: {},
 
@@ -113,7 +143,7 @@ exports.removeAllFailed = {
 };
 
 exports.retryAndRemoveFailed = {
-  name: 'ah-resque-ui:retryAndRemoveFailed',
+  name: 'resque:retryAndRemoveFailed',
   description: 'I retry a failed job',
   outputExample: {},
 
@@ -134,7 +164,7 @@ exports.retryAndRemoveFailed = {
 };
 
 exports.retryAndRemoveAllFailed = {
-  name: 'ah-resque-ui:retryAndRemoveAllFailed',
+  name: 'resque:retryAndRemoveAllFailed',
   description: 'I retry all failed jobs',
   outputExample: {},
 

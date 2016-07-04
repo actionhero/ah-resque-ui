@@ -12,17 +12,19 @@ exports.default = {
   routes: function(api){
     return {
       get: [
-        { path: '/ah-resque-ui/packageDetails',       action: 'ah-resque-ui:packageDetails'       },
-        { path: '/ah-resque-ui/resqueDetails',        action: 'ah-resque-ui:resqueDetails'        },
-        { path: '/ah-resque-ui/resqueFailedCount',    action: 'ah-resque-ui:resqueFailedCount'    },
-        { path: '/ah-resque-ui/resqueFailed',         action: 'ah-resque-ui:resqueFailed'         },
+        { path: '/resque/packageDetails',       action: 'resque:packageDetails'       },
+        { path: '/resque/resqueDetails',        action: 'resque:resqueDetails'        },
+        { path: '/resque/loadWorkerQueues',     action: 'resque:loadWorkerQueues'     },
+        { path: '/resque/resqueFailedCount',    action: 'resque:resqueFailedCount'    },
+        { path: '/resque/resqueFailed',         action: 'resque:resqueFailed'         },
       ],
 
       post: [
-        { path: '/ah-resque-ui/removeFailed',            action: 'ah-resque-ui:removeFailed'            },
-        { path: '/ah-resque-ui/retryAndRemoveFailed',    action: 'ah-resque-ui:retryAndRemoveFailed'    },
-        { path: '/ah-resque-ui/removeAllFailed',         action: 'ah-resque-ui:removeAllFailed'         },
-        { path: '/ah-resque-ui/retryAndRemoveAllFailed', action: 'ah-resque-ui:retryAndRemoveAllFailed' },
+        { path: '/resque/removeFailed',            action: 'resque:removeFailed'            },
+        { path: '/resque/retryAndRemoveFailed',    action: 'resque:retryAndRemoveFailed'    },
+        { path: '/resque/removeAllFailed',         action: 'resque:removeAllFailed'         },
+        { path: '/resque/retryAndRemoveAllFailed', action: 'resque:retryAndRemoveAllFailed' },
+        { path: '/resque/forceCleanWorker',        action: 'resque:forceCleanWorker'        },
       ]
     }
   }
