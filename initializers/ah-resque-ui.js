@@ -2,6 +2,27 @@ module.exports = {
   load: 99999999,
   initialize: function (api, next) {
 
+    /* ----- Route Injection ----- */
+
+    api.routes.registerRoute('get', '/resque/packageDetails',    'resque:packageDetails');
+    api.routes.registerRoute('get', '/resque/resqueDetails',     'resque:resqueDetails');
+    api.routes.registerRoute('get', '/resque/queued',            'resque:queued');
+    api.routes.registerRoute('get', '/resque/loadWorkerQueues',  'resque:loadWorkerQueues');
+    api.routes.registerRoute('get', '/resque/resqueFailedCount', 'resque:resqueFailedCount');
+    api.routes.registerRoute('get', '/resque/resqueFailed',      'resque:resqueFailed');
+    api.routes.registerRoute('get', '/resque/delayedjobs',       'resque:delayedjobs');
+
+    api.routes.registerRoute('post', '/resque/removeFailed',            'resque:removeFailed');
+    api.routes.registerRoute('post', '/resque/retryAndRemoveFailed',    'resque:retryAndRemoveFailed');
+    api.routes.registerRoute('post', '/resque/removeAllFailed',         'resque:removeAllFailed');
+    api.routes.registerRoute('post', '/resque/retryAndRemoveAllFailed', 'resque:retryAndRemoveAllFailed');
+    api.routes.registerRoute('post', '/resque/forceCleanWorker',        'resque:forceCleanWorker');
+    api.routes.registerRoute('post', '/resque/delQueue',                'resque:delQueue');
+    api.routes.registerRoute('post', '/resque/delDelayed',              'resque:delDelayed');
+    api.routes.registerRoute('post', '/resque/runDelayed',              'resque:runDelayed');
+
+    /* ----- Proxy Middleware ----- */
+
     var middleware = {
       'ah-resque-ui-proxy-middleware': {
         name: 'ah-resque-ui-proxy-middleware',
