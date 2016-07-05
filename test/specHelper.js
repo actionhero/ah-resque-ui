@@ -1,3 +1,4 @@
+var os    = require('os');
 var path  = require('path');
 var async = require('async');
 var exec  = require('child_process').exec;
@@ -13,7 +14,8 @@ var doBash = function(commands, callback){
 };
 
 exports.specHelper = {
-  testDir: '/tmp/ah-resque-ui',
+  // testDir: '/tmp/ah-resque-ui',
+  testDir: os.tmpDir() + '/ah-resque-ui',
   projectDir: path.normalize(__dirname + '/..'),
 
   build: function(callback){
@@ -27,8 +29,13 @@ exports.specHelper = {
       'cd ' + this.testDir + ' && npm install',
       'rm -f ' + this.testDir + '/node_modules/ah-resque-ui',
       'ln -s ' + this.projectDir + ' ' + this.testDir + '/node_modules/ah-resque-ui',
-      'cd ' + this.testDir + ' && npm run actionhero -- link --name ah-resque-ui',
     ];
+
+    if(os.platform() === 'darwin'){
+      commands.push('cd ' + this.testDir + ' && PWD=/private' + this.testDir + ' npm run actionhero -- link --name ah-resque-ui');
+    }else{
+      commands.push('cd ' + this.testDir + ' && npm run actionhero -- link --name ah-resque-ui');
+    }
 
     if(process.env.SKIP_BUILD !== 'true'){
       commands.forEach(function(cmd){

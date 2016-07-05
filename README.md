@@ -122,10 +122,6 @@ Now you can apply the `logged-in-session` middleware to your actions to protect 
 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = 'logged-in-session'` in the provided configuration file.
 
-## Testing
-
-On OSX, you may need to manually simulate the `link` action in test project preperation.  There's something fishy about how OSX links `/tmp` to `/private/tmp` that confuses out linker.
-
 ## Thanks
 - [Theme](https://bootswatch.com)
 - [HighCharts](http://www.highcharts.com/)
