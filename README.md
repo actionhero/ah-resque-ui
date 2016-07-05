@@ -47,7 +47,7 @@ exports.default = {
 ## Authentication Via Middleware
 This package exposes some potentially dangerous actions which would allow folks to see user data (if you keep such in your task params), and modify your task queues.  To protect these actions, you should configure this package to use [action middleware](http://www.actionherojs.com/docs/#action-middleware) which would restrict these actions to only certain clients.
 
-For example, you might have roles (`admin`, `analyst`, etc), and require that a certain session (determined via fingerprint) to be pre-logged in.  In this case, you might have an initializer like the following:
+An example middleware would be one which requires a valid user to be logged in:
 
 ```js
 // from initializers/session
@@ -120,7 +120,7 @@ module.exports = {
 
 Now you can apply the `logged-in-session` middleware to your actions to protect them.  
 
-To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = 'logged-in-session'`
+To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = 'logged-in-session'` in the provided configuration file.
 
 ## Testing
 
