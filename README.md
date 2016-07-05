@@ -12,7 +12,7 @@ A resque administration website for actionhero
 ## Setup
 
 - `npm install --save ah-resque-ui`
-- `npm run actionhero -- link --name ah-resque-ui`
+- `npm run actionhero --link --name ah-resque-ui`
 
 ## Routes
 
