@@ -29,7 +29,11 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
         Object.keys($scope.queues).forEach(function(q){
           $scope.chart.series.forEach(function(s){
             if(s.name === q){
-              s.addPoint([new Date().getTime(), $scope.queues[q].length]);
+              if(s.data.length > 100){
+                s.addPoint([new Date().getTime(), $scope.queues[q].length], true, true);
+              }else{
+                s.addPoint([new Date().getTime(), $scope.queues[q].length]);
+              }
             }
           });
         });

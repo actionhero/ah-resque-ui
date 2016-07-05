@@ -130,6 +130,7 @@ describe('ah-resque-ui', function(){
   });
 
   describe('with failed jobs', function(){
+    beforeEach(function(done){ api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(){ done(); }); });
     beforeEach(function(done){ api.specHelper.runAction('resque:removeAllFailed', function(){ done(); }); });
 
     beforeEach(function(done){ api.tasks.enqueue('testTask', {a: 1, fail: true}, 'testQueue', done) });
