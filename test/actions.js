@@ -129,6 +129,41 @@ describe('ah-resque-ui', function(){
     });
   });
 
+  describe('with delayed jobs', function(){
+    before(function(done){ api.tasks.enqueueAt(1000, 'testTask', {a: 1}, 'testQueue', done) });
+    before(function(done){ api.tasks.enqueueAt(2000, 'testTask', {b: 2}, 'testQueue', done) });
+    before(function(done){ api.tasks.enqueueAt(3000, 'testTask', {c: 3}, 'testQueue', done) });
+
+    it('resque:delayedjobs (defaults)', function(done){
+      api.specHelper.runAction('resque:delayedjobs', function(response){
+        response.timestampsCount.should.equal(3);
+        Object.keys(response.delayedjobs).length.should.equal(3);
+        response.delayedjobs['1000'][0].args[0].a.should.equal(1);
+        response.delayedjobs['2000'][0].args[0].b.should.equal(2);
+        response.delayedjobs['3000'][0].args[0].c.should.equal(3);
+        done();
+      });
+    });
+
+    it('resque:delayedjobs (pagination)', function(done){
+      api.specHelper.runAction('resque:delayedjobs', {start:0, stop:1}, function(response){
+        response.timestampsCount.should.equal(3);
+        Object.keys(response.delayedjobs).length.should.equal(2);
+        response.delayedjobs['1000'][0].args[0].a.should.equal(1);
+        response.delayedjobs['2000'][0].args[0].b.should.equal(2);
+        api.specHelper.runAction('resque:delayedjobs', {start:2, stop:999}, function(response){
+          response.timestampsCount.should.equal(3);
+          Object.keys(response.delayedjobs).length.should.equal(1);
+          response.delayedjobs['3000'][0].args[0].c.should.equal(3);
+          done();
+        });
+      });
+    });
+
+    it('resque:delDelayed');
+    it('resque:runDelayed');
+  });
+
   describe('with failed jobs', function(){
     beforeEach(function(done){ api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(){ done(); }); });
     beforeEach(function(done){ api.specHelper.runAction('resque:removeAllFailed', function(){ done(); }); });
