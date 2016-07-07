@@ -50,7 +50,9 @@ app.run(['$rootScope', '$http', function($rootScope, $http){
     }
 
     if(typeof errorCallback !== 'function'){
-      errorCallback = function(errorMessage){ alert(errorMessage); };
+      errorCallback = function(errorMessage){
+        $rootScope.error = errorMessage
+      };
     }
 
     for(i in data){
@@ -68,12 +70,15 @@ app.run(['$rootScope', '$http', function($rootScope, $http){
       data    : $.param(data),  // pass in data as strings
       headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
      }).success(function(data){
+       setTimeout(function(){ delete $rootScope.error; }, 5000);
        $('button').prop('disabled', false);
       successCallback(data);
     }).catch(function(data){
       var errorMessage = '';
       if(data.data && data.data.error){
         errorMessage = data.data.error;
+      }else if(!data.statusText && data.status === -1){
+        errorMessage = 'Cannot reach server';
       }else{
         errorMessage = data.statusText + ' | ' + data.status;
       }
