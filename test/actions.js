@@ -80,7 +80,7 @@ describe('ah-resque-ui', function(){
 
   it('resque:forceCleanWorker')
 
-  describe('locks', function(){
+  describe('with locks', function(){
     beforeEach(function(done){ api.resque.queue.connection.redis.set(api.resque.queue.connection.key('lock:lists:queueName:jobName:[{}]'), 123, done); });
     beforeEach(function(done){ api.resque.queue.connection.redis.set(api.resque.queue.connection.key('workerslock:lists:queueName:jobName:[{}]'), 456, done); });
 
