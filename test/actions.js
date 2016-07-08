@@ -80,6 +80,34 @@ describe('ah-resque-ui', function(){
 
   it('resque:forceCleanWorker')
 
+  describe('locks', function(){
+    beforeEach(function(done){ api.resque.queue.connection.redis.set(api.resque.queue.connection.key('lock:lists:queueName:jobName:[{}]'), 123, done); });
+    beforeEach(function(done){ api.resque.queue.connection.redis.set(api.resque.queue.connection.key('workerslock:lists:queueName:jobName:[{}]'), 456, done); });
+
+    afterEach(function(done){ api.resque.queue.connection.redis.del(api.resque.queue.connection.key('lock:lists:queueName:jobName:[{}]'), done); });
+    afterEach(function(done){ api.resque.queue.connection.redis.del(api.resque.queue.connection.key('workerslock:lists:queueName:jobName:[{}]'), done); });
+
+    it('resque:locks', function(done){
+      api.specHelper.runAction('resque:locks', function(response){
+        Object.keys(response.locks).length.should.equal(2);
+        response.locks['lock:lists:queueName:jobName:[{}]'].should.equal('123');
+        response.locks['workerslock:lists:queueName:jobName:[{}]'].should.equal('456');
+        done();
+      });
+    });
+
+    it('resque:delLock', function(done){
+      api.specHelper.runAction('resque:delLock', {lock: 'workerslock:lists:queueName:jobName:[{}]'}, function(response){
+        response.count.should.equal(1);
+        api.specHelper.runAction('resque:locks', function(response){
+          Object.keys(response.locks).length.should.equal(1);
+          response.locks['lock:lists:queueName:jobName:[{}]'].should.equal('123');
+          done();
+        });
+      });
+    });
+  });
+
   describe('with jobs', function(){
     beforeEach(function(done){ api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(){ done(); }); });
 

@@ -29,6 +29,7 @@ exports.specHelper = {
       'cd ' + this.testDir + ' && npm install',
       'rm -f ' + this.testDir + '/node_modules/ah-resque-ui',
       'ln -s ' + this.projectDir + ' ' + this.testDir + '/node_modules/ah-resque-ui',
+      'cd ' + this.testDir + ' && npm run actionhero -- link --name ah-resque-ui',
     ];
 
     if(process.env.SKIP_BUILD !== 'true'){
