@@ -9,4 +9,5 @@ var ROUTES = [
   [ '/delayed/:page',      '/resque/pages/delayed.html'  ],
   [ '/queue/:queue',       '/resque/pages/queue.html'    ],
   [ '/queue/:queue/:page', '/resque/pages/queue.html'    ],
+  [ '/locks',              '/resque/pages/locks.html'    ],
 ];

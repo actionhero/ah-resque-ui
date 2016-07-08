@@ -118,11 +118,13 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   };
 
   $scope.delQueue = function(){
-    $rootScope.action($scope, {
-      queue: $scope.queue,
-    }, '/api/resque/delQueue', 'POST', function(data){
-      $location.path('/overview');
-    });
+    if(confirm('Are you sure?')){
+      $rootScope.action($scope, {
+        queue: $scope.queue,
+      }, '/api/resque/delQueue', 'POST', function(data){
+        $location.path('/overview');
+      });
+    }
   }
 
   /* ----------- Workers ----------- */
@@ -184,12 +186,14 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   };
 
   $scope.delDelayed = function(timestamp, count){
-    $rootScope.action($scope, {
-      timestamp: timestamp,
-      count: count,
-    }, '/api/resque/delDelayed', 'POST', function(data){
-      run();
-    });
+    if(confirm('Are you sure?')){
+      $rootScope.action($scope, {
+        timestamp: timestamp,
+        count: count,
+      }, '/api/resque/delDelayed', 'POST', function(data){
+        run();
+      });
+    }
   };
 
   $scope.runDelayed = function(timestamp, count){
@@ -199,6 +203,27 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
     }, '/api/resque/runDelayed', 'POST', function(data){
       run();
     });
+  };
+
+  /* ----------- Locks ----------- */
+
+  $scope.loadLocks = function(){
+    $rootScope.action($scope, {}, '/api/resque/locks', 'GET', function(data){
+      $scope.locks = [];
+      Object.keys(data.locks).forEach(function(l){
+        $scope.locks.push({lock: l, at: new Date(parseInt(data.locks[l]) * 1000)});
+      });
+    });
+  };
+
+  $scope.delLock = function(lock){
+    if(confirm('Are you sure?')){
+      $rootScope.action($scope, {
+        lock: lock
+      }, '/api/resque/delLock', 'POST', function(data){
+        run();
+      });
+    }
   };
 
   /* ----------- Failures ----------- */
@@ -236,15 +261,19 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
   };
 
   $scope.removeAllFailedJobs = function(index){
-    $rootScope.action($scope, {}, '/api/resque/removeAllFailed', 'POST', function(data){
-      run();
-    });
+    if(confirm('Are you sure?')){
+      $rootScope.action($scope, {}, '/api/resque/removeAllFailed', 'POST', function(data){
+        run();
+      });
+    }
   };
 
   $scope.retryAllFailedJobs = function(index){
-    $rootScope.action($scope, {}, '/api/resque/retryAndRemoveAllFailed', 'POST', function(data){
-      run();
-    });
+    if(confirm('Are you sure?')){
+      $rootScope.action($scope, {}, '/api/resque/retryAndRemoveAllFailed', 'POST', function(data){
+        run();
+      });
+    }
   };
 
   $scope.renderFailureStack = function(index){
@@ -278,6 +307,10 @@ app.controller('resque', ['$scope', '$rootScope', '$location', '$routeParams', f
 
     if(['delayed'].indexOf(path) >= 0){
       $scope.loadDelayedJobs();
+    }
+
+    if(['locks'].indexOf(path) >= 0){
+      $scope.loadLocks();
     }
 
     if(['workers'].indexOf(path) >= 0){

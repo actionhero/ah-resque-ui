@@ -37,6 +37,7 @@
               <ul>
                 <li ng-repeat="a in f.payload.args">{{ a }}</li>
               </ul>
+            </td>
             <td><button ng-click="retryFailedJob($index)" class="btn btn-xs btn-warning">Retry</button></td>
             <td><button ng-click="removeFailedJob($index)" class="btn btn-xs btn-danger">Remove</button></td>
           </tr>

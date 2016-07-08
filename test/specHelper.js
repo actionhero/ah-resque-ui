@@ -31,12 +31,6 @@ exports.specHelper = {
       'ln -s ' + this.projectDir + ' ' + this.testDir + '/node_modules/ah-resque-ui',
     ];
 
-    if(os.platform() === 'darwin'){
-      commands.push('cd ' + this.testDir + ' && PWD=/private' + this.testDir + ' npm run actionhero -- link --name ah-resque-ui');
-    }else{
-      commands.push('cd ' + this.testDir + ' && npm run actionhero -- link --name ah-resque-ui');
-    }
-
     if(process.env.SKIP_BUILD !== 'true'){
       commands.forEach(function(cmd){
         jobs.push(function(done){ doBash(cmd, done); })

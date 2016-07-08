@@ -11,6 +11,7 @@ module.exports = {
     api.routes.registerRoute('get', '/resque/resqueFailedCount', 'resque:resqueFailedCount');
     api.routes.registerRoute('get', '/resque/resqueFailed',      'resque:resqueFailed');
     api.routes.registerRoute('get', '/resque/delayedjobs',       'resque:delayedjobs');
+    api.routes.registerRoute('get', '/resque/locks',             'resque:locks');
 
     api.routes.registerRoute('post', '/resque/removeFailed',            'resque:removeFailed');
     api.routes.registerRoute('post', '/resque/retryAndRemoveFailed',    'resque:retryAndRemoveFailed');
@@ -20,6 +21,7 @@ module.exports = {
     api.routes.registerRoute('post', '/resque/delQueue',                'resque:delQueue');
     api.routes.registerRoute('post', '/resque/delDelayed',              'resque:delDelayed');
     api.routes.registerRoute('post', '/resque/runDelayed',              'resque:runDelayed');
+    api.routes.registerRoute('post', '/resque/delLock',                 'resque:delLock');
 
     /* ----- Proxy Middleware ----- */
 

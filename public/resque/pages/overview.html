@@ -31,7 +31,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="danger">
+          <tr ng-class="(counts.failed > 0) ? 'danger' : ''">
             <td><strong><a href="/resque/#/failed">failed</a></strong></td>
             <td><strong>{{ counts.failed }}</strong></td>
           </tr>

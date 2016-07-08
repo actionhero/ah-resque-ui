@@ -244,6 +244,38 @@ exports.retryAndRemoveAllFailed = {
   }
 };
 
+exports.locks = {
+  name: 'resque:locks',
+  description: 'I return all locks',
+  middleware: ['ah-resque-ui-proxy-middleware'],
+  outputExample: {},
+
+  run: function(api, data, next){
+    api.tasks.locks(function(error, locks){
+      data.response.locks = locks;
+      next(error);
+    });
+  }
+};
+
+exports.delLock = {
+  name: 'resque:delLock',
+  description: 'I delte a lock',
+  middleware: ['ah-resque-ui-proxy-middleware'],
+  outputExample: {},
+
+  inputs:{
+    lock: { required: true }
+  },
+
+  run: function(api, data, next){
+    api.tasks.delLock(data.params.lock, function(error, count){
+      data.response.count = count;
+      next(error);
+    });
+  }
+};
+
 exports.delayedjobs = {
   name: 'resque:delayedjobs',
   description: 'I return paginated lists of delayedjobs',
