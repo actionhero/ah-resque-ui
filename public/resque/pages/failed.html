@@ -17,6 +17,7 @@
             <th>Date</th>
             <th>Exception</th>
             <th>Queue</th>
+            <th>Method</th>
             <th>Worker</th>
             <th>Arguments</th>
             <th>&nbsp;</th>
@@ -32,6 +33,7 @@
               <strong>{{ f.exception }}: {{ f.error }}</strong>
             </td>
             <td><span class="text-success"><a href="/resque/#/queue/{{ f.queue }}">{{ f.queue }}</a></span></td>
+            <td>{{ f.payload.class }}</td>
             <td>{{ f.worker }}</td>
             <td>
               <ul>
