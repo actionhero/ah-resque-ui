@@ -7,6 +7,8 @@ exports.packageDetails = {
   description: 'I return the resque package metadata',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     data.response.packageDetails = {};
@@ -21,6 +23,8 @@ exports.resqueDetails = {
   description: 'I return the results of api.tasks.details',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     api.tasks.details(function(error, resqueDetails){
@@ -35,6 +39,8 @@ exports.loadWorkerQueues = {
   description: 'I return the results of api.tasks.workers',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     api.tasks.workers(function(error, workerQueues){
@@ -49,6 +55,8 @@ exports.forceCleanWorker = {
   description: 'I remove a worker from resque',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs: {
     workerName:{ required: true}
@@ -67,6 +75,8 @@ exports.resqueFailedCount = {
   description: 'I return a count of failed jobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     api.tasks.failedCount(function(error, failedCount){
@@ -81,6 +91,8 @@ exports.queued = {
   description: 'I list enqueued jobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     queue: {
@@ -111,6 +123,8 @@ exports.delQueue = {
   description: 'I delete a queue',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     queue: {
@@ -128,6 +142,8 @@ exports.resqueFailed = {
   description: 'I return failed jobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     start:{
@@ -155,6 +171,8 @@ exports.removeFailed = {
   description: 'I remove a failed job',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     id:{
@@ -177,6 +195,8 @@ exports.removeAllFailed = {
   description: 'I remove all failed jobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     var failedJob;
@@ -202,6 +222,8 @@ exports.retryAndRemoveFailed = {
   description: 'I retry a failed job',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     id:{
@@ -224,6 +246,8 @@ exports.retryAndRemoveAllFailed = {
   description: 'I retry all failed jobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     var failedJob;
@@ -249,6 +273,8 @@ exports.locks = {
   description: 'I return all locks',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   run: function(api, data, next){
     api.tasks.locks(function(error, locks){
@@ -263,6 +289,8 @@ exports.delLock = {
   description: 'I delte a lock',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     lock: { required: true }
@@ -281,6 +309,8 @@ exports.delayedjobs = {
   description: 'I return paginated lists of delayedjobs',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     start:{
@@ -331,6 +361,8 @@ exports.delDelayed = {
   description: 'I delete a delayed job',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     timestamp:{
@@ -361,6 +393,8 @@ exports.runDelayed = {
   description: 'I run a delayed job now',
   middleware: ['ah-resque-ui-proxy-middleware'],
   outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
 
   inputs:{
     timestamp:{
