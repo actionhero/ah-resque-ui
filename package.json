@@ -20,7 +20,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "async": "2.0.1"
+    "async": "^2.0.1"
   },
   "devDependencies": {
     "mocha": "^2.5.3",
