@@ -14,6 +14,8 @@ A resque administration website for actionhero
 - `npm install --save ah-resque-ui`
 - `npm run actionhero -- link --name ah-resque-ui`
 
+ActionHero version 14 or higher is required.
+
 ## Routes
 
 This plugin will inject routes into your application.  The routes are equivalent to:
