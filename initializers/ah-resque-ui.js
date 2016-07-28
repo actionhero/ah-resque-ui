@@ -3,7 +3,7 @@ module.exports = {
   initialize: function (api, next) {
 
     /* ----- Route Injection ----- */
- 
+
     api.routes.registerRoute('get', '/resque/packageDetails',    'resque:packageDetails');
     api.routes.registerRoute('get', '/resque/resqueDetails',     'resque:resqueDetails');
     api.routes.registerRoute('get', '/resque/queued',            'resque:queued');
