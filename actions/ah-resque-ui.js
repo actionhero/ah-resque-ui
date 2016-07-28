@@ -13,7 +13,13 @@ exports.packageDetails = {
   run: function(api, data, next){
     data.response.packageDetails = {};
     data.response.packageDetails.packageJSON = packageJSON;
-    data.response.packageDetails.redis = api.config.redis.client.args;
+    // AH v12 check
+    if(api.config.redis.client){
+      data.response.packageDetails.redis = api.config.redis.client.args;
+    } else {
+      data.response.packageDetails.redis = [api.config.redis];
+    }
+    
     next();
   }
 };
