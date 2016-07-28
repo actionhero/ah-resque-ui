@@ -6,7 +6,6 @@ module.exports = {
  
     api.routes.registerRoute('get', '/resque/packageDetails',    'resque:packageDetails');
     api.routes.registerRoute('get', '/resque/resqueDetails',     'resque:resqueDetails');
-
     api.routes.registerRoute('get', '/resque/queued',            'resque:queued');
     api.routes.registerRoute('get', '/resque/loadWorkerQueues',  'resque:loadWorkerQueues');
     api.routes.registerRoute('get', '/resque/resqueFailedCount', 'resque:resqueFailedCount');
