@@ -67,8 +67,13 @@ describe('ah-resque-ui', function(){
     api.specHelper.runAction('resque:packageDetails', function(response){
       response.packageDetails.packageJSON.version.should.equal(pkg.version);
       response.packageDetails.packageJSON.license.should.equal('Apache-2.0');
-      response.packageDetails.redis.port.should.equal(6379);
-      response.packageDetails.redis.host.should.equal('127.0.0.1');
+      if(process.env.FAKEREDIS === 'false'){
+        response.packageDetails.redis[0].port.should.equal(6379);
+        response.packageDetails.redis[0].host.should.equal('127.0.0.1');
+      }else{
+        response.packageDetails.redis[0].should.equal(6379);
+        response.packageDetails.redis[1].should.equal('127.0.0.1');
+      }
       done();
     });
   });
@@ -84,7 +89,6 @@ describe('ah-resque-ui', function(){
 
     it('resque:locks', function(done){
       api.specHelper.runAction('resque:locks', function(response){
-        console.dir(arguments);
         Object.keys(response.locks).length.should.equal(2);
         response.locks['lock:lists:queueName:jobName:[{}]'].should.equal('123');
         response.locks['workerslock:lists:queueName:jobName:[{}]'].should.equal('456');
@@ -154,18 +158,17 @@ describe('ah-resque-ui', function(){
   });
 
   describe('with delayed jobs', function(){
-    before(function(done){ api.tasks.enqueueAt(2000, 'testTask', {a: 1}, 'testQueue', done) });
-    before(function(done){ api.tasks.enqueueAt(3000, 'testTask', {b: 2}, 'testQueue', done) });
-    before(function(done){ api.tasks.enqueueAt(4000, 'testTask', {c: 3}, 'testQueue', done) });
+    before(function(done){ api.tasks.enqueueAt(1000, 'testTask', {a: 1}, 'testQueue', done) });
+    before(function(done){ api.tasks.enqueueAt(2000, 'testTask', {b: 2}, 'testQueue', done) });
+    before(function(done){ api.tasks.enqueueAt(3000, 'testTask', {c: 3}, 'testQueue', done) });
 
     it('resque:delayedjobs (defaults)', function(done){
       api.specHelper.runAction('resque:delayedjobs', function(response){
-        console.dir(response);
         response.timestampsCount.should.equal(3);
         Object.keys(response.delayedjobs).length.should.equal(3);
-        response.delayedjobs['2000'][0].args[0].a.should.equal(1);
-        response.delayedjobs['3000'][0].args[0].b.should.equal(2);
-        response.delayedjobs['4000'][0].args[0].c.should.equal(3);
+        response.delayedjobs['1000'][0].args[0].a.should.equal(1);
+        response.delayedjobs['2000'][0].args[0].b.should.equal(2);
+        response.delayedjobs['3000'][0].args[0].c.should.equal(3);
         done();
       });
     });
