@@ -13,7 +13,7 @@ exports.packageDetails = {
   run: function(api, data, next){
     data.response.packageDetails = {};
     data.response.packageDetails.packageJSON = packageJSON;
-    data.response.packageDetails.redis = api.config.redis.client.args;
+    data.response.packageDetails.redis = api.config.redis;
     next();
   }
 };
