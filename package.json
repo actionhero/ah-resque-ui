@@ -23,7 +23,7 @@
     "async": "^2.0.1"
   },
   "devDependencies": {
-    "mocha": "^2.5.3",
+    "mocha": "^3.0.1",
     "should": "^10.0.0"
   },
   "scripts": {
