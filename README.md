@@ -13,11 +13,13 @@ A resque administration website for actionhero
 
 - `npm install --save ah-resque-ui`
 - `npm run actionhero -- link --name ah-resque-ui`
+- visit `http://localhost:8080/resque`
 
 ## Setup for AH 12.X
 
 - `npm install --save ah-resque-ui`
 - insert `ah-resque-ui` in your plugins.js to include the application
+- visit `http://localhost:8080/resque`
 
 ActionHero version 12 or higher is required.
 
