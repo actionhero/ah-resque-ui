@@ -6,7 +6,7 @@ const Delayed = React.createClass({
   getInitialState: function(){
     return {
       timer: null,
-      refreshInterval: this.props.refreshInterval,
+      refreshInterval: parseInt(this.props.refreshInterval),
       timestamps: [],
       delayedjobs: {},
       counts: {},
@@ -16,8 +16,8 @@ const Delayed = React.createClass({
   },
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval){
-      this.setState({refreshInterval: nextProps.refreshInterval}, ()=>{
+    if(nextProps.refreshInterval !== this.state.refreshInterval){
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
         this.loadDelayedJobs();
       });
     }

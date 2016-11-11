@@ -8,9 +8,9 @@ import { Alert, Button } from 'react-bootstrap';
 export default React.createClass({
   getInitialState(){
     return {
-      show: false,
-      level: 'warning',
-      message: '',
+      show: this.props.show || false,
+      level: this.props.level || 'danger',
+      message: this.props.message || '',
     };
   },
 
@@ -47,24 +47,11 @@ export default React.createClass({
   },
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.message){
-      clearTimeout(this.state.timer);
-      let timer = setTimeout(() => {
-        this.setState({show: false});
-      }, 5000);
-
-      this.setState({
-        timer: timer,
-        show: true
-      });
-    }
-
-    if(nextProps.level){ this.setState({level: nextProps.level}); }
-    if(nextProps.message){ this.setState({message: nextProps.message}); }
-  },
-
-  componentWillUnmount(){
-    clearTimeout(this.state.timer);
+    this.setState({
+      show: !(nextProps.show === null || nextProps.show === null) ? nextProps.show : this.state.show,
+      level: nextProps.level ? nextProps.level : this.state.level,
+      message: nextProps.message ? nextProps.message : this.state.message,
+    });
   },
 
   render(){
@@ -82,9 +69,5 @@ export default React.createClass({
 
   handleAlertDismiss(){
     this.setState({show: false});
-  },
-
-  handleAlertShow(){
-    this.setState({show: true});
   }
 });

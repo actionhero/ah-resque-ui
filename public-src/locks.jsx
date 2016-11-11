@@ -5,14 +5,14 @@ const Locks = React.createClass({
   getInitialState: function(){
     return {
       timer: null,
-      refreshInterval: this.props.refreshInterval,
+      refreshInterval: parseInt(this.props.refreshInterval),
       locks: [],
     };
   },
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval){
-      this.setState({refreshInterval: nextProps.refreshInterval}, () => {
+    if(nextProps.refreshInterval !== this.state.refreshInterval){
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
         this.loadLocks();
       });
     }
@@ -82,7 +82,7 @@ const Locks = React.createClass({
                   this.state.locks.map((l) => {
                     index++;
                     return (
-                      <tr ng-repeat="l in locks">
+                      <tr key={`${index}-${l.at.getTime()}`}>
                         <td>{ (index + 1) }</td>
                         <td>{ l.lock }</td>
                         <td>{ l.at.toString() }</td>

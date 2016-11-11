@@ -6,7 +6,7 @@ const Dashboard = React.createClass({
   getInitialState(){
     return {
       timer: null,
-      refreshInterval: this.props.refreshInterval,
+      refreshInterval: parseInt(this.props.refreshInterval),
       queues: {},
       workers: [],
       stats: {},
@@ -46,8 +46,8 @@ const Dashboard = React.createClass({
   },
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval){
-      this.setState({refreshInterval: nextProps.refreshInterval}, ()=>{
+    if(nextProps.refreshInterval !== this.state.refreshInterval){
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
         this.loadDetails();
       });
     }
@@ -72,6 +72,7 @@ const Dashboard = React.createClass({
 
   loadDetails(){
     clearTimeout(this.timer);
+
     if(this.state.refreshInterval > 0){
       this.timer = setTimeout(() => {
         this.loadDetails();

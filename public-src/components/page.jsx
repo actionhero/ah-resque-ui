@@ -12,15 +12,20 @@ const Page = React.createClass({
       client: new Client(),
       user: {},
       refreshInterval: 5,
-      error: {
-        title: '',
-        body: '',
-      }
+      error: {show: false}
     };
   },
 
   notify(message, level){
+    clearTimeout(this.state.error.timer);
+
+    let timer = setTimeout(() => {
+      this.setState({error: {show: false}});
+    }, 5000);
+
     this.setState({error: {
+      show: true,
+      timer: timer,
       level: level,
       message: message,
     }});
@@ -29,6 +34,10 @@ const Page = React.createClass({
   componentDidMount: function(){
     const client = this.state.client;
     client.notify = this.notify;
+  },
+
+  componentWillUnmount(){
+    if(this.state.error.timer){ clearTimeout(this.state.error.timer); }
   },
 
   handleRefreshIntervalChangeUpdate(event){
@@ -54,6 +63,7 @@ const Page = React.createClass({
             <NotificationZone
               level={this.state.error.level}
               message={this.state.error.message}
+              show={this.state.error.show}
             />
           </Col>
         </Row>

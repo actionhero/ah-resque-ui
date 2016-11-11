@@ -60,27 +60,27 @@
 
 	var _page2 = _interopRequireDefault(_page);
 
-	var _overview = __webpack_require__(503);
+	var _overview = __webpack_require__(492);
 
 	var _overview2 = _interopRequireDefault(_overview);
 
-	var _failed = __webpack_require__(506);
+	var _failed = __webpack_require__(495);
 
 	var _failed2 = _interopRequireDefault(_failed);
 
-	var _workers = __webpack_require__(508);
+	var _workers = __webpack_require__(497);
 
 	var _workers2 = _interopRequireDefault(_workers);
 
-	var _delayed = __webpack_require__(509);
+	var _delayed = __webpack_require__(498);
 
 	var _delayed2 = _interopRequireDefault(_delayed);
 
-	var _queue = __webpack_require__(510);
+	var _queue = __webpack_require__(499);
 
 	var _queue2 = _interopRequireDefault(_queue);
 
-	var _locks = __webpack_require__(511);
+	var _locks = __webpack_require__(500);
 
 	var _locks2 = _interopRequireDefault(_locks);
 
@@ -26401,15 +26401,15 @@
 
 	var _client2 = _interopRequireDefault(_client);
 
-	var _notificationZone = __webpack_require__(500);
+	var _notificationZone = __webpack_require__(489);
 
 	var _notificationZone2 = _interopRequireDefault(_notificationZone);
 
-	var _navigation = __webpack_require__(501);
+	var _navigation = __webpack_require__(490);
 
 	var _navigation2 = _interopRequireDefault(_navigation);
 
-	var _footer = __webpack_require__(502);
+	var _footer = __webpack_require__(491);
 
 	var _footer2 = _interopRequireDefault(_footer);
 
@@ -26423,15 +26423,22 @@
 	      client: new _client2.default(),
 	      user: {},
 	      refreshInterval: 5,
-	      error: {
-	        title: '',
-	        body: ''
-	      }
+	      error: { show: false }
 	    };
 	  },
 
 	  notify: function notify(message, level) {
+	    var _this = this;
+
+	    clearTimeout(this.state.error.timer);
+
+	    var timer = setTimeout(function () {
+	      _this.setState({ error: { show: false } });
+	    }, 5000);
+
 	    this.setState({ error: {
+	        show: true,
+	        timer: timer,
 	        level: level,
 	        message: message
 	      } });
@@ -26443,16 +26450,21 @@
 	    client.notify = this.notify;
 	  },
 
+	  componentWillUnmount: function componentWillUnmount() {
+	    if (this.state.error.timer) {
+	      clearTimeout(this.state.error.timer);
+	    }
+	  },
 	  handleRefreshIntervalChangeUpdate: function handleRefreshIntervalChangeUpdate(event) {
 	    this.setState({ refreshInterval: event.target.value });
 	  },
 
 
 	  render: function render() {
-	    var _this = this;
+	    var _this2 = this;
 
 	    var childrenWithProps = _react2.default.Children.map(this.props.children, function (child) {
-	      return _react2.default.cloneElement(child, _this.state);
+	      return _react2.default.cloneElement(child, _this2.state);
 	    });
 
 	    return _react2.default.createElement(
@@ -26475,7 +26487,8 @@
 	          { md: 12 },
 	          _react2.default.createElement(_notificationZone2.default, {
 	            level: this.state.error.level,
-	            message: this.state.error.message
+	            message: this.state.error.message,
+	            show: this.state.error.show
 	          })
 	        )
 	      ),
@@ -45152,15 +45165,11 @@
 
 	var _keys2 = _interopRequireDefault(_keys);
 
-	var _promise = __webpack_require__(485);
-
-	var _promise2 = _interopRequireDefault(_promise);
-
 	var _classCallCheck2 = __webpack_require__(268);
 
 	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-	var _createClass2 = __webpack_require__(496);
+	var _createClass2 = __webpack_require__(485);
 
 	var _createClass3 = _interopRequireDefault(_createClass2);
 
@@ -45204,7 +45213,6 @@
 	      if (typeof errorCallback !== 'function') {
 	        errorCallback = function errorCallback(errorMessage, error) {
 	          _this.notify(errorMessage, 'danger');
-	          return _promise2.default.reject(error);
 	        };
 	      }
 
@@ -45254,9 +45262,7 @@
 	        return successCallback(response);
 	      }).catch(function (error) {
 	        // $('button').prop('disabled', false);
-	        if (error) {
-	          return errorCallback(error.toString(), error);
-	        }
+	        return errorCallback(error.toString(), error);
 	      });
 	    }
 	  }]);
@@ -45327,589 +45333,11 @@
 /* 485 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(486), __esModule: true };
-
-/***/ },
-/* 486 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(302);
-	__webpack_require__(273);
-	__webpack_require__(286);
-	__webpack_require__(487);
-	module.exports = __webpack_require__(234).Promise;
-
-/***/ },
-/* 487 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var LIBRARY            = __webpack_require__(276)
-	  , global             = __webpack_require__(233)
-	  , ctx                = __webpack_require__(235)
-	  , classof            = __webpack_require__(378)
-	  , $export            = __webpack_require__(232)
-	  , isObject           = __webpack_require__(240)
-	  , aFunction          = __webpack_require__(236)
-	  , anInstance         = __webpack_require__(488)
-	  , forOf              = __webpack_require__(489)
-	  , speciesConstructor = __webpack_require__(490)
-	  , task               = __webpack_require__(491).set
-	  , microtask          = __webpack_require__(493)()
-	  , PROMISE            = 'Promise'
-	  , TypeError          = global.TypeError
-	  , process            = global.process
-	  , $Promise           = global[PROMISE]
-	  , process            = global.process
-	  , isNode             = classof(process) == 'process'
-	  , empty              = function(){ /* empty */ }
-	  , Internal, GenericPromiseCapability, Wrapper;
-
-	var USE_NATIVE = !!function(){
-	  try {
-	    // correct subclassing with @@species support
-	    var promise     = $Promise.resolve(1)
-	      , FakePromise = (promise.constructor = {})[__webpack_require__(284)('species')] = function(exec){ exec(empty, empty); };
-	    // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
-	    return (isNode || typeof PromiseRejectionEvent == 'function') && promise.then(empty) instanceof FakePromise;
-	  } catch(e){ /* empty */ }
-	}();
-
-	// helpers
-	var sameConstructor = function(a, b){
-	  // with library wrapper special case
-	  return a === b || a === $Promise && b === Wrapper;
-	};
-	var isThenable = function(it){
-	  var then;
-	  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
-	};
-	var newPromiseCapability = function(C){
-	  return sameConstructor($Promise, C)
-	    ? new PromiseCapability(C)
-	    : new GenericPromiseCapability(C);
-	};
-	var PromiseCapability = GenericPromiseCapability = function(C){
-	  var resolve, reject;
-	  this.promise = new C(function($$resolve, $$reject){
-	    if(resolve !== undefined || reject !== undefined)throw TypeError('Bad Promise constructor');
-	    resolve = $$resolve;
-	    reject  = $$reject;
-	  });
-	  this.resolve = aFunction(resolve);
-	  this.reject  = aFunction(reject);
-	};
-	var perform = function(exec){
-	  try {
-	    exec();
-	  } catch(e){
-	    return {error: e};
-	  }
-	};
-	var notify = function(promise, isReject){
-	  if(promise._n)return;
-	  promise._n = true;
-	  var chain = promise._c;
-	  microtask(function(){
-	    var value = promise._v
-	      , ok    = promise._s == 1
-	      , i     = 0;
-	    var run = function(reaction){
-	      var handler = ok ? reaction.ok : reaction.fail
-	        , resolve = reaction.resolve
-	        , reject  = reaction.reject
-	        , domain  = reaction.domain
-	        , result, then;
-	      try {
-	        if(handler){
-	          if(!ok){
-	            if(promise._h == 2)onHandleUnhandled(promise);
-	            promise._h = 1;
-	          }
-	          if(handler === true)result = value;
-	          else {
-	            if(domain)domain.enter();
-	            result = handler(value);
-	            if(domain)domain.exit();
-	          }
-	          if(result === reaction.promise){
-	            reject(TypeError('Promise-chain cycle'));
-	          } else if(then = isThenable(result)){
-	            then.call(result, resolve, reject);
-	          } else resolve(result);
-	        } else reject(value);
-	      } catch(e){
-	        reject(e);
-	      }
-	    };
-	    while(chain.length > i)run(chain[i++]); // variable length - can't use forEach
-	    promise._c = [];
-	    promise._n = false;
-	    if(isReject && !promise._h)onUnhandled(promise);
-	  });
-	};
-	var onUnhandled = function(promise){
-	  task.call(global, function(){
-	    var value = promise._v
-	      , abrupt, handler, console;
-	    if(isUnhandled(promise)){
-	      abrupt = perform(function(){
-	        if(isNode){
-	          process.emit('unhandledRejection', value, promise);
-	        } else if(handler = global.onunhandledrejection){
-	          handler({promise: promise, reason: value});
-	        } else if((console = global.console) && console.error){
-	          console.error('Unhandled promise rejection', value);
-	        }
-	      });
-	      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
-	      promise._h = isNode || isUnhandled(promise) ? 2 : 1;
-	    } promise._a = undefined;
-	    if(abrupt)throw abrupt.error;
-	  });
-	};
-	var isUnhandled = function(promise){
-	  if(promise._h == 1)return false;
-	  var chain = promise._a || promise._c
-	    , i     = 0
-	    , reaction;
-	  while(chain.length > i){
-	    reaction = chain[i++];
-	    if(reaction.fail || !isUnhandled(reaction.promise))return false;
-	  } return true;
-	};
-	var onHandleUnhandled = function(promise){
-	  task.call(global, function(){
-	    var handler;
-	    if(isNode){
-	      process.emit('rejectionHandled', promise);
-	    } else if(handler = global.onrejectionhandled){
-	      handler({promise: promise, reason: promise._v});
-	    }
-	  });
-	};
-	var $reject = function(value){
-	  var promise = this;
-	  if(promise._d)return;
-	  promise._d = true;
-	  promise = promise._w || promise; // unwrap
-	  promise._v = value;
-	  promise._s = 2;
-	  if(!promise._a)promise._a = promise._c.slice();
-	  notify(promise, true);
-	};
-	var $resolve = function(value){
-	  var promise = this
-	    , then;
-	  if(promise._d)return;
-	  promise._d = true;
-	  promise = promise._w || promise; // unwrap
-	  try {
-	    if(promise === value)throw TypeError("Promise can't be resolved itself");
-	    if(then = isThenable(value)){
-	      microtask(function(){
-	        var wrapper = {_w: promise, _d: false}; // wrap
-	        try {
-	          then.call(value, ctx($resolve, wrapper, 1), ctx($reject, wrapper, 1));
-	        } catch(e){
-	          $reject.call(wrapper, e);
-	        }
-	      });
-	    } else {
-	      promise._v = value;
-	      promise._s = 1;
-	      notify(promise, false);
-	    }
-	  } catch(e){
-	    $reject.call({_w: promise, _d: false}, e); // wrap
-	  }
-	};
-
-	// constructor polyfill
-	if(!USE_NATIVE){
-	  // 25.4.3.1 Promise(executor)
-	  $Promise = function Promise(executor){
-	    anInstance(this, $Promise, PROMISE, '_h');
-	    aFunction(executor);
-	    Internal.call(this);
-	    try {
-	      executor(ctx($resolve, this, 1), ctx($reject, this, 1));
-	    } catch(err){
-	      $reject.call(this, err);
-	    }
-	  };
-	  Internal = function Promise(executor){
-	    this._c = [];             // <- awaiting reactions
-	    this._a = undefined;      // <- checked in isUnhandled reactions
-	    this._s = 0;              // <- state
-	    this._d = false;          // <- done
-	    this._v = undefined;      // <- value
-	    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
-	    this._n = false;          // <- notify
-	  };
-	  Internal.prototype = __webpack_require__(494)($Promise.prototype, {
-	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
-	    then: function then(onFulfilled, onRejected){
-	      var reaction    = newPromiseCapability(speciesConstructor(this, $Promise));
-	      reaction.ok     = typeof onFulfilled == 'function' ? onFulfilled : true;
-	      reaction.fail   = typeof onRejected == 'function' && onRejected;
-	      reaction.domain = isNode ? process.domain : undefined;
-	      this._c.push(reaction);
-	      if(this._a)this._a.push(reaction);
-	      if(this._s)notify(this, false);
-	      return reaction.promise;
-	    },
-	    // 25.4.5.1 Promise.prototype.catch(onRejected)
-	    'catch': function(onRejected){
-	      return this.then(undefined, onRejected);
-	    }
-	  });
-	  PromiseCapability = function(){
-	    var promise  = new Internal;
-	    this.promise = promise;
-	    this.resolve = ctx($resolve, promise, 1);
-	    this.reject  = ctx($reject, promise, 1);
-	  };
-	}
-
-	$export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
-	__webpack_require__(283)($Promise, PROMISE);
-	__webpack_require__(495)(PROMISE);
-	Wrapper = __webpack_require__(234)[PROMISE];
-
-	// statics
-	$export($export.S + $export.F * !USE_NATIVE, PROMISE, {
-	  // 25.4.4.5 Promise.reject(r)
-	  reject: function reject(r){
-	    var capability = newPromiseCapability(this)
-	      , $$reject   = capability.reject;
-	    $$reject(r);
-	    return capability.promise;
-	  }
-	});
-	$export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
-	  // 25.4.4.6 Promise.resolve(x)
-	  resolve: function resolve(x){
-	    // instanceof instead of internal slot check because we should fix it without replacement native Promise core
-	    if(x instanceof $Promise && sameConstructor(x.constructor, this))return x;
-	    var capability = newPromiseCapability(this)
-	      , $$resolve  = capability.resolve;
-	    $$resolve(x);
-	    return capability.promise;
-	  }
-	});
-	$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(379)(function(iter){
-	  $Promise.all(iter)['catch'](empty);
-	})), PROMISE, {
-	  // 25.4.4.1 Promise.all(iterable)
-	  all: function all(iterable){
-	    var C          = this
-	      , capability = newPromiseCapability(C)
-	      , resolve    = capability.resolve
-	      , reject     = capability.reject;
-	    var abrupt = perform(function(){
-	      var values    = []
-	        , index     = 0
-	        , remaining = 1;
-	      forOf(iterable, false, function(promise){
-	        var $index        = index++
-	          , alreadyCalled = false;
-	        values.push(undefined);
-	        remaining++;
-	        C.resolve(promise).then(function(value){
-	          if(alreadyCalled)return;
-	          alreadyCalled  = true;
-	          values[$index] = value;
-	          --remaining || resolve(values);
-	        }, reject);
-	      });
-	      --remaining || resolve(values);
-	    });
-	    if(abrupt)reject(abrupt.error);
-	    return capability.promise;
-	  },
-	  // 25.4.4.4 Promise.race(iterable)
-	  race: function race(iterable){
-	    var C          = this
-	      , capability = newPromiseCapability(C)
-	      , reject     = capability.reject;
-	    var abrupt = perform(function(){
-	      forOf(iterable, false, function(promise){
-	        C.resolve(promise).then(capability.resolve, reject);
-	      });
-	    });
-	    if(abrupt)reject(abrupt.error);
-	    return capability.promise;
-	  }
-	});
-
-/***/ },
-/* 488 */
-/***/ function(module, exports) {
-
-	module.exports = function(it, Constructor, name, forbiddenField){
-	  if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
-	    throw TypeError(name + ': incorrect invocation!');
-	  } return it;
-	};
-
-/***/ },
-/* 489 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ctx         = __webpack_require__(235)
-	  , call        = __webpack_require__(374)
-	  , isArrayIter = __webpack_require__(375)
-	  , anObject    = __webpack_require__(239)
-	  , toLength    = __webpack_require__(256)
-	  , getIterFn   = __webpack_require__(377)
-	  , BREAK       = {}
-	  , RETURN      = {};
-	var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
-	  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
-	    , f      = ctx(fn, that, entries ? 2 : 1)
-	    , index  = 0
-	    , length, step, iterator, result;
-	  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
-	  // fast case for arrays with default iterator
-	  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
-	    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
-	    if(result === BREAK || result === RETURN)return result;
-	  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
-	    result = call(iterator, f, step.value, entries);
-	    if(result === BREAK || result === RETURN)return result;
-	  }
-	};
-	exports.BREAK  = BREAK;
-	exports.RETURN = RETURN;
-
-/***/ },
-/* 490 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
-	var anObject  = __webpack_require__(239)
-	  , aFunction = __webpack_require__(236)
-	  , SPECIES   = __webpack_require__(284)('species');
-	module.exports = function(O, D){
-	  var C = anObject(O).constructor, S;
-	  return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
-	};
-
-/***/ },
-/* 491 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ctx                = __webpack_require__(235)
-	  , invoke             = __webpack_require__(492)
-	  , html               = __webpack_require__(282)
-	  , cel                = __webpack_require__(244)
-	  , global             = __webpack_require__(233)
-	  , process            = global.process
-	  , setTask            = global.setImmediate
-	  , clearTask          = global.clearImmediate
-	  , MessageChannel     = global.MessageChannel
-	  , counter            = 0
-	  , queue              = {}
-	  , ONREADYSTATECHANGE = 'onreadystatechange'
-	  , defer, channel, port;
-	var run = function(){
-	  var id = +this;
-	  if(queue.hasOwnProperty(id)){
-	    var fn = queue[id];
-	    delete queue[id];
-	    fn();
-	  }
-	};
-	var listener = function(event){
-	  run.call(event.data);
-	};
-	// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
-	if(!setTask || !clearTask){
-	  setTask = function setImmediate(fn){
-	    var args = [], i = 1;
-	    while(arguments.length > i)args.push(arguments[i++]);
-	    queue[++counter] = function(){
-	      invoke(typeof fn == 'function' ? fn : Function(fn), args);
-	    };
-	    defer(counter);
-	    return counter;
-	  };
-	  clearTask = function clearImmediate(id){
-	    delete queue[id];
-	  };
-	  // Node.js 0.8-
-	  if(__webpack_require__(253)(process) == 'process'){
-	    defer = function(id){
-	      process.nextTick(ctx(run, id, 1));
-	    };
-	  // Browsers with MessageChannel, includes WebWorkers
-	  } else if(MessageChannel){
-	    channel = new MessageChannel;
-	    port    = channel.port2;
-	    channel.port1.onmessage = listener;
-	    defer = ctx(port.postMessage, port, 1);
-	  // Browsers with postMessage, skip WebWorkers
-	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-	  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScripts){
-	    defer = function(id){
-	      global.postMessage(id + '', '*');
-	    };
-	    global.addEventListener('message', listener, false);
-	  // IE8-
-	  } else if(ONREADYSTATECHANGE in cel('script')){
-	    defer = function(id){
-	      html.appendChild(cel('script'))[ONREADYSTATECHANGE] = function(){
-	        html.removeChild(this);
-	        run.call(id);
-	      };
-	    };
-	  // Rest old browsers
-	  } else {
-	    defer = function(id){
-	      setTimeout(ctx(run, id, 1), 0);
-	    };
-	  }
-	}
-	module.exports = {
-	  set:   setTask,
-	  clear: clearTask
-	};
-
-/***/ },
-/* 492 */
-/***/ function(module, exports) {
-
-	// fast apply, http://jsperf.lnkit.com/fast-apply/5
-	module.exports = function(fn, args, that){
-	  var un = that === undefined;
-	  switch(args.length){
-	    case 0: return un ? fn()
-	                      : fn.call(that);
-	    case 1: return un ? fn(args[0])
-	                      : fn.call(that, args[0]);
-	    case 2: return un ? fn(args[0], args[1])
-	                      : fn.call(that, args[0], args[1]);
-	    case 3: return un ? fn(args[0], args[1], args[2])
-	                      : fn.call(that, args[0], args[1], args[2]);
-	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
-	                      : fn.call(that, args[0], args[1], args[2], args[3]);
-	  } return              fn.apply(that, args);
-	};
-
-/***/ },
-/* 493 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var global    = __webpack_require__(233)
-	  , macrotask = __webpack_require__(491).set
-	  , Observer  = global.MutationObserver || global.WebKitMutationObserver
-	  , process   = global.process
-	  , Promise   = global.Promise
-	  , isNode    = __webpack_require__(253)(process) == 'process';
-
-	module.exports = function(){
-	  var head, last, notify;
-
-	  var flush = function(){
-	    var parent, fn;
-	    if(isNode && (parent = process.domain))parent.exit();
-	    while(head){
-	      fn   = head.fn;
-	      head = head.next;
-	      try {
-	        fn();
-	      } catch(e){
-	        if(head)notify();
-	        else last = undefined;
-	        throw e;
-	      }
-	    } last = undefined;
-	    if(parent)parent.enter();
-	  };
-
-	  // Node.js
-	  if(isNode){
-	    notify = function(){
-	      process.nextTick(flush);
-	    };
-	  // browsers with MutationObserver
-	  } else if(Observer){
-	    var toggle = true
-	      , node   = document.createTextNode('');
-	    new Observer(flush).observe(node, {characterData: true}); // eslint-disable-line no-new
-	    notify = function(){
-	      node.data = toggle = !toggle;
-	    };
-	  // environments with maybe non-completely correct, but existent Promise
-	  } else if(Promise && Promise.resolve){
-	    var promise = Promise.resolve();
-	    notify = function(){
-	      promise.then(flush);
-	    };
-	  // for other environments - macrotask based on:
-	  // - setImmediate
-	  // - MessageChannel
-	  // - window.postMessag
-	  // - onreadystatechange
-	  // - setTimeout
-	  } else {
-	    notify = function(){
-	      // strange IE + webpack dev server bug - use .call(global)
-	      macrotask.call(global, flush);
-	    };
-	  }
-
-	  return function(fn){
-	    var task = {fn: fn, next: undefined};
-	    if(last)last.next = task;
-	    if(!head){
-	      head = task;
-	      notify();
-	    } last = task;
-	  };
-	};
-
-/***/ },
-/* 494 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var hide = __webpack_require__(237);
-	module.exports = function(target, src, safe){
-	  for(var key in src){
-	    if(safe && target[key])target[key] = src[key];
-	    else hide(target, key, src[key]);
-	  } return target;
-	};
-
-/***/ },
-/* 495 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var global      = __webpack_require__(233)
-	  , core        = __webpack_require__(234)
-	  , dP          = __webpack_require__(238)
-	  , DESCRIPTORS = __webpack_require__(242)
-	  , SPECIES     = __webpack_require__(284)('species');
-
-	module.exports = function(KEY){
-	  var C = typeof core[KEY] == 'function' ? core[KEY] : global[KEY];
-	  if(DESCRIPTORS && C && !C[SPECIES])dP.f(C, SPECIES, {
-	    configurable: true,
-	    get: function(){ return this; }
-	  });
-	};
-
-/***/ },
-/* 496 */
-/***/ function(module, exports, __webpack_require__) {
-
 	"use strict";
 
 	exports.__esModule = true;
 
-	var _defineProperty = __webpack_require__(497);
+	var _defineProperty = __webpack_require__(486);
 
 	var _defineProperty2 = _interopRequireDefault(_defineProperty);
 
@@ -45934,23 +45362,23 @@
 	}();
 
 /***/ },
-/* 497 */
+/* 486 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(498), __esModule: true };
+	module.exports = { "default": __webpack_require__(487), __esModule: true };
 
 /***/ },
-/* 498 */
+/* 487 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(499);
+	__webpack_require__(488);
 	var $Object = __webpack_require__(234).Object;
 	module.exports = function defineProperty(it, key, desc){
 	  return $Object.defineProperty(it, key, desc);
 	};
 
 /***/ },
-/* 499 */
+/* 488 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var $export = __webpack_require__(232);
@@ -45958,7 +45386,7 @@
 	$export($export.S + $export.F * !__webpack_require__(242), 'Object', {defineProperty: __webpack_require__(238).f});
 
 /***/ },
-/* 500 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -45983,9 +45411,9 @@
 	  displayName: 'notificationZone',
 	  getInitialState: function getInitialState() {
 	    return {
-	      show: false,
-	      level: 'warning',
-	      message: ''
+	      show: this.props.show || false,
+	      level: this.props.level || 'danger',
+	      message: this.props.message || ''
 	    };
 	  },
 
@@ -46025,29 +45453,11 @@
 	  },
 
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	    var _this = this;
-
-	    if (nextProps.message) {
-	      clearTimeout(this.state.timer);
-	      var timer = setTimeout(function () {
-	        _this.setState({ show: false });
-	      }, 5000);
-
-	      this.setState({
-	        timer: timer,
-	        show: true
-	      });
-	    }
-
-	    if (nextProps.level) {
-	      this.setState({ level: nextProps.level });
-	    }
-	    if (nextProps.message) {
-	      this.setState({ message: nextProps.message });
-	    }
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    clearTimeout(this.state.timer);
+	    this.setState({
+	      show: !(nextProps.show === null || nextProps.show === null) ? nextProps.show : this.state.show,
+	      level: nextProps.level ? nextProps.level : this.state.level,
+	      message: nextProps.message ? nextProps.message : this.state.message
+	    });
 	  },
 	  render: function render() {
 	    if (this.state.show) {
@@ -46071,14 +45481,11 @@
 	  },
 	  handleAlertDismiss: function handleAlertDismiss() {
 	    this.setState({ show: false });
-	  },
-	  handleAlertShow: function handleAlertShow() {
-	    this.setState({ show: true });
 	  }
 	});
 
 /***/ },
-/* 501 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46218,7 +45625,7 @@
 	exports.default = Nav;
 
 /***/ },
-/* 502 */
+/* 491 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46322,7 +45729,7 @@
 	exports.default = Footer;
 
 /***/ },
-/* 503 */
+/* 492 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -46341,7 +45748,7 @@
 
 	var _reactBootstrap = __webpack_require__(266);
 
-	var _reactHighcharts = __webpack_require__(504);
+	var _reactHighcharts = __webpack_require__(493);
 
 	var _reactHighcharts2 = _interopRequireDefault(_reactHighcharts);
 
@@ -46352,7 +45759,7 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
-	      refreshInterval: this.props.refreshInterval,
+	      refreshInterval: parseInt(this.props.refreshInterval),
 	      queues: {},
 	      workers: [],
 	      stats: {},
@@ -46390,8 +45797,8 @@
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var _this = this;
 
-	    if (nextProps.refreshInterval) {
-	      this.setState({ refreshInterval: nextProps.refreshInterval }, function () {
+	    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+	      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, function () {
 	        _this.loadDetails();
 	      });
 	    }
@@ -46416,6 +45823,7 @@
 	    var _this3 = this;
 
 	    clearTimeout(this.timer);
+
 	    if (this.state.refreshInterval > 0) {
 	      this.timer = setTimeout(function () {
 	        _this3.loadDetails();
@@ -46698,13 +46106,13 @@
 	exports.default = Dashboard;
 
 /***/ },
-/* 504 */
+/* 493 */
 /***/ function(module, exports, __webpack_require__) {
 
-	!function(t,r){ true?module.exports=r(__webpack_require__(1),__webpack_require__(505)):"function"==typeof define&&define.amd?define(["react","highcharts"],r):"object"==typeof exports?exports.ReactHighcharts=r(require("react"),require("highcharts")):t.ReactHighcharts=r(t.React,t.Highcharts)}(this,function(t,r){return function(t){function r(o){if(e[o])return e[o].exports;var n=e[o]={exports:{},id:o,loaded:!1};return t[o].call(n.exports,n,n.exports,r),n.loaded=!0,n.exports}var e={};return r.m=t,r.c=e,r.p="",r(0)}([function(t,r,e){t.exports=e(3)},function(r,e){r.exports=t},function(t,r,e){(function(r){"use strict";var o=Object.assign||function(t){for(var r=1;r<arguments.length;r++){var e=arguments[r];for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&(t[o]=e[o])}return t},n=e(1),i="undefined"==typeof r?window:r;t.exports=function(r,e){var c="Highcharts"+r,s=n.createClass({displayName:c,propTypes:{config:n.PropTypes.object.isRequired,isPureConfig:n.PropTypes.bool,neverReflow:n.PropTypes.bool,callback:n.PropTypes.func,domProps:n.PropTypes.object},defaultProps:{callback:function(){},domProps:{}},renderChart:function(t){var n=this;if(!t)throw new Error("Config must be specified for the "+c+" component");var s=t.chart;this.chart=new e[r](o({},t,{chart:o({},s,{renderTo:this.refs.chart})}),this.props.callback),this.props.neverReflow||i.requestAnimationFrame&&requestAnimationFrame(function(){n.chart&&n.chart.options&&n.chart.reflow()})},shouldComponentUpdate:function(t){return!!(t.neverReflow||t.isPureConfig&&this.props.config===t.config)||(this.renderChart(t.config),!1)},getChart:function(){if(!this.chart)throw new Error("getChart() should not be called before the component is mounted");return this.chart},componentDidMount:function(){this.renderChart(this.props.config)},componentWillUnmount:function(){this.chart.destroy()},render:function(){return n.createElement("div",o({ref:"chart"},this.props.domProps))}});return s.Highcharts=e,s.withHighcharts=function(e){return t.exports(r,e)},s}}).call(r,function(){return this}())},function(t,r,e){"use strict";t.exports=e(2)("Chart",e(4))},function(t,e){t.exports=r}])});
+	!function(t,r){ true?module.exports=r(__webpack_require__(1),__webpack_require__(494)):"function"==typeof define&&define.amd?define(["react","highcharts"],r):"object"==typeof exports?exports.ReactHighcharts=r(require("react"),require("highcharts")):t.ReactHighcharts=r(t.React,t.Highcharts)}(this,function(t,r){return function(t){function r(o){if(e[o])return e[o].exports;var n=e[o]={exports:{},id:o,loaded:!1};return t[o].call(n.exports,n,n.exports,r),n.loaded=!0,n.exports}var e={};return r.m=t,r.c=e,r.p="",r(0)}([function(t,r,e){t.exports=e(3)},function(r,e){r.exports=t},function(t,r,e){(function(r){"use strict";var o=Object.assign||function(t){for(var r=1;r<arguments.length;r++){var e=arguments[r];for(var o in e)Object.prototype.hasOwnProperty.call(e,o)&&(t[o]=e[o])}return t},n=e(1),i="undefined"==typeof r?window:r;t.exports=function(r,e){var c="Highcharts"+r,s=n.createClass({displayName:c,propTypes:{config:n.PropTypes.object.isRequired,isPureConfig:n.PropTypes.bool,neverReflow:n.PropTypes.bool,callback:n.PropTypes.func,domProps:n.PropTypes.object},defaultProps:{callback:function(){},domProps:{}},renderChart:function(t){var n=this;if(!t)throw new Error("Config must be specified for the "+c+" component");var s=t.chart;this.chart=new e[r](o({},t,{chart:o({},s,{renderTo:this.refs.chart})}),this.props.callback),this.props.neverReflow||i.requestAnimationFrame&&requestAnimationFrame(function(){n.chart&&n.chart.options&&n.chart.reflow()})},shouldComponentUpdate:function(t){return!!(t.neverReflow||t.isPureConfig&&this.props.config===t.config)||(this.renderChart(t.config),!1)},getChart:function(){if(!this.chart)throw new Error("getChart() should not be called before the component is mounted");return this.chart},componentDidMount:function(){this.renderChart(this.props.config)},componentWillUnmount:function(){this.chart.destroy()},render:function(){return n.createElement("div",o({ref:"chart"},this.props.domProps))}});return s.Highcharts=e,s.withHighcharts=function(e){return t.exports(r,e)},s}}).call(r,function(){return this}())},function(t,r,e){"use strict";t.exports=e(2)("Chart",e(4))},function(t,e){t.exports=r}])});
 
 /***/ },
-/* 505 */
+/* 494 */
 /***/ function(module, exports) {
 
 	/*
@@ -47092,7 +46500,7 @@
 
 
 /***/ },
-/* 506 */
+/* 495 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47111,7 +46519,7 @@
 
 	var _reactBootstrap = __webpack_require__(266);
 
-	var _pagination = __webpack_require__(507);
+	var _pagination = __webpack_require__(496);
 
 	var _pagination2 = _interopRequireDefault(_pagination);
 
@@ -47123,7 +46531,7 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
-	      refreshInterval: this.props.refreshInterval,
+	      refreshInterval: parseInt(this.props.refreshInterval),
 	      failed: [],
 	      counts: {},
 	      focusedException: {},
@@ -47136,8 +46544,8 @@
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var _this = this;
 
-	    if (nextProps.refreshInterval) {
-	      this.setState({ refreshInterval: nextProps.refreshInterval }, function () {
+	    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+	      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, function () {
 	        _this.loadFailed();
 	      });
 	    }
@@ -47518,7 +46926,7 @@
 	exports.default = Failed;
 
 /***/ },
-/* 507 */
+/* 496 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47579,7 +46987,7 @@
 	exports.default = PaginationHelper;
 
 /***/ },
-/* 508 */
+/* 497 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47606,7 +47014,7 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
-	      refreshInterval: this.props.refreshInterval,
+	      refreshInterval: parseInt(this.props.refreshInterval),
 	      workers: {},
 	      workerQueues: [],
 	      counts: {}
@@ -47616,8 +47024,8 @@
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var _this = this;
 
-	    if (nextProps.refreshInterval) {
-	      this.setState({ refreshInterval: nextProps.refreshInterval }, function () {
+	    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+	      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, function () {
 	        _this.loadWorkers();
 	      });
 	    }
@@ -47841,7 +47249,7 @@
 	exports.default = Workers;
 
 /***/ },
-/* 509 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47864,7 +47272,7 @@
 
 	var _reactBootstrap = __webpack_require__(266);
 
-	var _pagination = __webpack_require__(507);
+	var _pagination = __webpack_require__(496);
 
 	var _pagination2 = _interopRequireDefault(_pagination);
 
@@ -47876,7 +47284,7 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
-	      refreshInterval: this.props.refreshInterval,
+	      refreshInterval: parseInt(this.props.refreshInterval),
 	      timestamps: [],
 	      delayedjobs: {},
 	      counts: {},
@@ -47888,8 +47296,8 @@
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var _this = this;
 
-	    if (nextProps.refreshInterval) {
-	      this.setState({ refreshInterval: nextProps.refreshInterval }, function () {
+	    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+	      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, function () {
 	        _this.loadDelayedJobs();
 	      });
 	    }
@@ -48128,7 +47536,7 @@
 	exports.default = Delayed;
 
 /***/ },
-/* 510 */
+/* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48147,7 +47555,7 @@
 
 	var _reactBootstrap = __webpack_require__(266);
 
-	var _pagination = __webpack_require__(507);
+	var _pagination = __webpack_require__(496);
 
 	var _pagination2 = _interopRequireDefault(_pagination);
 
@@ -48161,7 +47569,7 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
-	      refreshInterval: this.props.refreshInterval,
+	      refreshInterval: parseInt(this.props.refreshInterval),
 	      queue: this.props.params.queue,
 	      jobs: [],
 	      queueLength: 0,
@@ -48173,8 +47581,8 @@
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var _this = this;
 
-	    if (nextProps.refreshInterval) {
-	      this.setState({ refreshInterval: nextProps.refreshInterval }, function () {
+	    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+	      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, function () {
 	        _this.loadQueue();
 	      });
 	    }
@@ -48330,7 +47738,7 @@
 	exports.default = Queues;
 
 /***/ },
-/* 511 */
+/* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48357,7 +47765,7 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
-	      refreshInterval: this.props.refreshInterval,
+	      refreshInterval: parseInt(this.props.refreshInterval),
 	      locks: []
 	    };
 	  },
@@ -48365,8 +47773,8 @@
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
 	    var _this = this;
 
-	    if (nextProps.refreshInterval) {
-	      this.setState({ refreshInterval: nextProps.refreshInterval }, function () {
+	    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+	      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, function () {
 	        _this.loadLocks();
 	      });
 	    }
@@ -48470,7 +47878,7 @@
 	                index++;
 	                return _react2.default.createElement(
 	                  'tr',
-	                  { 'ng-repeat': 'l in locks' },
+	                  { key: index + '-' + l.at.getTime() },
 	                  _react2.default.createElement(
 	                    'td',
 	                    null,

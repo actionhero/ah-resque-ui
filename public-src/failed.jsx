@@ -6,7 +6,7 @@ const Failed = React.createClass({
   getInitialState: function(){
     return {
       timer: null,
-      refreshInterval: this.props.refreshInterval,
+      refreshInterval: parseInt(this.props.refreshInterval),
       failed: [],
       counts: {},
       focusedException: {},
@@ -17,8 +17,8 @@ const Failed = React.createClass({
   },
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval){
-      this.setState({refreshInterval: nextProps.refreshInterval}, ()=>{
+    if(nextProps.refreshInterval !== this.state.refreshInterval){
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
         this.loadFailed();
       });
     }

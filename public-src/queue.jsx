@@ -7,7 +7,7 @@ const Queues = React.createClass({
   getInitialState: function(){
     return {
       timer: null,
-      refreshInterval: this.props.refreshInterval,
+      refreshInterval: parseInt(this.props.refreshInterval),
       queue: this.props.params.queue,
       jobs: [],
       queueLength: 0,
@@ -17,8 +17,8 @@ const Queues = React.createClass({
   },
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval){
-      this.setState({refreshInterval: nextProps.refreshInterval}, ()=>{
+    if(nextProps.refreshInterval !== this.state.refreshInterval){
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
         this.loadQueue();
       });
     }

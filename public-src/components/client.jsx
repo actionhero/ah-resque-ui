@@ -25,7 +25,6 @@ class Client{
     if(typeof errorCallback !== 'function'){
       errorCallback = (errorMessage, error) => {
         this.notify(errorMessage, 'danger');
-        return Promise.reject(error);
       };
     }
 
@@ -67,7 +66,7 @@ class Client{
       return successCallback(response);
     }).catch(function(error){
       // $('button').prop('disabled', false);
-      if(error){ return errorCallback(error.toString(), error); }
+      return errorCallback(error.toString(), error);
     });
   }
 
