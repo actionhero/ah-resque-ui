@@ -1,6 +1,6 @@
 module.exports = {
   load: 99999999,
-  initialize: function (api, next) {
+  initialize: function(api, next){
 
     /* ----- Route Injection ----- */
 
@@ -33,7 +33,7 @@ module.exports = {
           return callback();
         }
       }
-    }
+    };
 
     if(api.config['ah-resque-ui'].middleware){
       var sourceMiddleware = api.actions.middleware[api.config['ah-resque-ui'].middleware];
