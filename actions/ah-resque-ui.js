@@ -19,7 +19,7 @@ exports.packageDetails = {
     } else {
       data.response.packageDetails.redis = [api.config.redis];
     }
-    
+
     next();
   }
 };
@@ -117,9 +117,13 @@ exports.queued = {
   },
 
   run: function(api, data, next){
-    api.tasks.queued(data.params.queue, data.params.start, data.params.stop, function(error, jobs){
-      data.response.jobs = jobs;
-      next(error);
+    api.resque.queue.length(data.params.queue, function(error, length){
+      if(error){ return next(error); }
+      data.response.queueLength = length;
+      api.tasks.queued(data.params.queue, data.params.start, data.params.stop, function(error, jobs){
+        data.response.jobs = jobs;
+        next(error);
+      });
     });
   }
 };
@@ -213,11 +217,11 @@ exports.removeAllFailed = {
         if(!failed || failed.length === 0){ return done(); }
         api.tasks.removeFailed(failedJob, done);
       });
-    }
+    };
 
     var check = function(){
-      return !(failedJob === undefined)
-    }
+      return !(failedJob === undefined);
+    };
 
     async.doWhilst(act, check, next);
   }
@@ -264,11 +268,11 @@ exports.retryAndRemoveAllFailed = {
         if(!failed || failed.length === 0){ return done(); }
         api.tasks.retryAndRemoveFailed(failedJob, done);
       });
-    }
+    };
 
     var check = function(){
-      return !(failedJob === undefined)
-    }
+      return !(failedJob === undefined);
+    };
 
     async.doWhilst(act, check, next);
   }
@@ -340,7 +344,7 @@ exports.delayedjobs = {
       if(error){ next(error); }
       if(allTimestmps.length === 0){ return next(); }
 
-      for (var i = 0; i < allTimestmps.length; i++) {
+      for (var i = 0; i < allTimestmps.length; i++){
         if(i >= data.params.start && i <= data.params.stop){ timestamps.push(allTimestmps[i]); }
       }
 

@@ -131,6 +131,12 @@ Now you can apply the `logged-in-session` middleware to your actions to protect 
 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = 'logged-in-session'` in the provided configuration file.
 
+## React
+
+This project is build using React and contains various components you might want to include into your own project. These components can be loaded from `public-src`, ie: `include WorkersList from '/node-modules/ah-resque-ui/public-src/workers.jsx'`
+
+The main point of configuration will be the React client's `baseRoute` which is where you enter in the API server's URL. Simply set `this.props.baseRoute` on any component which uses the client and it should be passed down.  `window.location.origin` is the default, but that may not be appropriate for all use cases.
+
 ## Thanks
 - [Theme](https://bootswatch.com)
 - [HighCharts](http://www.highcharts.com/)
