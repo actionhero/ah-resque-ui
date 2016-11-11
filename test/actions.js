@@ -78,7 +78,7 @@ describe('ah-resque-ui', function(){
     });
   });
 
-  it('resque:forceCleanWorker')
+  it('resque:forceCleanWorker'); // TODO
 
   describe('with locks', function(){
     beforeEach(function(done){ api.resque.queue.connection.redis.set(api.resque.queue.connection.key('lock:lists:queueName:jobName:[{}]'), 123, done); });
@@ -111,13 +111,13 @@ describe('ah-resque-ui', function(){
   describe('with jobs', function(){
     beforeEach(function(done){ api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(){ done(); }); });
 
-    beforeEach(function(done){ api.tasks.enqueue('testTask', {a: 1}, 'testQueue', done) });
-    beforeEach(function(done){ api.tasks.enqueue('testTask', {b: 2}, 'testQueue', done) });
-    beforeEach(function(done){ api.tasks.enqueue('testTask', {c: 3}, 'testQueue', done) });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {a: 1}, 'testQueue', done); });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {b: 2}, 'testQueue', done); });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {c: 3}, 'testQueue', done); });
 
     it('resque:resqueDetails', function(done){
       api.specHelper.runAction('resque:resqueDetails', function(response){
-        response.resqueDetails.queues['testQueue'].length.should.equal(3);
+        response.resqueDetails.queues.testQueue.length.should.equal(3);
         Object.keys(response.resqueDetails.workers).length.should.equal(1);
         done();
       });
@@ -152,15 +152,15 @@ describe('ah-resque-ui', function(){
         api.specHelper.runAction('resque:queued', {queue: 'testQueue'}, function(response){
           response.jobs.length.should.equal(0);
           done();
-        })
+        });
       });
     });
   });
 
   describe('with delayed jobs', function(){
-    before(function(done){ api.tasks.enqueueAt(1000, 'testTask', {a: 1}, 'testQueue', done) });
-    before(function(done){ api.tasks.enqueueAt(2000, 'testTask', {b: 2}, 'testQueue', done) });
-    before(function(done){ api.tasks.enqueueAt(3000, 'testTask', {c: 3}, 'testQueue', done) });
+    before(function(done){ api.tasks.enqueueAt(1000, 'testTask', {a: 1}, 'testQueue', done); });
+    before(function(done){ api.tasks.enqueueAt(2000, 'testTask', {b: 2}, 'testQueue', done); });
+    before(function(done){ api.tasks.enqueueAt(3000, 'testTask', {c: 3}, 'testQueue', done); });
 
     it('resque:delayedjobs (defaults)', function(done){
       api.specHelper.runAction('resque:delayedjobs', function(response){
@@ -196,9 +196,9 @@ describe('ah-resque-ui', function(){
     beforeEach(function(done){ api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'}, function(){ done(); }); });
     beforeEach(function(done){ api.specHelper.runAction('resque:removeAllFailed', function(){ done(); }); });
 
-    beforeEach(function(done){ api.tasks.enqueue('testTask', {a: 1, fail: true}, 'testQueue', done) });
-    beforeEach(function(done){ api.tasks.enqueue('testTask', {b: 2, fail: true}, 'testQueue', done) });
-    beforeEach(function(done){ api.tasks.enqueue('testTask', {c: 3, fail: true}, 'testQueue', done) });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {a: 1, fail: true}, 'testQueue', done); });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {b: 2, fail: true}, 'testQueue', done); });
+    beforeEach(function(done){ api.tasks.enqueue('testTask', {c: 3, fail: true}, 'testQueue', done); });
 
     beforeEach(function(done){ setTimeout(done, 1000); }); // should allow time to work the bad jobs
 
@@ -229,7 +229,7 @@ describe('ah-resque-ui', function(){
         api.specHelper.runAction('resque:resqueFailed', {start:2, stop:99}, function(response){
           response.failed.length.should.equal(1);
           response.failed[0].payload.args[0].c.should.equal(3);
-          done()
+          done();
         });
       });
     });
@@ -261,7 +261,7 @@ describe('ah-resque-ui', function(){
           response.failed[0].payload.args[0].a.should.equal(1);
           response.failed[1].payload.args[0].c.should.equal(3);
           api.specHelper.runAction('resque:resqueDetails', function(response){
-            response.resqueDetails.queues['testQueue'].length.should.equal(1);
+            response.resqueDetails.queues.testQueue.length.should.equal(1);
             done();
           });
         });
@@ -273,7 +273,7 @@ describe('ah-resque-ui', function(){
         api.specHelper.runAction('resque:resqueFailed', function(response){
           response.failed.length.should.equal(0);
           api.specHelper.runAction('resque:resqueDetails', function(response){
-            response.resqueDetails.queues['testQueue'].length.should.equal(3);
+            response.resqueDetails.queues.testQueue.length.should.equal(3);
             done();
           });
         });
