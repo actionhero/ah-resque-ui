@@ -140,7 +140,7 @@ The main point of configuration will be the React client's `baseRoute` which is 
 ## Thanks
 - [Theme](https://bootswatch.com)
 - [HighCharts](http://www.highcharts.com/)
-- [AngularJS](https://angularjs.org)
+- [React](https://facebook.github.io/react/)
 - [Delicious Hat](https://www.delicioushat.com)
 - [TaskRabbit](https://www.taskrabbit.com)
 - [node-resque](https://github.com/taskrabbit/node-resque)
