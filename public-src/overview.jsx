@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import ReactHighcharts from 'react-highcharts';
 
-const Dashboard = React.createClass({
+const Overview = React.createClass({
   getInitialState(){
     return {
       timer: null,
@@ -83,12 +83,12 @@ const Dashboard = React.createClass({
 
     client.action({}, '/api/resque/resqueDetails', 'GET', (data) => {
       this.setState({
-        queues: data.resqueDetails.queues,
-        workers: data.resqueDetails.workers,
-        stats: data.resqueDetails.stats,
+        queues: (data.resqueDetails.queues || {}),
+        workers: (data.resqueDetails.workers || []),
+        stats: (data.resqueDetails.stats || {}),
         counts: {
-          queues: Object.keys(data.resqueDetails.queues).length,
-          workers: Object.keys(data.resqueDetails.workers).length,
+          queues: Object.keys(data.resqueDetails.queues).length || 0,
+          workers: Object.keys(data.resqueDetails.workers).length || 0,
         }
       }, () => {
         this.loadFailedCount();
@@ -241,4 +241,4 @@ const Dashboard = React.createClass({
 
 });
 
-export default Dashboard;
+export default Overview;

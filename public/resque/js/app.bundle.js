@@ -45754,8 +45754,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Dashboard = _react2.default.createClass({
-	  displayName: 'Dashboard',
+	var Overview = _react2.default.createClass({
+	  displayName: 'Overview',
 	  getInitialState: function getInitialState() {
 	    return {
 	      timer: null,
@@ -45834,12 +45834,12 @@
 
 	    client.action({}, '/api/resque/resqueDetails', 'GET', function (data) {
 	      _this3.setState({
-	        queues: data.resqueDetails.queues,
-	        workers: data.resqueDetails.workers,
-	        stats: data.resqueDetails.stats,
+	        queues: data.resqueDetails.queues || {},
+	        workers: data.resqueDetails.workers || [],
+	        stats: data.resqueDetails.stats || {},
 	        counts: {
-	          queues: (0, _keys2.default)(data.resqueDetails.queues).length,
-	          workers: (0, _keys2.default)(data.resqueDetails.workers).length
+	          queues: (0, _keys2.default)(data.resqueDetails.queues).length || 0,
+	          workers: (0, _keys2.default)(data.resqueDetails.workers).length || 0
 	        }
 	      }, function () {
 	        _this3.loadFailedCount();
@@ -46103,7 +46103,7 @@
 	  }
 	});
 
-	exports.default = Dashboard;
+	exports.default = Overview;
 
 /***/ },
 /* 493 */
