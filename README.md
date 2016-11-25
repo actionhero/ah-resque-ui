@@ -9,13 +9,13 @@ A resque administration website for actionhero
 ![https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/failed.png](https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/failed.png)
 ![https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/delayed.png](https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/delayed.png)
 
-## Setup for AH 13.X and 14.X
+## Setup for ActionHero 13.X+
 
 - `npm install --save ah-resque-ui`
 - `npm run actionhero -- link --name ah-resque-ui`
 - visit `http://localhost:8080/resque`
 
-## Setup for AH 12.X
+## Setup for ActionHero 12.X
 
 - `npm install --save ah-resque-ui`
 - insert `ah-resque-ui` in your plugins.js to include the application
