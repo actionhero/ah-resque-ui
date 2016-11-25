@@ -43,8 +43,8 @@ exports.specHelper = {
 
   start: function(callback){
     var self = this;
-    var actionheroPrototype = require(self.testDir + '/node_modules/actionhero/actionhero.js').actionheroPrototype;
-    self.actionhero = new actionheroPrototype();
+    var ActionheroPrototype = require(self.testDir + '/node_modules/actionhero/actionhero.js');
+    self.actionhero = new ActionheroPrototype();
     process.env.PROJECT_ROOT = self.testDir;
     self.actionhero.start(function(error, a){
       self.api = a;
