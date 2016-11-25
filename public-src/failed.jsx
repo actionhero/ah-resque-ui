@@ -1,9 +1,10 @@
-import React from 'react';
-import { Row, Col, Modal } from 'react-bootstrap';
-import Pagination from './components/pagination.jsx';
+import React from 'react'
+import { Link } from 'react-router'
+import { Row, Col, Modal } from 'react-bootstrap'
+import Pagination from './components/pagination.jsx'
 
 const Failed = React.createClass({
-  getInitialState: function(){
+  getInitialState: function () {
     return {
       timer: null,
       refreshInterval: parseInt(this.props.refreshInterval),
@@ -12,127 +13,129 @@ const Failed = React.createClass({
       focusedException: {},
       perPage: 50,
       showModal: false,
-      page: parseInt(this.props.params.page || 0),
-    };
-  },
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval !== this.state.refreshInterval){
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
-        this.loadFailed();
-      });
-    }
-
-    if(nextProps.params && nextProps.params.page){
-      this.setState({page: nextProps.params.page}, ()=>{
-        this.loadFailed();
-      });
+      page: parseInt(this.props.params.page || 0)
     }
   },
 
-  componentDidMount(){
-    this.loadFailed();
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+        this.loadFailed()
+      })
+    }
+
+    if (nextProps.params && nextProps.params.page) {
+      this.setState({page: nextProps.params.page}, () => {
+        this.loadFailed()
+      })
+    }
   },
 
-  componentWillUnmount(){
-    clearTimeout(this.timer);
+  componentDidMount () {
+    this.loadFailed()
   },
 
-  loadFailedCount(){
-    const client = this.props.client;
+  componentWillUnmount () {
+    clearTimeout(this.timer)
+  },
+
+  loadFailedCount () {
+    const client = this.props.client
     client.action({}, '/api/resque/resqueFailedCount', 'GET', (data) => {
-      this.setState({counts: {failed: data.failedCount}});
+      this.setState({counts: {failed: data.failedCount}})
       // $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.counts.failed);
-    });
+    })
   },
 
-  loadFailed(){
-    clearTimeout(this.timer);
-    if(this.state.refreshInterval > 0){
+  loadFailed () {
+    clearTimeout(this.timer)
+    if (this.state.refreshInterval > 0) {
       this.timer = setTimeout(() => {
-        this.loadFailed();
-      }, (this.state.refreshInterval * 1000));
+        this.loadFailed()
+      }, (this.state.refreshInterval * 1000))
     }
 
-    const client = this.props.client;
+    const client = this.props.client
     client.action({
       start: (this.state.page * this.state.perPage),
       stop: ((this.state.page * this.state.perPage) + (this.state.perPage - 1))
     }, '/api/resque/resqueFailed', 'GET', (data) => {
       this.setState({failed: data.failed}, () => {
-        this.loadFailedCount();
-      });
-    });
+        this.loadFailedCount()
+      })
+    })
   },
 
-  removeFailedJob(index){
-    const client = this.props.client;
+  removeFailedJob (index) {
+    const client = this.props.client
     client.action({
       id: index
     }, '/api/resque/removeFailed', 'POST', (data) => {
-      this.loadFailed();
-    });
+      this.loadFailed()
+    })
   },
 
-  retryFailedJob(index){
-    const client = this.props.client;
+  retryFailedJob (index) {
+    const client = this.props.client
     client.action({
       id: index
     }, '/api/resque/retryAndRemoveFailed', 'POST', (data) => {
-      this.loadFailed();
-    });
+      this.loadFailed()
+    })
   },
 
-  removeAllFailedJobs(){
-    const client = this.props.client;
-    if(window.confirm('Are you sure?')){
+  removeAllFailedJobs () {
+    const client = this.props.client
+    if (window.confirm('Are you sure?')) {
       client.action({}, '/api/resque/removeAllFailed', 'POST', (data) => {
-        this.loadFailed();
-      });
+        this.loadFailed()
+      })
     }
   },
 
-  retryAllFailedJobs(){
-    const client = this.props.client;
-    if(window.confirm('Are you sure?')){
+  retryAllFailedJobs () {
+    const client = this.props.client
+    if (window.confirm('Are you sure?')) {
       client.action({}, '/api/resque/retryAndRemoveAllFailed', 'POST', (data) => {
-        this.loadFailed();
-      });
+        this.loadFailed()
+      })
     }
   },
 
-  renderFailureStack(index){
-    let focusedException = this.state.failed[index];
-    focusedException.renderedStack = focusedException.backtrace.join('\r\n');
+  renderFailureStack (index) {
+    let focusedException = this.state.failed[index]
+    focusedException.renderedStack = ''
+    if (focusedException.backtrace) {
+      focusedException.renderedStack = focusedException.backtrace.join('\r\n')
+    }
 
     this.setState({
       focusedException: focusedException,
-      showModal: true,
-    });
+      showModal: true
+    })
   },
 
-  onHide(){
-    this.setState({showModal: false});
+  onHide () {
+    this.setState({showModal: false})
   },
 
-  render(){
-    let index = -1;
-    let argCounter = -1;
+  render () {
+    let index = -1
+    let argCounter = -1
 
-    return(
+    return (
       <div>
 
         <h1>Failed Jobs ({ this.state.counts.failed })</h1>
 
         <p>
-          <button onClick={this.retryAllFailedJobs} className="btn btn-sm btn-warning">Retry All</button>&nbsp;
-          <button onClick={this.removeAllFailedJobs} className="btn btn-sm btn-danger">Remove All</button>
+          <button onClick={this.retryAllFailedJobs} className='btn btn-sm btn-warning'>Retry All</button> <button onClick={this.removeAllFailedJobs} className='btn btn-sm btn-danger'>Remove All</button>
         </p>
 
         <Row>
           <Col md={12}>
 
-            <table id="failureTable" className="table table-striped table-hover ">
+            <table id='failureTable' className='table table-striped table-hover '>
               <thead>
                 <tr>
                   <th>&nbsp;</th>
@@ -147,35 +150,35 @@ const Failed = React.createClass({
                 </tr>
               </thead>
               <tbody>
-                  {
+                {
                     this.state.failed.map((f) => {
-                      index++;
+                      index++
 
-                      return(
+                      return (
                         <tr key={`failure-${index}`}>
                           <td>{ (this.state.page * this.state.perPage) + (index + 1) }</td>
                           <td>{ f.failed_at }</td>
                           <td>
-                            <a onClick={ this.renderFailureStack.bind(null, index) } ><span className="glyphicon glyphicon-plus-sign"></span></a>&nbsp;
+                            <a onClick={this.renderFailureStack.bind(null, index)} ><span className='glyphicon glyphicon-plus-sign' /></a>&nbsp;
                             <strong>{ f.exception }: { f.error }</strong>
                           </td>
-                          <td><span className="text-success"><a href={`/resque/#/queue/${f.queue}`}>{ f.queue }</a></span></td>
+                          <td><span className='text-success'><Link to={`queue/${f.queue}`}>{ f.queue }</Link></span></td>
                           <td>{ f.payload.class }</td>
                           <td>{ f.worker }</td>
                           <td>
                             <ul>
                               {
                                 f.payload.args.map((a) => {
-                                  argCounter++;
-                                  return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>;
+                                  argCounter++
+                                  return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>
                                 })
                               }
                             </ul>
                           </td>
-                          <td><button onClick={ this.retryFailedJob.bind(null, index) }  className="btn btn-xs btn-warning">Retry</button></td>
-                          <td><button onClick={ this.removeFailedJob.bind(null, index) } className="btn btn-xs btn-danger">Remove</button></td>
+                          <td><button onClick={this.retryFailedJob.bind(null, index)} className='btn btn-xs btn-warning'>Retry</button></td>
+                          <td><button onClick={this.removeFailedJob.bind(null, index)} className='btn btn-xs btn-danger'>Remove</button></td>
                         </tr>
-                      );
+                      )
                     })
                   }
               </tbody>
@@ -185,7 +188,7 @@ const Failed = React.createClass({
               page={this.state.page}
               total={this.state.counts.failed}
               perPage={this.state.perPage}
-              base="/resque/#/failed"
+              base='/resque/#/failed'
             />
 
           </Col>
@@ -206,13 +209,13 @@ const Failed = React.createClass({
             <pre>{ this.state.focusedException.renderedStack }</pre>
           </Modal.Body>
           <Modal.Footer>
-            <button className="btn btn-xs" onClick={this.onHide}>Close</button>
+            <button className='btn btn-xs' onClick={this.onHide}>Close</button>
           </Modal.Footer>
         </Modal>
 
       </div>
-    );
+    )
   }
-});
+})
 
-export default Failed;
+export default Failed

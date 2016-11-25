@@ -1,114 +1,115 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import React from 'react'
+import { Link } from 'react-router'
+import { Row, Col } from 'react-bootstrap'
 
 const Workers = React.createClass({
-  getInitialState: function(){
+  getInitialState: function () {
     return {
       timer: null,
       refreshInterval: parseInt(this.props.refreshInterval),
       workers: {},
       workerQueues: [],
-      counts: {},
-    };
-  },
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval !== this.state.refreshInterval){
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
-        this.loadWorkers();
-      });
+      counts: {}
     }
   },
 
-  componentDidMount(){
-    this.loadWorkers();
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+        this.loadWorkers()
+      })
+    }
   },
 
-  componentWillUnmount(){
-    clearTimeout(this.timer);
+  componentDidMount () {
+    this.loadWorkers()
   },
 
-  loadWorkers(){
-    clearTimeout(this.timer);
-    if(this.state.refreshInterval > 0){
+  componentWillUnmount () {
+    clearTimeout(this.timer)
+  },
+
+  loadWorkers () {
+    clearTimeout(this.timer)
+    if (this.state.refreshInterval > 0) {
       this.timer = setTimeout(() => {
-        this.loadWorkers();
-      }, (this.state.refreshInterval * 1000));
+        this.loadWorkers()
+      }, (this.state.refreshInterval * 1000))
     }
 
-    const client = this.props.client;
+    const client = this.props.client
 
     client.action({}, '/api/resque/resqueDetails', 'GET', (data) => {
       this.setState({
         workers: data.resqueDetails.workers,
         counts: {
-          workers: Object.keys(data.resqueDetails.workers).length,
+          workers: Object.keys(data.resqueDetails.workers).length
         }
       }, () => {
-        this.setState({chartConfig: this.state.chartConfig});
+        this.setState({chartConfig: this.state.chartConfig})
 
         Object.keys(this.state.workers).forEach((workerName) => {
-          var worker = this.state.workers[workerName];
-          if(typeof worker === 'string'){
+          var worker = this.state.workers[workerName]
+          if (typeof worker === 'string') {
             this.state.workers[workerName] = {
               status: worker,
-              statusString: worker,
-            };
-          }else{
-            worker.delta = Math.round((new Date().getTime() - new Date(worker.run_at).getTime()) / 1000);
-            worker.statusString = 'working on ' + worker.queue + '#' + worker.payload.class + ' for ' + worker.delta + 's';
+              statusString: worker
+            }
+          } else {
+            worker.delta = Math.round((new Date().getTime() - new Date(worker.run_at).getTime()) / 1000)
+            worker.statusString = 'working on ' + worker.queue + '#' + worker.payload.class + ' for ' + worker.delta + 's'
           }
-        });
+        })
 
-        this.loadWorkerQueues();
-      });
-    });
+        this.loadWorkerQueues()
+      })
+    })
   },
 
-  loadWorkerQueues(){
-    const client = this.props.client;
+  loadWorkerQueues () {
+    const client = this.props.client
 
     client.action({}, '/api/resque/loadWorkerQueues', 'GET', (data) => {
-      let workerQueues = [];
+      let workerQueues = []
       Object.keys(data.workerQueues).forEach((workerName) => {
-        let parts = workerName.split(':');
-        let id = parts.pop();
-        let host = parts.join(':');
-        let queues = data.workerQueues[workerName].split(',');
+        let parts = workerName.split(':')
+        let id = parts.pop()
+        let host = parts.join(':')
+        let queues = data.workerQueues[workerName].split(',')
 
-        let worker = {};
-        if(this.state.workers[workerName]){
-          worker = this.state.workers[workerName];
+        let worker = {}
+        if (this.state.workers[workerName]) {
+          worker = this.state.workers[workerName]
         }
 
         workerQueues.push({
-          id:id, host:host, queues:queues, worker:worker, workerName:workerName
-        });
-      });
+          id: id, host: host, queues: queues, worker: worker, workerName: workerName
+        })
+      })
 
-      this.setState({workerQueues: workerQueues});
-    });
+      this.setState({workerQueues: workerQueues})
+    })
   },
 
-  forceCleanWorker(workerName){
-    const client = this.props.client;
+  forceCleanWorker (workerName) {
+    const client = this.props.client
 
-    if(confirm('Are you sure?')){
+    if (confirm('Are you sure?')) {
       client.action({workerName: workerName}, '/api/resque/forceCleanWorker', 'POST', (data) => {
-        this.loadWorkers();
-      });
+        this.loadWorkers()
+      })
     }
   },
 
-  render(){
-    return(
+  render () {
+    return (
       <div>
         <h1>Workers ({ this.state.counts.workers })</h1>
 
         <Row>
           <Col md={12}>
 
-            <table className="table table-striped table-hover ">
+            <table className='table table-striped table-hover '>
               <thead>
                 <tr>
                   <td><strong>ID</strong></td>
@@ -121,30 +122,29 @@ const Workers = React.createClass({
               <tbody>
                 {
                   this.state.workerQueues.map((w) => {
-                    return(
-                      <tr key={w}>
+                    return (
+                      <tr key={w.workerName}>
                         <td>{ w.id }</td>
                         <td>{ w.host }</td>
                         <td>
                           <ul>
                             {
                               w.queues.map((q) => {
-                                return(
+                                return (
                                   <li key={`${w}-${q}`}>
-                                    <a href={`/resque/#/queue/${q}`}>{ q }</a>
+                                    <Link to={`queue/${q}`}>{ q }</Link>
                                   </li>
-                                );
+                                )
                               })
                             }
                           </ul>
                         </td>
                         <td><span className={w.worker.delta > 0 ? 'text-success' : ''}>{ w.worker.statusString }</span></td>
-                        <td><button onClick={this.forceCleanWorker.bind(null, w.workerName)} className="btn btn-xs btn-danger">Remove Worker</button></td>
+                        <td><button onClick={this.forceCleanWorker.bind(null, w.workerName)} className='btn btn-xs btn-danger'>Remove Worker</button></td>
                       </tr>
-                    );
+                    )
                   })
                 }
-
 
               </tbody>
             </table>
@@ -153,8 +153,8 @@ const Workers = React.createClass({
         </Row>
 
       </div>
-    );
+    )
   }
-});
+})
 
-export default Workers;
+export default Workers

@@ -1,6 +1,6 @@
-var path = require('path');
-var async = require('async');
-var packageJSON = require(path.normalize(__dirname + path.sep + '..' + path.sep + 'package.json'));
+var path = require('path')
+var async = require('async')
+var packageJSON = require(path.normalize(path.join(__dirname, '..', 'package.json')))
 
 exports.packageDetails = {
   name: 'resque:packageDetails',
@@ -10,19 +10,19 @@ exports.packageDetails = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    data.response.packageDetails = {};
-    data.response.packageDetails.packageJSON = packageJSON;
+  run: function (api, data, next) {
+    data.response.packageDetails = {}
+    data.response.packageDetails.packageJSON = packageJSON
     // AH v12 check
-    if(api.config.redis.client){
-      data.response.packageDetails.redis = api.config.redis.client.args;
+    if (api.config.redis.client) {
+      data.response.packageDetails.redis = api.config.redis.client.args
     } else {
-      data.response.packageDetails.redis = [api.config.redis];
+      data.response.packageDetails.redis = [api.config.redis]
     }
 
-    next();
+    next()
   }
-};
+}
 
 exports.resqueDetails = {
   name: 'resque:resqueDetails',
@@ -32,13 +32,13 @@ exports.resqueDetails = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    api.tasks.details(function(error, resqueDetails){
-      data.response.resqueDetails = resqueDetails;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.tasks.details(function (error, resqueDetails) {
+      data.response.resqueDetails = resqueDetails
+      next(error)
+    })
   }
-};
+}
 
 exports.loadWorkerQueues = {
   name: 'resque:loadWorkerQueues',
@@ -48,13 +48,13 @@ exports.loadWorkerQueues = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    api.tasks.workers(function(error, workerQueues){
-      data.response.workerQueues = workerQueues;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.tasks.workers(function (error, workerQueues) {
+      data.response.workerQueues = workerQueues
+      next(error)
+    })
   }
-};
+}
 
 exports.forceCleanWorker = {
   name: 'resque:forceCleanWorker',
@@ -65,16 +65,16 @@ exports.forceCleanWorker = {
   toDocument: false,
 
   inputs: {
-    workerName:{ required: true}
+    workerName: { required: true }
   },
 
-  run: function(api, data, next){
-    api.resque.queue.forceCleanWorker(data.params.workerName, function(error, generatedErrorPayload){
-      data.response.generatedErrorPayload = generatedErrorPayload;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.resque.queue.forceCleanWorker(data.params.workerName, function (error, generatedErrorPayload) {
+      data.response.generatedErrorPayload = generatedErrorPayload
+      next(error)
+    })
   }
-};
+}
 
 exports.resqueFailedCount = {
   name: 'resque:resqueFailedCount',
@@ -84,13 +84,13 @@ exports.resqueFailedCount = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    api.tasks.failedCount(function(error, failedCount){
-      data.response.failedCount = failedCount;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.tasks.failedCount(function (error, failedCount) {
+      data.response.failedCount = failedCount
+      next(error)
+    })
   }
-};
+}
 
 exports.queued = {
   name: 'resque:queued',
@@ -100,33 +100,33 @@ exports.queued = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
+  inputs: {
     queue: {
       required: true
     },
-    start:{
+    start: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) },
       default: 0
     },
-    stop:{
+    stop: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) },
       default: 99
     }
   },
 
-  run: function(api, data, next){
-    api.resque.queue.length(data.params.queue, function(error, length){
-      if(error){ return next(error); }
-      data.response.queueLength = length;
-      api.tasks.queued(data.params.queue, data.params.start, data.params.stop, function(error, jobs){
-        data.response.jobs = jobs;
-        next(error);
-      });
-    });
+  run: function (api, data, next) {
+    api.resque.queue.length(data.params.queue, function (error, length) {
+      if (error) { return next(error) }
+      data.response.queueLength = length
+      api.tasks.queued(data.params.queue, data.params.start, data.params.stop, function (error, jobs) {
+        data.response.jobs = jobs
+        next(error)
+      })
+    })
   }
-};
+}
 
 exports.delQueue = {
   name: 'resque:delQueue',
@@ -136,16 +136,16 @@ exports.delQueue = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
+  inputs: {
     queue: {
       required: true
     }
   },
 
-  run: function(api, data, next){
-    api.tasks.delQueue(data.params.queue, next);
+  run: function (api, data, next) {
+    api.tasks.delQueue(data.params.queue, next)
   }
-};
+}
 
 exports.resqueFailed = {
   name: 'resque:resqueFailed',
@@ -155,26 +155,26 @@ exports.resqueFailed = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
-    start:{
+  inputs: {
+    start: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) },
       default: 0
     },
-    stop:{
+    stop: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) },
       default: 99
     }
   },
 
-  run: function(api, data, next){
-    api.tasks.failed(data.params.start, data.params.stop, function(error, failed){
-      data.response.failed = failed;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.tasks.failed(data.params.start, data.params.stop, function (error, failed) {
+      data.response.failed = failed
+      next(error)
+    })
   }
-};
+}
 
 exports.removeFailed = {
   name: 'resque:removeFailed',
@@ -184,21 +184,21 @@ exports.removeFailed = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
-    id:{
+  inputs: {
+    id: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) }
     }
   },
 
-  run: function(api, data, next){
-    api.tasks.failed(data.params.id, data.params.id, function(error, failed){
-      if(error){ return next(error); }
-      if(!failed){ return next(new Error('failed job not found')); }
-      api.tasks.removeFailed(failed[0], next);
-    });
+  run: function (api, data, next) {
+    api.tasks.failed(data.params.id, data.params.id, function (error, failed) {
+      if (error) { return next(error) }
+      if (!failed) { return next(new Error('failed job not found')) }
+      api.tasks.removeFailed(failed[0], next)
+    })
   }
-};
+}
 
 exports.removeAllFailed = {
   name: 'resque:removeAllFailed',
@@ -208,24 +208,24 @@ exports.removeAllFailed = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    var failedJob;
-    var act = function(done){
-      api.tasks.failed(0, 0, function(error, failed){
-        if(error){ return done(error); }
-        failedJob = failed[0];
-        if(!failed || failed.length === 0){ return done(); }
-        api.tasks.removeFailed(failedJob, done);
-      });
-    };
+  run: function (api, data, next) {
+    var failedJob
+    var act = function (done) {
+      api.tasks.failed(0, 0, function (error, failed) {
+        if (error) { return done(error) }
+        failedJob = failed[0]
+        if (!failed || failed.length === 0) { return done() }
+        api.tasks.removeFailed(failedJob, done)
+      })
+    }
 
-    var check = function(){
-      return !(failedJob === undefined);
-    };
+    var check = function () {
+      return !(failedJob === undefined)
+    }
 
-    async.doWhilst(act, check, next);
+    async.doWhilst(act, check, next)
   }
-};
+}
 
 exports.retryAndRemoveFailed = {
   name: 'resque:retryAndRemoveFailed',
@@ -235,21 +235,21 @@ exports.retryAndRemoveFailed = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
-    id:{
+  inputs: {
+    id: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) }
     }
   },
 
-  run: function(api, data, next){
-    api.tasks.failed(data.params.id, data.params.id, function(error, failed){
-      if(error){ return next(error); }
-      if(!failed){ return next(new Error('failed job not found')); }
-      api.tasks.retryAndRemoveFailed(failed[0], next);
-    });
+  run: function (api, data, next) {
+    api.tasks.failed(data.params.id, data.params.id, function (error, failed) {
+      if (error) { return next(error) }
+      if (!failed) { return next(new Error('failed job not found')) }
+      api.tasks.retryAndRemoveFailed(failed[0], next)
+    })
   }
-};
+}
 
 exports.retryAndRemoveAllFailed = {
   name: 'resque:retryAndRemoveAllFailed',
@@ -259,24 +259,24 @@ exports.retryAndRemoveAllFailed = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    var failedJob;
-    var act = function(done){
-      api.tasks.failed(0, 0, function(error, failed){
-        if(error){ return done(error); }
-        failedJob = failed[0];
-        if(!failed || failed.length === 0){ return done(); }
-        api.tasks.retryAndRemoveFailed(failedJob, done);
-      });
-    };
+  run: function (api, data, next) {
+    var failedJob
+    var act = function (done) {
+      api.tasks.failed(0, 0, function (error, failed) {
+        if (error) { return done(error) }
+        failedJob = failed[0]
+        if (!failed || failed.length === 0) { return done() }
+        api.tasks.retryAndRemoveFailed(failedJob, done)
+      })
+    }
 
-    var check = function(){
-      return !(failedJob === undefined);
-    };
+    var check = function () {
+      return !(failedJob === undefined)
+    }
 
-    async.doWhilst(act, check, next);
+    async.doWhilst(act, check, next)
   }
-};
+}
 
 exports.locks = {
   name: 'resque:locks',
@@ -286,13 +286,13 @@ exports.locks = {
   logLevel: 'debug',
   toDocument: false,
 
-  run: function(api, data, next){
-    api.tasks.locks(function(error, locks){
-      data.response.locks = locks;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.tasks.locks(function (error, locks) {
+      data.response.locks = locks
+      next(error)
+    })
   }
-};
+}
 
 exports.delLock = {
   name: 'resque:delLock',
@@ -302,17 +302,17 @@ exports.delLock = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
+  inputs: {
     lock: { required: true }
   },
 
-  run: function(api, data, next){
-    api.tasks.delLock(data.params.lock, function(error, count){
-      data.response.count = count;
-      next(error);
-    });
+  run: function (api, data, next) {
+    api.tasks.delLock(data.params.lock, function (error, count) {
+      data.response.count = count
+      next(error)
+    })
   }
-};
+}
 
 exports.delayedjobs = {
   name: 'resque:delayedjobs',
@@ -322,49 +322,49 @@ exports.delayedjobs = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
-    start:{
+  inputs: {
+    start: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) },
       default: 0
     },
-    stop:{
+    stop: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) },
       default: 99
     }
   },
 
-  run: function(api, data, next){
-    var jobs = [];
-    var timestamps = [];
-    var delayedjobs = {};
+  run: function (api, data, next) {
+    var jobs = []
+    var timestamps = []
+    var delayedjobs = {}
 
-    api.tasks.timestamps(function(error, allTimestmps){
-      if(error){ next(error); }
-      if(allTimestmps.length === 0){ return next(); }
+    api.tasks.timestamps(function (error, allTimestmps) {
+      if (error) { next(error) }
+      if (allTimestmps.length === 0) { return next() }
 
-      for (var i = 0; i < allTimestmps.length; i++){
-        if(i >= data.params.start && i <= data.params.stop){ timestamps.push(allTimestmps[i]); }
+      for (var i = 0; i < allTimestmps.length; i++) {
+        if (i >= data.params.start && i <= data.params.stop) { timestamps.push(allTimestmps[i]) }
       }
 
-      timestamps.forEach(function(timestamp){
-        jobs.push(function(done){
-          api.tasks.delayedAt(timestamp, function(error, delayed){
-            delayedjobs[timestamp] = delayed;
-            done(error);
-          });
-        });
-      });
+      timestamps.forEach(function (timestamp) {
+        jobs.push(function (done) {
+          api.tasks.delayedAt(timestamp, function (error, delayed) {
+            delayedjobs[timestamp] = delayed
+            done(error)
+          })
+        })
+      })
 
-      async.series(jobs, function(error){
-        data.response.delayedjobs = delayedjobs;
-        data.response.timestampsCount = allTimestmps.length;
-        next(error);
-      });
-    });
+      async.series(jobs, function (error) {
+        data.response.delayedjobs = delayedjobs
+        data.response.timestampsCount = allTimestmps.length
+        next(error)
+      })
+    })
   }
-};
+}
 
 exports.delDelayed = {
   name: 'resque:delDelayed',
@@ -374,29 +374,29 @@ exports.delDelayed = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
-    timestamp:{
+  inputs: {
+    timestamp: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) }
     },
-    count:{
+    count: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
-    },
+      formatter: function (p) { return parseInt(p) }
+    }
   },
 
-  run: function(api, data, next){
-    api.tasks.delayedAt(data.params.timestamp, function(error, delayed){
-      if(error){ return next(error); }
-      if(delayed.length === 0 || !delayed[data.params.count]){
-        return next(new Error('delayed job not found'));
+  run: function (api, data, next) {
+    api.tasks.delayedAt(data.params.timestamp, function (error, delayed) {
+      if (error) { return next(error) }
+      if (delayed.length === 0 || !delayed[data.params.count]) {
+        return next(new Error('delayed job not found'))
       }
 
-      var job = delayed[data.params.count];
-      api.tasks.delDelayed(job.queue, job.class, job.args, next);
-    });
+      var job = delayed[data.params.count]
+      api.tasks.delDelayed(job.queue, job.class, job.args, next)
+    })
   }
-};
+}
 
 exports.runDelayed = {
   name: 'resque:runDelayed',
@@ -406,29 +406,29 @@ exports.runDelayed = {
   logLevel: 'debug',
   toDocument: false,
 
-  inputs:{
-    timestamp:{
+  inputs: {
+    timestamp: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
+      formatter: function (p) { return parseInt(p) }
     },
-    count:{
+    count: {
       required: true,
-      formatter: function(p){ return parseInt(p); },
-    },
+      formatter: function (p) { return parseInt(p) }
+    }
   },
 
-  run: function(api, data, next){
-    api.tasks.delayedAt(data.params.timestamp, function(error, delayed){
-      if(error){ return next(error); }
-      if(delayed.length === 0 || !delayed[data.params.count]){
-        return next(new Error('delayed job not found'));
+  run: function (api, data, next) {
+    api.tasks.delayedAt(data.params.timestamp, function (error, delayed) {
+      if (error) { return next(error) }
+      if (delayed.length === 0 || !delayed[data.params.count]) {
+        return next(new Error('delayed job not found'))
       }
 
-      var job = delayed[data.params.count];
-      api.tasks.delDelayed(job.queue, job.class, job.args, function(error){
-        if(error){ return next(error); }
-        api.tasks.enqueue(job.class, job.args, job.queue, next);
-      });
-    });
+      var job = delayed[data.params.count]
+      api.tasks.delDelayed(job.queue, job.class, job.args, function (error) {
+        if (error) { return next(error) }
+        api.tasks.enqueue(job.class, job.args, job.queue, next)
+      })
+    })
   }
-};
+}

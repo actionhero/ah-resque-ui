@@ -1,12 +1,12 @@
-const path = require('path');
-const webpack = require('webpack');
+const path = require('path')
+const webpack = require('webpack') // eslint-disable-line
 
 module.exports = {
   entry: {
-    app: path.join(__dirname, 'public-src', 'app.jsx'),
+    app: path.join(__dirname, 'public-src', 'app.jsx')
   },
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].bundle.min.js',
     path: path.join(__dirname, 'public', 'resque', 'js')
   },
   // plugins: [
@@ -16,7 +16,7 @@ module.exports = {
   //     }
   //   })
   // ],
-  module:{
+  module: {
     loaders: [
       { test: /\.css$/, loader: 'style!css' },
       {
@@ -30,8 +30,8 @@ module.exports = {
       },
       {
         test: /\.(html|json)$/,
-        loader: 'file?name=[name].[ext]',
+        loader: 'file?name=[name].[ext]'
       }
     ]
   }
-};
+}

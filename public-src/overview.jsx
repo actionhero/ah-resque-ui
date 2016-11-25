@@ -1,9 +1,10 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import ReactHighcharts from 'react-highcharts';
+import React from 'react'
+import { Link } from 'react-router'
+import { Row, Col } from 'react-bootstrap'
+import ReactHighcharts from 'react-highcharts'
 
 const Overview = React.createClass({
-  getInitialState(){
+  getInitialState () {
     return {
       timer: null,
       refreshInterval: parseInt(this.props.refreshInterval),
@@ -13,7 +14,7 @@ const Overview = React.createClass({
       counts: {},
       chartConfig: {
         chart: {
-          type: 'spline',
+          type: 'spline'
           // events: {
           //   load: function(){ $scope.chart = this; }
           // }
@@ -37,49 +38,49 @@ const Overview = React.createClass({
           layout: 'vertical',
           align: 'left',
           verticalAlign: 'top',
-          floating: true,
+          floating: true
         },
         exporting: {enabled: true},
-        series: [],
-      },
-    };
-  },
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval !== this.state.refreshInterval){
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
-        this.loadDetails();
-      });
+        series: []
+      }
     }
   },
 
-  componentDidMount(){
-    this.loadDetails();
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+        this.loadDetails()
+      })
+    }
   },
 
-  componentWillUnmount(){
-    clearTimeout(this.timer);
+  componentDidMount () {
+    this.loadDetails()
   },
 
-  loadFailedCount(){
-    const client = this.props.client;
+  componentWillUnmount () {
+    clearTimeout(this.timer)
+  },
+
+  loadFailedCount () {
+    const client = this.props.client
     client.action({}, '/api/resque/resqueFailedCount', 'GET', (data) => {
-      let counts = this.state.counts;
-      counts.failed = data.failedCount;
-      this.setState({counts: counts});
-    });
+      let counts = this.state.counts
+      counts.failed = data.failedCount
+      this.setState({counts: counts})
+    })
   },
 
-  loadDetails(){
-    clearTimeout(this.timer);
+  loadDetails () {
+    clearTimeout(this.timer)
 
-    if(this.state.refreshInterval > 0){
+    if (this.state.refreshInterval > 0) {
       this.timer = setTimeout(() => {
-        this.loadDetails();
-      }, (this.state.refreshInterval * 1000));
+        this.loadDetails()
+      }, (this.state.refreshInterval * 1000))
     }
 
-    const client = this.props.client;
+    const client = this.props.client
 
     client.action({}, '/api/resque/resqueDetails', 'GET', (data) => {
       this.setState({
@@ -88,70 +89,70 @@ const Overview = React.createClass({
         stats: (data.resqueDetails.stats || {}),
         counts: {
           queues: Object.keys(data.resqueDetails.queues).length || 0,
-          workers: Object.keys(data.resqueDetails.workers).length || 0,
+          workers: Object.keys(data.resqueDetails.workers).length || 0
         }
       }, () => {
-        this.loadFailedCount();
+        this.loadFailedCount()
 
         Object.keys(this.state.queues).forEach((q) => {
-          let found = false;
-          let point = {x: new Date().getTime(), y: this.state.queues[q].length};
+          let found = false
+          let point = {x: new Date().getTime(), y: this.state.queues[q].length}
           this.state.chartConfig.series.forEach((s) => {
-            if(s.name === q){
-              found = true;
-              s.data.push(point);
-              while(s.data.length > 100){ s.data.shift(); }
+            if (s.name === q) {
+              found = true
+              s.data.push(point)
+              while (s.data.length > 100) { s.data.shift() }
             }
-          });
-          if(!found){
+          })
+          if (!found) {
             this.state.chartConfig.series.push({
               name: q,
               animation: false,
-              data: [point],
-            });
+              data: [point]
+            })
           }
-        });
+        })
 
-        this.setState({chartConfig: this.state.chartConfig});
+        this.setState({chartConfig: this.state.chartConfig})
 
         Object.keys(this.state.workers).forEach((workerName) => {
-          var worker = this.state.workers[workerName];
-          if(typeof worker === 'string'){
+          var worker = this.state.workers[workerName]
+          if (typeof worker === 'string') {
             this.state.workers[workerName] = {
               status: worker,
-              statusString: worker,
-            };
-          }else{
-            worker.delta = Math.round((new Date().getTime() - new Date(worker.run_at).getTime()) / 1000);
-            worker.statusString = 'working on ' + worker.queue + '#' + worker.payload.class + ' for ' + worker.delta + 's';
+              statusString: worker
+            }
+          } else {
+            worker.delta = Math.round((new Date().getTime() - new Date(worker.run_at).getTime()) / 1000)
+            worker.statusString = 'working on ' + worker.queue + '#' + worker.payload.class + ' for ' + worker.delta + 's'
           }
-        });
-      });
-    });
+        })
+      })
+    })
   },
 
-  render(){
-    return(
+  render () {
+    return (
       <div>
         <h1>Resque Overview</h1>
 
         <Row>
           <Col md={3}>
             <h3>Stats:</h3>
-            <table className="table table-hover">
+            <table className='table table-hover'>
               <tbody>
 
                 {
                   Object.keys(this.state.stats).map((k) => {
-                    let v = this.state.stats[k];
-                    if(k.indexOf(':') > 0){ return null; }
+                    let v = this.state.stats[k]
+                    if (k.indexOf(':') > 0) { return null }
 
-                    return(
+                    return (
                       <tr key={k}>
                         <td>{k}</td>
                         <td>{v}</td>
                       </tr>
-                    );
+                    )
                   })
                 }
 
@@ -161,84 +162,83 @@ const Overview = React.createClass({
           <Col md={9}>
             <ReactHighcharts
               isPureConfig={false}
-              ref="chart"
-              config={ this.state.chartConfig }
+              ref='chart'
+              config={this.state.chartConfig}
               domProps={{
                 style: {
                   minWidth: '310px',
                   height: '300px',
                   margin: '0'
                 }
-              }
-            } />
+              }} />
           </Col>
         </Row>
 
         <Row>
-        <Col md={4}>
-          <h2>Queues ({ this.state.counts.queues })</h2>
+          <Col md={4}>
+            <h2>Queues ({ this.state.counts.queues })</h2>
 
-          <table className="table table-striped table-hover ">
-            <thead>
-              <tr>
-                <th>Queue Name</th>
-                <th>Jobs</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className={ this.state.counts.failed > 0 ? 'danger' : '' }>
-                <td><strong><a href="/resque/#/failed">failed</a></strong></td>
-                <td><strong>{ this.state.counts.failed || 0 }</strong></td>
-              </tr>
+            <table className='table table-striped table-hover '>
+              <thead>
+                <tr>
+                  <th>Queue Name</th>
+                  <th>Jobs</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className={this.state.counts.failed > 0 ? 'danger' : ''}>
+                  <td><strong><Link to='failed'>failed</Link></strong></td>
+                  <td><strong>{ this.state.counts.failed || 0 }</strong></td>
+                </tr>
 
-              {
+                {
                 Object.keys(this.state.queues).map((q) => {
                   return (
                     <tr key={q}>
-                      <td><a href={`/resque/#/queue/${q}`}>{ q }</a></td>
+                      <td><Link to={`queue/${q}`}>{ q }</Link></td>
                       <td>{this.state.queues[q].length}</td>
                     </tr>
-                  );
+                  )
                 })
               }
 
-            </tbody>
-          </table>
-        </Col>
+              </tbody>
+            </table>
+          </Col>
 
-        <Col md={8}>
-          <h2>Workers ({ this.state.counts.workers })</h2>
+          <Col md={8}>
+            <h2>Workers ({ this.state.counts.workers })</h2>
 
-          <table className="table table-striped table-hover ">
-            <thead>
-              <tr>
-                <th>Worker Name</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
+            <table className='table table-striped table-hover '>
+              <thead>
+                <tr>
+                  <th>Worker Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
 
-              {
+                {
                 Object.keys(this.state.workers).map((name) => {
-                  let worker = this.state.workers[name];
+                  let worker = this.state.workers[name]
                   return (
                     <tr key={name}>
-                      <td><span className={ worker.delta > 0 ? 'text-success' : ''}>{ name }</span></td>
-                      <td><span className={ worker.delta > 0 ? 'text-success' : ''}>{ worker.statusString }</span></td>
+                      <td><span className={worker.delta > 0 ? 'text-success' : ''}>{ name }</span></td>
+                      <td><span className={worker.delta > 0 ? 'text-success' : ''}>{ worker.statusString }</span></td>
                     </tr>
-                  );
+                  )
                 })
               }
 
-            </tbody>
-          </table>
-        </Col>
-      </Row>
+              </tbody>
+            </table>
+          </Col>
+        </Row>
 
-    </div>
-    );
-  },
+      </div>
+    )
+  }
 
-});
+})
 
-export default Overview;
+export default Overview

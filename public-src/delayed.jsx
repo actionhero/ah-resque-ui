@@ -1,9 +1,10 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import Pagination from './components/pagination.jsx';
+import React from 'react'
+import { Row, Col } from 'react-bootstrap'
+import { Link } from 'react-router'
+import Pagination from './components/pagination.jsx'
 
 const Delayed = React.createClass({
-  getInitialState: function(){
+  getInitialState: function () {
     return {
       timer: null,
       refreshInterval: parseInt(this.props.refreshInterval),
@@ -11,93 +12,93 @@ const Delayed = React.createClass({
       delayedjobs: {},
       counts: {},
       perPage: 50,
-      page: parseInt(this.props.params.page || 0),
-    };
-  },
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval !== this.state.refreshInterval){
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
-        this.loadDelayedJobs();
-      });
-    }
-
-    if(nextProps.params && nextProps.params.page){
-      this.setState({page: nextProps.params.page}, ()=>{
-        this.loadDelayedJobs();
-      });
+      page: parseInt(this.props.params.page || 0)
     }
   },
 
-  componentDidMount(){
-    this.loadDelayedJobs();
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+        this.loadDelayedJobs()
+      })
+    }
+
+    if (nextProps.params && nextProps.params.page) {
+      this.setState({page: nextProps.params.page}, () => {
+        this.loadDelayedJobs()
+      })
+    }
   },
 
-  componentWillUnmount(){
-    clearTimeout(this.timer);
+  componentDidMount () {
+    this.loadDelayedJobs()
   },
 
-  loadDelayedJobs(){
-    clearTimeout(this.timer);
-    if(this.state.refreshInterval > 0){
+  componentWillUnmount () {
+    clearTimeout(this.timer)
+  },
+
+  loadDelayedJobs () {
+    clearTimeout(this.timer)
+    if (this.state.refreshInterval > 0) {
       this.timer = setTimeout(() => {
-        this.loadDelayedJobs();
-      }, (this.state.refreshInterval * 1000));
+        this.loadDelayedJobs()
+      }, (this.state.refreshInterval * 1000))
     }
 
-    const client = this.props.client;
+    const client = this.props.client
 
     client.action({
       start: (this.state.page * this.state.perPage),
       stop: ((this.state.page * this.state.perPage) + (this.state.perPage - 1))
     }, '/api/resque/delayedjobs', 'GET', (data) => {
-      let timestamps = [];
-      if(data.delayedjobs){
-        Object.keys(data.delayedjobs).forEach(function(t){
+      let timestamps = []
+      if (data.delayedjobs) {
+        Object.keys(data.delayedjobs).forEach(function (t) {
           timestamps.push({
             date: new Date(parseInt(t)),
-            key: t,
-          });
-        });
+            key: t
+          })
+        })
       }
 
       this.setState({
         counts: {timestamps: data.timestampsCount},
         delayedjobs: data.delayedjobs,
-        timestamps: timestamps,
-      });
-    });
+        timestamps: timestamps
+      })
+    })
   },
 
-  delDelayed(timestamp, count){
-    const client = this.props.client;
+  delDelayed (timestamp, count) {
+    const client = this.props.client
 
-    if(confirm('Are you sure?')){
+    if (confirm('Are you sure?')) {
       client.action({
         timestamp: timestamp,
-        count: count,
+        count: count
       }, '/api/resque/delDelayed', 'POST', (data) => {
-        this.loadDelayedJobs();
-      });
+        this.loadDelayedJobs()
+      })
     }
   },
 
-  runDelayed(timestamp, count){
-    const client = this.props.client;
+  runDelayed (timestamp, count) {
+    const client = this.props.client
 
     client.action({
       timestamp: timestamp,
-      count: count,
+      count: count
     }, '/api/resque/runDelayed', 'POST', (data) => {
-      this.loadDelayedJobs();
-    });
+      this.loadDelayedJobs()
+    })
   },
 
-  render(){
-    let argCounter = 0;
-    let index = 0;
+  render () {
+    let argCounter = 0
+    let index = 0
 
-    return(
+    return (
       <div>
         <h1>Delayed Jobs</h1>
 
@@ -105,15 +106,15 @@ const Delayed = React.createClass({
           <Col md={12}>
             {
               this.state.timestamps.map((t) => {
-                index = -1;
-                return(
-                  <div key={t.date.getTime()} className="panel panel-primary">
-                    <div className="panel-heading">
-                      <h3 className="panel-title">{ t.date.toString() }</h3>
+                index = -1
+                return (
+                  <div key={t.date.getTime()} className='panel panel-primary'>
+                    <div className='panel-heading'>
+                      <h3 className='panel-title'>{ t.date.toString() }</h3>
                     </div>
-                    <div className="panel-body">
+                    <div className='panel-body'>
 
-                      <table className="table table-striped table-hover">
+                      <table className='table table-striped table-hover'>
                         <thead>
                           <tr>
                             <td><strong>Class</strong></td>
@@ -126,25 +127,25 @@ const Delayed = React.createClass({
                         <tbody>
                           {
                             this.state.delayedjobs[t.key].map((job) => {
-                              index++;
+                              index++
                               return (
                                 <tr key={`${t.date.getTime()}-${job.queue}-${JSON.stringify(job.args)}`}>
                                   <td>{ job.class }</td>
-                                  <td><a href={`/resque/#/queue/${job.queue}`}>{ job.queue }</a></td>
+                                  <td><Link to={`queue/${job.queue}`}>{ job.queue }</Link></td>
                                   <td>
                                     <ul>
                                       {
                                         job.args.map((a) => {
-                                          argCounter++;
-                                          return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>;
+                                          argCounter++
+                                          return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>
                                         })
                                       }
                                     </ul>
                                   </td>
-                                  <td width="100"><button onClick={this.runDelayed.bind(null, t.key, index)} className="btn btn-xs btn-warning">Run Now</button></td>
-                                  <td width="100"><button onClick={this.delDelayed.bind(null, t.key, index)} className="btn btn-xs btn-danger">Remove</button></td>
+                                  <td width='100'><button onClick={this.runDelayed.bind(null, t.key, index)} className='btn btn-xs btn-warning'>Run Now</button></td>
+                                  <td width='100'><button onClick={this.delDelayed.bind(null, t.key, index)} className='btn btn-xs btn-danger'>Remove</button></td>
                                 </tr>
-                              );
+                              )
                             })
                           }
                         </tbody>
@@ -152,7 +153,7 @@ const Delayed = React.createClass({
 
                     </div>
                   </div>
-                );
+                )
               })
             }
 
@@ -160,14 +161,14 @@ const Delayed = React.createClass({
               page={this.state.page}
               total={this.state.counts.timestamps}
               perPage={this.state.perPage}
-              base="/resque/#/delayed"
+              base='/resque/#/delayed'
             />
 
           </Col>
         </Row>
       </div>
-    );
+    )
   }
-});
+})
 
-export default Delayed;
+export default Delayed

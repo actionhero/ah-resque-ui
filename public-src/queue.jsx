@@ -1,10 +1,9 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
-import Pagination from './components/pagination.jsx';
-import { browserHistory } from 'react-router';
+import React from 'react'
+import Pagination from './components/pagination.jsx'
+import { browserHistory } from 'react-router'
 
 const Queues = React.createClass({
-  getInitialState: function(){
+  getInitialState: function () {
     return {
       timer: null,
       refreshInterval: parseInt(this.props.refreshInterval),
@@ -12,41 +11,41 @@ const Queues = React.createClass({
       jobs: [],
       queueLength: 0,
       perPage: 50,
-      page: parseInt(this.props.params.page || 0),
-    };
-  },
-
-  componentWillReceiveProps(nextProps){
-    if(nextProps.refreshInterval !== this.state.refreshInterval){
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, ()=>{
-        this.loadQueue();
-      });
-    }
-
-    if(nextProps.params && nextProps.params.page){
-      this.setState({page: nextProps.params.page}, ()=>{
-        this.loadQueue();
-      });
+      page: parseInt(this.props.params.page || 0)
     }
   },
 
-  componentDidMount(){
-    this.loadQueue();
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.refreshInterval !== this.state.refreshInterval) {
+      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+        this.loadQueue()
+      })
+    }
+
+    if (nextProps.params && nextProps.params.page) {
+      this.setState({page: nextProps.params.page}, () => {
+        this.loadQueue()
+      })
+    }
   },
 
-  componentWillUnmount(){
-    clearTimeout(this.timer);
+  componentDidMount () {
+    this.loadQueue()
   },
 
-  loadQueue(){
-    clearTimeout(this.timer);
-    if(this.state.refreshInterval > 0){
+  componentWillUnmount () {
+    clearTimeout(this.timer)
+  },
+
+  loadQueue () {
+    clearTimeout(this.timer)
+    if (this.state.refreshInterval > 0) {
       this.timer = setTimeout(() => {
-        this.loadQueue();
-      }, (this.state.refreshInterval * 1000));
+        this.loadQueue()
+      }, (this.state.refreshInterval * 1000))
     }
 
-    const client = this.props.client;
+    const client = this.props.client
 
     client.action({
       queue: this.state.queue,
@@ -56,36 +55,36 @@ const Queues = React.createClass({
       this.setState({
         jobs: data.jobs,
         queueLength: data.queueLength
-      });
-    });
+      })
+    })
   },
 
-  delQueue(){
-    const client = this.props.client;
+  delQueue () {
+    const client = this.props.client
 
-    if(confirm('Are you sure?')){
+    if (confirm('Are you sure?')) {
       client.action({
-        queue: this.state.queue,
-      }, '/api/resque/delQueue', 'POST', function(data){
-        browserHistory.push('/resque/#/overview');
-        window.location.reload();
-      });
+        queue: this.state.queue
+      }, '/api/resque/delQueue', 'POST', function (data) {
+        browserHistory.push('/resque/#/overview')
+        window.location.reload()
+      })
     }
   },
 
-  render(){
-    let index = -1;
-    let argCounter = -1;
+  render () {
+    let index = -1
+    let argCounter = -1
 
-    return(
+    return (
       <div>
         <h1>{ this.state.queue } ({ this.state.queueLength })</h1>
 
         <p>
-          <button onClick={this.delQueue} className="btn btn-xs btn-danger">Delete Queue</button>
+          <button onClick={this.delQueue} className='btn btn-xs btn-danger'>Delete Queue</button>
         </p>
 
-        <table id="jobTable" className="table table-striped table-hover ">
+        <table id='jobTable' className='table table-striped table-hover '>
           <thead>
             <tr>
               <th>&nbsp;</th>
@@ -96,9 +95,9 @@ const Queues = React.createClass({
           <tbody>
             {
               this.state.jobs.map((job) => {
-                index++;
+                index++
 
-                return(
+                return (
                   <tr key={JSON.stringify(job)}>
                     <td>{ (this.state.page * this.state.perPage) + (index + 1) }</td>
                     <td>{ job.class }</td>
@@ -106,14 +105,14 @@ const Queues = React.createClass({
                       <ul>
                         {
                           job.args.map((a) => {
-                            argCounter++;
-                            return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>;
+                            argCounter++
+                            return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>
                           })
                         }
                       </ul>
                     </td>
                   </tr>
-                );
+                )
               })
             }
           </tbody>
@@ -127,8 +126,8 @@ const Queues = React.createClass({
         />
 
       </div>
-    );
+    )
   }
-});
+})
 
-export default Queues;
+export default Queues
