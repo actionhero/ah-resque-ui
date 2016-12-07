@@ -37,7 +37,7 @@
     "react-router": "^3.0.0",
     "should": "^11.1.1",
     "standard": "^8.6.0",
-    "webpack": "^1.13.3"
+    "webpack": "^1.14.0"
   },
   "standard": {
     "globals": [
