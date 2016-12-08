@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router'
 import { Row, Col } from 'react-bootstrap'
 
 const Footer = React.createClass({
