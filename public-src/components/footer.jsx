@@ -43,7 +43,7 @@ const Footer = React.createClass({
 
           <Col md={6}>
             <p className='text-muted text-right'>
-              <Link target='_new' to='https://github.com/evantahler/ah-resque-ui'><strong>ah-resque-ui version:</strong> { this.state.version }</Link><br />
+              <a target='_new' to='https://github.com/evantahler/ah-resque-ui'><strong>ah-resque-ui version:</strong> { this.state.version }</a><br />
             </p>
           </Col>
 
