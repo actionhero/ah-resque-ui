@@ -1,5 +1,6 @@
 var path = require('path')
 var async = require('async')
+var os = require('os')
 var packageJSON = require(path.normalize(path.join(__dirname, '..', 'package.json')))
 
 exports.packageDetails = {
@@ -21,6 +22,30 @@ exports.packageDetails = {
     }
 
     next()
+  }
+}
+
+exports.redisInfo = {
+  name: 'resque:redisInfo',
+  description: 'I return the results of redis info',
+  middleware: ['ah-resque-ui-proxy-middleware'],
+  outputExample: {},
+  logLevel: 'debug',
+  toDocument: false,
+
+  run: function (api, data, next) {
+    try {
+      api.resque.queue.connection.redis.info((error, redisInfo) => {
+        if (redisInfo) { data.response.redisInfo = redisInfo.split(os.EOL) }
+        next(error)
+      })
+    } catch (error) {
+      if (error.toString().match(/INFO is not implemented in fakeredis/)) {
+        return next(null)
+      } else {
+        throw error
+      }
+    }
   }
 }
 

@@ -10,6 +10,7 @@ import Workers from './workers.jsx'
 import Delayed from './delayed.jsx'
 import Queue from './queue.jsx'
 import Locks from './locks.jsx'
+import Redis from './redis.jsx'
 
 ReactDOM.render(
   <Router history={hashHistory}>
@@ -25,6 +26,7 @@ ReactDOM.render(
       <Route path='delayed' component={Delayed} />
       <Route path='delayed/:page' component={Delayed} />
       <Route path='locks' component={Locks} />
+      <Route path='redis' component={Redis} />
     </Route>
   </Router>,
 
