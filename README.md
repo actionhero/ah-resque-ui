@@ -31,6 +31,7 @@ This plugin will inject routes into your application.  The routes are equivalent
 
 get: [
   { path: '/resque/packageDetails',       action: 'resque:packageDetails'    },
+  { path: '/resque/redisInfo',            action: 'resque:redisInfo'         },
   { path: '/resque/resqueDetails',        action: 'resque:resqueDetails'     },
   { path: '/resque/queued',               action: 'resque:queued'            },
   { path: '/resque/loadWorkerQueues',     action: 'resque:loadWorkerQueues'  },

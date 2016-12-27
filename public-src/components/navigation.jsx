@@ -52,6 +52,7 @@ const Nav = React.createClass({
                 <_NavItem path='workers' />
                 <_NavItem path='delayed' />
                 <_NavItem path='locks' />
+                <_NavItem path='redis' />
               </ul>
 
               <form className='navbar-form navbar-right' role='search'>
