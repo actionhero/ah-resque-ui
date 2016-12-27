@@ -81,9 +81,9 @@ describe('ah-resque-ui', function () {
   it('resque:redisInfo', function (done) {
     if (process.env.FAKEREDIS === 'false' || process.env.REDIS_HOST !== undefined) {
       api.specHelper.runAction('resque:redisInfo', function (response) {
-        response.redisInfo.should.match(/redis_version/)
-        response.redisInfo.should.match(/used_memory/)
-        response.redisInfo.should.match(/used_memory_human/)
+        response.redisInfo.join('\n').should.match(/redis_version/)
+        response.redisInfo.join('\n').should.match(/used_memory/)
+        response.redisInfo.join('\n').should.match(/used_memory_human/)
         done()
       })
     } else {
