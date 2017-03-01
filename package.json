@@ -54,7 +54,8 @@
     ]
   },
   "scripts": {
-    "test": "standard && NODE_ENV=test mocha",
+    "pretest": "standard",
+    "test": "NODE_ENV=test mocha",
     "ui:watch": "webpack --optimize-dedupe --progress --colors --watch",
     "ui:build": "webpack --optimize-dedupe --optimize-minimize --progress",
     "prepublish": "npm run ui:build"

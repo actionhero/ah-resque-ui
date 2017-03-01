@@ -69,7 +69,6 @@ class Client {
       return errorCallback(error.toString(), error)
     })
   }
-
 }
 
 export default Client
