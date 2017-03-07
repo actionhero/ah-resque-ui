@@ -1,4 +1,6 @@
 # AH-RESQUE-UI
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/actionhero/ah-resque-ui.svg)](https://greenkeeper.io/)
 A resque administration website for actionhero
 
 [![Build Status](https://travis-ci.org/evantahler/ah-resque-ui.svg?branch=master)](https://travis-ci.org/evantahler/ah-resque-ui)
