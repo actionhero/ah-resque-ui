@@ -71,16 +71,16 @@ const Overview = React.createClass({
   },
 
   loadFailedCount () {
-    const client = this.props.client
+    const client = this.props.client;
     client.action({}, '/api/resque/resqueFailedCount', 'GET', (data) => {
-      let counts = this.state.counts
-      counts.failed = data.failedCount
+      let counts = this.state.counts;
+      counts.failed = data.failedCount;
       this.setState({counts: counts})
     })
   },
 
   loadDetails () {
-    clearTimeout(this.timer)
+    clearTimeout(this.timer);
 
     if (this.state.refreshInterval > 0) {
       this.timer = setTimeout(() => {
@@ -88,7 +88,7 @@ const Overview = React.createClass({
       }, (this.state.refreshInterval * 1000))
     }
 
-    const client = this.props.client
+    const client = this.props.client;
 
     client.action({}, '/api/resque/resqueDetails', 'GET', (data) => {
       this.setState({
@@ -100,20 +100,20 @@ const Overview = React.createClass({
           workers: Object.keys(data.resqueDetails.workers).length || 0
         }
       }, () => {
-        this.loadFailedCount()
+        this.loadFailedCount();
 
         Object.keys(this.state.queues).forEach((q) => {
-          let found = false
-          let point = {x: new Date().getTime(), y: this.state.queues[q].length}
+          let found = false;
+          let point = {x: new Date().getTime(), y: this.state.queues[q].length};
           this.state.chartConfig.series.forEach((s) => {
             if (s.name === q) {
-              found = true
-              s.data.push(point)
+              found = true;
+              s.data.push(point);
               while (s.data.length > 100) {
                 s.data.shift()
               }
             }
-          })
+          });
           if (!found) {
             this.state.chartConfig.series.push({
               name: q,
@@ -121,12 +121,12 @@ const Overview = React.createClass({
               data: [point]
             })
           }
-        })
+        });
 
-        this.setState({chartConfig: this.state.chartConfig})
+        this.setState({chartConfig: this.state.chartConfig});
 
         Object.keys(this.state.workers).forEach((workerName) => {
-          var worker = this.state.workers[workerName]
+          let worker = this.state.workers[workerName];
           if (typeof worker === 'string') {
             this.state.workers[workerName] = {
               status: worker,
@@ -141,7 +141,32 @@ const Overview = React.createClass({
     })
   },
 
+  clearAllSlow(){
+    const client = this.props.client;
+    Object.keys(this.state.workers).map((workerName) => {
+      let worker = this.state.workers[workerName];
+      if (worker.delta >= 30) {
+        client.action({workerName}, '/api/resque/forceCleanWorker', 'POST', (data) => null);
+      }
+    });
+  },
+
+  retryFailed(){
+    const client = this.props.client;
+    client.action({}, '/api/resque/retryAndRemoveAllFailed', 'POST', (data) => null);
+  },
+
   render () {
+
+    let totalSlow = 0;
+
+    Object.keys(this.state.workers).map((name) => {
+      let worker = this.state.workers[name];
+      if (worker.delta >= 30) {
+        totalSlow++;
+      }
+    });
+
     return (
       <div>
         <h1>Resque Overview</h1>
@@ -228,8 +253,11 @@ const Overview = React.createClass({
           </Col>
 
           <Col md={8}>
-            <h2>Workers ({ numeral(this.state.counts.workers).format('0,0') })</h2>
-
+            <h2>Workers ({ numeral(this.state.counts.workers).format('0,0') }) slow: {totalSlow}</h2>
+            <button onClick={() => this.setState({onlySlow: true})}>Only slow</button>
+            <button onClick={() => this.setState({onlySlow: false})}>Show all</button>
+            <button onClick={() => this.clearAllSlow()}>Clear all slow workers</button>
+            <button onClick={() => this.retryFailed()}>Retry all failed jobs</button>
             <table className='table table-striped table-hover '>
               <thead>
               <tr>
@@ -241,7 +269,12 @@ const Overview = React.createClass({
 
               {
                 Object.keys(this.state.workers).map((name) => {
-                  let worker = this.state.workers[name]
+                  let worker = this.state.workers[name];
+                  if (this.state.onlySlow === true) {
+                    if (worker.delta < 30) {
+                      return null;
+                    }
+                  }
                   return (
                     <tr key={name}>
                       <td><span className={worker.delta > 0 ? 'text-success' : ''}>{ name }</span></td>
