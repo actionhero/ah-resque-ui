@@ -1,11 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router'
-import { Row, Col } from 'react-bootstrap'
+import {Link} from 'react-router'
+import {Row, Col} from 'react-bootstrap'
 
 const Workers = React.createClass({
   getInitialState: function () {
     return {
       timer: null,
+      disableConfirm: false,
+      workingLongerThen: 300,
       refreshInterval: parseInt(this.props.refreshInterval),
       workers: {},
       workerQueues: [],
@@ -27,6 +29,16 @@ const Workers = React.createClass({
 
   componentWillUnmount () {
     clearTimeout(this.timer)
+  },
+
+  handleAutoRemoveWorkers(){
+    this.setState({disableConfirm: true}); // make sure no confirmation boxes
+    let smallestValue = this.state.workingLongerThen;
+    this.state.workerQueues.map((w) => {
+      if (w.worker.delta > smallestValue) {
+        setTimeout(() => this.forceCleanWorker(w.workerName), 100);
+      }
+    });
   },
 
   loadWorkers () {
@@ -94,7 +106,7 @@ const Workers = React.createClass({
   forceCleanWorker (workerName) {
     const client = this.props.client
 
-    if (confirm('Are you sure?')) {
+    if (this.state.disableConfirm || confirm('Are you sure?')) {
       client.action({workerName: workerName}, '/api/resque/forceCleanWorker', 'POST', (data) => {
         this.loadWorkers()
       })
@@ -111,40 +123,45 @@ const Workers = React.createClass({
 
             <table className='table table-striped table-hover '>
               <thead>
-                <tr>
-                  <td><strong>ID</strong></td>
-                  <td><strong>Host</strong></td>
-                  <td><strong>Queues</strong></td>
-                  <td><strong>Status</strong></td>
-                  <td>&nbsp;</td>
-                </tr>
+              <tr>
+                <td><strong>ID</strong></td>
+                <td><strong>Host</strong></td>
+                <td><strong>Queues</strong></td>
+                <td><strong>Status</strong></td>
+                <td>&nbsp;</td>
+              </tr>
               </thead>
               <tbody>
-                {
-                  this.state.workerQueues.map((w) => {
-                    return (
-                      <tr key={w.workerName}>
-                        <td>{ w.id }</td>
-                        <td>{ w.host }</td>
-                        <td>
-                          <ul>
-                            {
-                              w.queues.map((q) => {
-                                return (
-                                  <li key={`${w}-${q}`}>
-                                    <Link to={`queue/${q}`}>{ q }</Link>
-                                  </li>
-                                )
-                              })
-                            }
-                          </ul>
-                        </td>
-                        <td><span className={w.worker.delta > 0 ? 'text-success' : ''}>{ w.worker.statusString }</span></td>
-                        <td><button onClick={this.forceCleanWorker.bind(null, w.workerName)} className='btn btn-xs btn-danger'>Remove Worker</button></td>
-                      </tr>
-                    )
-                  })
-                }
+              {
+                this.state.workerQueues.map((w) => {
+                  return (
+                    <tr key={w.workerName}>
+                      <td>{ w.id }</td>
+                      <td>{ w.host }</td>
+                      <td>
+                        <ul>
+                          {
+                            w.queues.map((q) => {
+                              return (
+                                <li key={`${w}-${q}`}>
+                                  <Link to={`queue/${q}`}>{ q }</Link>
+                                </li>
+                              )
+                            })
+                          }
+                        </ul>
+                      </td>
+                      <td><span className={w.worker.delta > 0 ? 'text-success' : ''}>{ w.worker.statusString }</span>
+                      </td>
+                      <td>
+                        <button onClick={this.forceCleanWorker.bind(null, w.workerName)}
+                                className='btn btn-xs btn-danger'>Remove Worker
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
 
               </tbody>
             </table>
@@ -152,6 +169,22 @@ const Workers = React.createClass({
           </Col>
         </Row>
 
+        <button
+          onClick={() => this.setState({disableConfirm: !this.state.disableConfirm})}
+        >
+          {this.state.disableConfirm ? 'Enable' : 'Disable'} confirmation boxes
+        </button>
+
+        <div style={{display: 'flex', alignItems: 'center'}}>
+          <button onClick={this.handleAutoRemoveWorkers}>
+            Auto remove workers that are working longer then (seconds):
+          </button>
+          <input
+            value={this.state.workingLongerThen}
+            placeholder="Seconds"
+            onChange={(e) => this.setState({workingLongerThen: e.target.value})}
+          />
+        </div>
       </div>
     )
   }

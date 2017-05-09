@@ -1,9 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router'
-import { Row, Col } from 'react-bootstrap'
+import {Link} from 'react-router'
+import {Row, Col} from 'react-bootstrap'
 import ReactHighcharts from 'react-highcharts'
+const numeral = require('numeral');
 
 const Overview = React.createClass({
+  prevState: null,
+  change: {},
+
   getInitialState () {
     return {
       timer: null,
@@ -54,6 +58,10 @@ const Overview = React.createClass({
     }
   },
 
+  componentDidUpdate(prevProps, prevState) {
+    this.prevState = prevState;
+  },
+
   componentDidMount () {
     this.loadDetails()
   },
@@ -101,7 +109,9 @@ const Overview = React.createClass({
             if (s.name === q) {
               found = true
               s.data.push(point)
-              while (s.data.length > 100) { s.data.shift() }
+              while (s.data.length > 100) {
+                s.data.shift()
+              }
             }
           })
           if (!found) {
@@ -142,19 +152,30 @@ const Overview = React.createClass({
             <table className='table table-hover'>
               <tbody>
 
-                {
-                  Object.keys(this.state.stats).map((k) => {
-                    let v = this.state.stats[k]
-                    if (k.indexOf(':') > 0) { return null }
+              {
+                Object.keys(this.state.stats).map((k) => {
+                  let v = this.state.stats[k];
+                  let was = this.prevState && this.prevState.stats[k] ? this.prevState.stats[k] : 0;
+                  if (was !== 0 && was !== v) {
+                    this.change[k] = v - was;
+                  }
+                  if (k.indexOf(':') > 0) {
+                    return null
+                  }
 
-                    return (
-                      <tr key={k}>
-                        <td>{k}</td>
-                        <td>{v}</td>
-                      </tr>
-                    )
-                  })
-                }
+                  return (
+                    <tr key={k}>
+                      <td>{k}</td>
+                      <td>{numeral(v).format('0,0')}</td>
+                      <td
+                        style={{color: 'green'}}
+                      >
+                        {`${this.change[k] > 0 ? '+' : ''}${numeral(this.change[k]).format('0,0')}`}
+                      </td>
+                    </tr>
+                  )
+                })
+              }
 
               </tbody>
             </table>
@@ -170,7 +191,7 @@ const Overview = React.createClass({
                   height: '300px',
                   margin: '0'
                 }
-              }} />
+              }}/>
           </Col>
         </Row>
 
@@ -180,23 +201,23 @@ const Overview = React.createClass({
 
             <table className='table table-striped table-hover '>
               <thead>
-                <tr>
-                  <th>Queue Name</th>
-                  <th>Jobs</th>
-                </tr>
+              <tr>
+                <th>Queue Name</th>
+                <th>Jobs</th>
+              </tr>
               </thead>
               <tbody>
-                <tr className={this.state.counts.failed > 0 ? 'danger' : ''}>
-                  <td><strong><Link to='failed'>failed</Link></strong></td>
-                  <td><strong>{ this.state.counts.failed || 0 }</strong></td>
-                </tr>
+              <tr className={this.state.counts.failed > 0 ? 'danger' : ''}>
+                <td><strong><Link to='failed'>failed</Link></strong></td>
+                <td><strong>{ this.state.counts.failed || 0 }</strong></td>
+              </tr>
 
-                {
+              {
                 Object.keys(this.state.queues).map((q) => {
                   return (
                     <tr key={q}>
                       <td><Link to={`queue/${q}`}>{ q }</Link></td>
-                      <td>{this.state.queues[q].length}</td>
+                      <td>{numeral(this.state.queues[q].length).format('0,0')}</td>
                     </tr>
                   )
                 })
@@ -207,18 +228,18 @@ const Overview = React.createClass({
           </Col>
 
           <Col md={8}>
-            <h2>Workers ({ this.state.counts.workers })</h2>
+            <h2>Workers ({ numeral(this.state.counts.workers).format('0,0') })</h2>
 
             <table className='table table-striped table-hover '>
               <thead>
-                <tr>
-                  <th>Worker Name</th>
-                  <th>Status</th>
-                </tr>
+              <tr>
+                <th>Worker Name</th>
+                <th>Status</th>
+              </tr>
               </thead>
               <tbody>
 
-                {
+              {
                 Object.keys(this.state.workers).map((name) => {
                   let worker = this.state.workers[name]
                   return (

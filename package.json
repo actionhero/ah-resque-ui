@@ -21,7 +21,8 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "async": "^2.1.4"
+    "async": "^2.1.4",
+    "numeral": "^2.0.6"
   },
   "devDependencies": {
     "babel-core": "^6.23.0",
