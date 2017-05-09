@@ -159,13 +159,55 @@ const Overview = React.createClass({
   render () {
 
     let totalSlow = 0;
+    let workersGrouped = {};
 
     Object.keys(this.state.workers).map((name) => {
+      let serverName = name.split('(')[1].split(')')[0];
+      let init = {
+        slow: {},
+        quick: {},
+      };
+      workersGrouped[serverName] = typeof workersGrouped[serverName] === 'undefined' ? init : workersGrouped[serverName];
+
+      let queue = name.split(' ')[0];
+      workersGrouped[serverName].slow[queue] = typeof workersGrouped[serverName].slow[queue] === 'undefined' ? 0 : workersGrouped[serverName].slow[queue];
+      workersGrouped[serverName].quick[queue] = typeof workersGrouped[serverName].quick[queue] === 'undefined' ? 0 : workersGrouped[serverName].quick[queue];
+
       let worker = this.state.workers[name];
-      if (worker.delta >= 30) {
+      if (worker.delta && worker.delta >= 30) {
         totalSlow++;
+        workersGrouped[serverName].slow[queue]++;
+      } else {
+        workersGrouped[serverName].quick[queue]++;
       }
     });
+
+    let stats = [];
+
+    Object.keys(workersGrouped).forEach((key) => {
+      stats.push(
+        <tr>
+          <td>{key}</td>
+          <td>{workersGrouped[key].slow.httpStatus}</td>
+          <td>{workersGrouped[key].slow.screenshot}</td>
+          <td>{workersGrouped[key].quick.httpStatus}</td>
+          <td>{workersGrouped[key].quick.screenshot}</td>
+        </tr>
+      );
+    });
+
+    stats =
+      <table style={{width: '100%'}}>
+        <tr style={{fontWeight: 600}}>
+          <td>Server</td>
+          <td>slow http status</td>
+          <td>slow screenshots</td>
+          <td>quick http status</td>
+          <td>quick screenshots</td>
+        </tr>
+        {stats}
+      </table>;
+
 
     return (
       <div>
@@ -253,7 +295,9 @@ const Overview = React.createClass({
           </Col>
 
           <Col md={8}>
-            <h2>Workers ({ numeral(this.state.counts.workers).format('0,0') }) slow: {totalSlow}</h2>
+            <h2>Workers total: { numeral(this.state.counts.workers).format('0,0') } slow: {totalSlow}</h2>
+            <div>{stats}</div>
+
             <button onClick={() => this.setState({onlySlow: true})}>Only slow</button>
             <button onClick={() => this.setState({onlySlow: false})}>Show all</button>
             <button onClick={() => this.clearAllSlow()}>Clear all slow workers</button>
@@ -271,7 +315,7 @@ const Overview = React.createClass({
                 Object.keys(this.state.workers).map((name) => {
                   let worker = this.state.workers[name];
                   if (this.state.onlySlow === true) {
-                    if (worker.delta < 30) {
+                    if (!worker.delta || worker.delta < 30) {
                       return null;
                     }
                   }
