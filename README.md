@@ -140,6 +140,23 @@ The main point of configuration will be the React client's `baseRoute` which is 
 
 The client can be assigned a `notify(errorMessage, severity)` to plug into your error reporters for failed requests.
 
+## Testing & Developing
+* Create a new ActionHero project
+  * (in a new directory)
+  * `npm install actionhero`
+  * `./node_modules/.bin/actionhero generate`
+  * `npm install`
+  * Alternativley, you can use the `npm link` workflow https://docs.npmjs.com/cli/link
+* Creae a symlink to this project inside of the new ActionHero project's `node_modules` folder
+  * `cd node_modules && link -s ../../ah-resque-ui/ .`
+* Link the ActionHero plugin
+  * `npm run actionhero -- link --name ah-resque-ui`
+* Start this ActionHero server
+  * `npm start`
+* In another shell, run the webpack to regenerate your changes
+  * (in this project)
+  * `npm run ui:watch`
+
 ## Thanks
 - [Theme](https://bootswatch.com)
 - [HighCharts](http://www.highcharts.com/)
