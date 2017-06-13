@@ -14,7 +14,7 @@ var doBash = function (commands, callback) {
 
 exports.specHelper = {
   // testDir: '/tmp/ah-resque-ui',
-  testDir: os.tmpDir() + '/ah-resque-ui',
+  testDir: os.tmpdir() + '/ah-resque-ui',
   projectDir: path.normalize(path.join(__dirname, '..')),
 
   build: function (callback) {
