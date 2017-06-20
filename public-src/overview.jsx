@@ -11,6 +11,7 @@ const Overview = React.createClass({
   getInitialState () {
     return {
       timer: null,
+      onlySlow: true,
       refreshInterval: parseInt(this.props.refreshInterval),
       queues: {},
       workers: [],
@@ -186,7 +187,7 @@ const Overview = React.createClass({
 
     Object.keys(workersGrouped).forEach((key) => {
       stats.push(
-        <tr>
+        <tr key={key}>
           <td>{key}</td>
           <td>{workersGrouped[key].slow.httpStatus}</td>
           <td>{workersGrouped[key].slow.screenshot}</td>
@@ -198,6 +199,7 @@ const Overview = React.createClass({
 
     stats =
       <table style={{width: '100%'}}>
+        <tbody>
         <tr style={{fontWeight: 600}}>
           <td>Server</td>
           <td>slow http status</td>
@@ -206,6 +208,7 @@ const Overview = React.createClass({
           <td>quick screenshots</td>
         </tr>
         {stats}
+        </tbody>
       </table>;
 
 
@@ -298,8 +301,18 @@ const Overview = React.createClass({
             <h2>Workers total: { numeral(this.state.counts.workers).format('0,0') } slow: {totalSlow}</h2>
             <div>{stats}</div>
 
-            <button onClick={() => this.setState({onlySlow: true})}>Only slow</button>
-            <button onClick={() => this.setState({onlySlow: false})}>Show all</button>
+            <button
+              style={{fontWeight: this.state.onlySlow ? 900 : 100}}
+              onClick={() => this.setState({onlySlow: true})}
+            >
+              Only slow
+            </button>
+            <button
+              style={{fontWeight: this.state.onlySlow ? 100 : 900}}
+              onClick={() => this.setState({onlySlow: false})}
+            >
+              Show all
+            </button>
             <button onClick={() => this.clearAllSlow()}>Clear all slow workers</button>
             <button onClick={() => this.retryFailed()}>Retry all failed jobs</button>
             <table className='table table-striped table-hover '>
