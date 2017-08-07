@@ -1,7 +1,8 @@
 exports.default = {
   'ah-resque-ui': function (api) {
     return {
-      // the name of the middleware which will protect all actions in this plugin
+      // the name of the middleware(s) which will protect all actions in this plugin
+      // ie middleware: ['logged-in-session', 'role-admin']
       middleware: null
     }
   }

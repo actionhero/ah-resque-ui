@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "ah-resque-ui",
   "description": "A resque administration website for actionhero",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "async": "^2.1.4"
+    "async": "^2.5.0"
   },
   "devDependencies": {
     "babel-core": "^6.23.0",

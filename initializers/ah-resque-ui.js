@@ -1,4 +1,5 @@
 var path = require('path')
+var async = require('async')
 
 module.exports = {
   load: 99999999,
@@ -33,14 +34,33 @@ module.exports = {
         global: false,
         preProcessor: function (data, callback) {
           return callback()
+        },
+        postProcessor: function (data, callback) {
+          return callback()
         }
       }
     }
 
     if (api.config['ah-resque-ui'].middleware) {
-      var sourceMiddleware = api.actions.middleware[api.config['ah-resque-ui'].middleware]
-      middleware['ah-resque-ui-proxy-middleware'].preProcessor = sourceMiddleware.preProcessor
-      middleware['ah-resque-ui-proxy-middleware'].postProcessor = sourceMiddleware.postProcessor
+      middleware['ah-resque-ui-proxy-middleware'].preProcessor = function (data, callback) {
+        var preJobs = []
+        api.config['ah-resque-ui'].middleware.forEach(function (middlewareName) {
+          if (api.actions.middleware[middlewareName].preProcessor) {
+            preJobs.push(function (done) { api.actions.middleware[middlewareName].preProcessor(data, done) })
+          }
+        })
+        async.series(preJobs, callback)
+      }
+
+      middleware['ah-resque-ui-proxy-middleware'].postProcessor = function (data, callback) {
+        var postJobs = []
+        api.config['ah-resque-ui'].middleware.forEach(function (middlewareName) {
+          if (api.actions.middleware[middlewareName].postProcessor) {
+            postJobs.push(function (done) { api.actions.middleware[middlewareName].postProcessor(data, done) })
+          }
+        })
+        async.series(postJobs, callback)
+      }
     }
 
     api.actions.addMiddleware(middleware['ah-resque-ui-proxy-middleware'])

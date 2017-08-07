@@ -130,7 +130,7 @@ module.exports = {
 
 Now you can apply the `logged-in-session` middleware to your actions to protect them.  
 
-To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = 'logged-in-session'` in the provided configuration file.
+To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['logged-in-session']` in the provided configuration file.
 
 ## React
 
