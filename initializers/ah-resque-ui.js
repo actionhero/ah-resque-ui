@@ -1,9 +1,13 @@
-var path = require('path')
-var async = require('async')
+const {Initializer, api} = require('actionhero')
 
-module.exports = {
-  load: 99999999,
-  initialize: function (api, next) {
+module.exports = class AHResqueUI extends Initializer {
+  constructor () {
+    super()
+    this.name = 'ah-resque-ui'
+    this.loadPriority = 99999999
+  }
+
+  async initialize () {
     /* ----- Route Injection ----- */
 
     api.routes.registerRoute('get', '/resque/packageDetails', 'resque:packageDetails')
@@ -28,49 +32,35 @@ module.exports = {
 
     /* ----- Proxy Middleware ----- */
 
-    var middleware = {
+    const middleware = {
       'ah-resque-ui-proxy-middleware': {
         name: 'ah-resque-ui-proxy-middleware',
         global: false,
-        preProcessor: function (data, callback) {
-          return callback()
-        },
-        postProcessor: function (data, callback) {
-          return callback()
-        }
+        preProcessor: () => { },
+        postProcessor: () => { }
       }
     }
 
     if (api.config['ah-resque-ui'].middleware) {
-      middleware['ah-resque-ui-proxy-middleware'].preProcessor = function (data, callback) {
-        var preJobs = []
-        api.config['ah-resque-ui'].middleware.forEach(function (middlewareName) {
-          if (api.actions.middleware[middlewareName].preProcessor) {
-            preJobs.push(function (done) { api.actions.middleware[middlewareName].preProcessor(data, done) })
+      middleware['ah-resque-ui-proxy-middleware'].preProcessor = async (data) => {
+        for (let i in api.config['ah-resque-ui'].middleware) {
+          let middleware = api.config['ah-resque-ui'].middleware[i]
+          if (typeof middleware.preProcessor === 'function') {
+            await middleware.preProcessor(data)
           }
-        })
-        async.series(preJobs, callback)
+        }
       }
 
-      middleware['ah-resque-ui-proxy-middleware'].postProcessor = function (data, callback) {
-        var postJobs = []
-        api.config['ah-resque-ui'].middleware.forEach(function (middlewareName) {
-          if (api.actions.middleware[middlewareName].postProcessor) {
-            postJobs.push(function (done) { api.actions.middleware[middlewareName].postProcessor(data, done) })
+      middleware['ah-resque-ui-proxy-middleware'].postProcessor = async (data) => {
+        for (let i in api.config['ah-resque-ui'].middleware) {
+          let middleware = api.config['ah-resque-ui'].middleware[i]
+          if (typeof middleware.postProcessor === 'function') {
+            await middleware.postProcessor(data)
           }
-        })
-        async.series(postJobs, callback)
+        }
       }
     }
 
     api.actions.addMiddleware(middleware['ah-resque-ui-proxy-middleware'])
-
-    var ahVersionSplit = api.actionheroVersion.split('.')
-    if (ahVersionSplit.length > 0 && parseInt(ahVersionSplit[0]) <= 12) {
-      api.log('[ah-resque-ui] Your ActionHero version (' + api.actionheroVersion + ') does not support all required resque functions. Adding polyfills', 'warning')
-      require(path.join(__dirname, '..', 'lib/polyfill.js'))(api)
-    }
-
-    next()
   }
 }

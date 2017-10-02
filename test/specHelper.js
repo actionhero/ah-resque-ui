@@ -1,28 +1,30 @@
-var os = require('os')
-var path = require('path')
-var async = require('async')
-var exec = require('child_process').exec
+const os = require('os')
+const path = require('path')
+const util = require('util')
+const exec = require('child_process').exec
 
-var doBash = function (commands, callback) {
+const doBash = async (commands) => {
   if (!Array.isArray(commands)) { commands = [commands] }
-  var fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\''
+  const fullCommand = '/bin/bash -c \'' + commands.join(' && ') + '\''
   console.log('>> ' + fullCommand)
-  exec(fullCommand, function (error, data) {
-    callback(error, data)
-  })
+  return util.promisify(exec)(fullCommand)
 }
 
-exports.specHelper = {
-  // testDir: '/tmp/ah-resque-ui',
-  testDir: os.tmpdir() + '/ah-resque-ui',
-  projectDir: path.normalize(path.join(__dirname, '..')),
+exports.specHelper = class SpecHelper {
+  constructor () {
+    this.testDir = os.tmpdir() + '/ah-resque-ui'
+    this.projectDir = path.normalize(path.join(__dirname, '..'))
 
-  build: function (callback) {
-    var jobs = []
-    var commands = [
+    console.log(`using ${this.testDir}`)
+  }
+
+  async build () {
+    let actionHeroVersion = require('./../package.json').peerDependencies.actionhero
+
+    const commands = [
       'rm -rf ' + this.testDir,
       'mkdir -p ' + this.testDir,
-      'cd ' + this.testDir + ' && npm install actionhero',
+      'cd ' + this.testDir + ' && npm install actionhero@' + actionHeroVersion,
       'cd ' + this.testDir + ' && ./node_modules/.bin/actionhero generate',
       'cd ' + this.testDir + ' && npm install',
       'rm -f ' + this.testDir + '/node_modules/ah-resque-ui',
@@ -31,32 +33,22 @@ exports.specHelper = {
     ]
 
     if (process.env.SKIP_BUILD !== 'true') {
-      commands.forEach(function (cmd) {
-        jobs.push(function (done) { doBash(cmd, done) })
-      })
+      for (let i in commands) { await doBash(commands[i]) }
     }
+  }
 
-    async.series(jobs, callback)
-  },
+  async start () {
+    const {Process} = require(this.testDir + '/node_modules/actionhero/index.js')
+    this.actionhero = new Process()
+    process.env.PROJECT_ROOT = this.testDir
+    this.api = await this.actionhero.start()
+    this.api.resque.multiWorker.options.minTaskProcessors = 1
+    this.api.resque.multiWorker.options.maxTaskProcessors = 1
+  }
 
-  start: function (callback) {
-    var self = this
-    var ActionheroPrototype = require(self.testDir + '/node_modules/actionhero/actionhero.js')
-    self.actionhero = new ActionheroPrototype()
-    process.env.PROJECT_ROOT = self.testDir
-    self.actionhero.start(function (error, a) {
-      if (error) { throw error }
-      self.api = a
-      self.api.resque.multiWorker.options.minTaskProcessors = 1
-      self.api.resque.multiWorker.options.maxTaskProcessors = 1
-      callback()
-    })
-  },
-
-  stop: function (callback) {
-    var self = this
-    self.api.resque.multiWorker.options.minTaskProcessors = 1
-    self.api.resque.multiWorker.options.maxTaskProcessors = 1
-    self.actionhero.stop(callback)
+  async stop () {
+    this.api.resque.multiWorker.options.minTaskProcessors = 0
+    this.api.resque.multiWorker.options.maxTaskProcessors = 0
+    await this.actionhero.stop()
   }
 }
