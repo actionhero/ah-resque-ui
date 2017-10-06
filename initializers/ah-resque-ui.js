@@ -41,7 +41,7 @@ module.exports = class AHResqueUI extends Initializer {
       }
     }
 
-    if (api.config['ah-resque-ui'].middleware) {
+    if (api.config['ah-resque-ui'].middleware && api.config['ah-resque-ui'].middleware.length > 0) {
       middleware['ah-resque-ui-proxy-middleware'].preProcessor = async (data) => {
         for (let i in api.config['ah-resque-ui'].middleware) {
           let middleware = api.config['ah-resque-ui'].middleware[i]

@@ -27,7 +27,7 @@ exports.ResuqePackageDetails = class ResuqePackageDetails extends RequeAction {
   async run ({response}) {
     response.packageDetails = {}
     response.packageDetails.packageJSON = packageJSON
-    response.packageDetails.redis = [api.config.redis]
+    response.packageDetails.redis = api.config.redis.tasks.args
   }
 }
 
