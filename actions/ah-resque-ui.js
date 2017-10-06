@@ -329,12 +329,12 @@ exports.ResuqeDelDelayed = class ResuqeDelDelayed extends RequeAction {
     }
   }
 
-  async run ({params}) {
-    let delayed = api.tasks.delayedAt(params.timestamp)
+  async run ({params, response}) {
+    let delayed = await api.tasks.delayedAt(params.timestamp)
     if (delayed.tasks.length === 0 || !delayed.tasks[params.count]) { throw new Error('delayed job not found') }
 
     let job = delayed.tasks[params.count]
-    await api.tasks.delDelayed(job.queue, job.class, job.args)
+    response.timestamps = await api.tasks.delDelayed(job.queue, job.class, job.args)
   }
 }
 
