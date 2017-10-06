@@ -1,459 +1,366 @@
-var path = require('path')
-var async = require('async')
-var os = require('os')
-var packageJSON = require(path.normalize(path.join(__dirname, '..', 'package.json')))
+const path = require('path')
+const os = require('os')
+const packageJSON = require(path.join(__dirname, '..', 'package.json'))
+const {api, Action} = require('actionhero')
 
-exports.packageDetails = {
-  name: 'resque:packageDetails',
-  description: 'I return the resque package metadata',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
+// A helper class
 
-  run: function (api, data, next) {
-    data.response.packageDetails = {}
-    data.response.packageDetails.packageJSON = packageJSON
-    // AH v12 check
-    if (api.config.redis.client) {
-      data.response.packageDetails.redis = api.config.redis.client.args
-    } else {
-      data.response.packageDetails.redis = [api.config.redis]
-    }
-
-    next()
+class RequeAction extends Action {
+  constructor () {
+    super()
+    this.middleware = ['ah-resque-ui-proxy-middleware']
+    this.logLevel = 'debug'
+    this.toDocument = false
   }
 }
 
-exports.redisInfo = {
-  name: 'resque:redisInfo',
-  description: 'I return the results of redis info',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
+// The actions
 
-  run: function (api, data, next) {
-    try {
-      api.resque.queue.connection.redis.info((error, redisInfo) => {
-        if (redisInfo) { data.response.redisInfo = redisInfo.split(os.EOL) }
-        next(error)
-      })
-    } catch (error) {
-      if (error.toString().match(/INFO is not implemented in fakeredis/)) {
-        return next(null)
-      } else {
-        throw error
+exports.ResuqePackageDetails = class ResuqePackageDetails extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:packageDetails'
+    this.description = 'I return the resque package metadata'
+    this.inputs = {}
+  }
+
+  async run ({response}) {
+    response.packageDetails = {}
+    response.packageDetails.packageJSON = packageJSON
+    response.packageDetails.redis = api.config.redis.tasks.args
+  }
+}
+
+exports.ResuqeRedisInfo = class ResuqeRedisInfo extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:redisInfo'
+    this.description = 'I return the results of redis info'
+    this.inputs = {}
+  }
+
+  async run ({response}) {
+    let redisInfo = await api.resque.queue.connection.redis.info()
+    if (redisInfo) { response.redisInfo = redisInfo.split(os.EOL) }
+  }
+}
+
+exports.ResuqeResqueDetails = class ResuqeResqueDetails extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:resqueDetails'
+    this.description = 'I return the results of api.tasks.details'
+    this.inputs = {}
+  }
+
+  async run ({response}) {
+    response.resqueDetails = await api.tasks.details()
+  }
+}
+
+exports.ResuqeLoadWorkerQueues = class ResuqeLoadWorkerQueues extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:loadWorkerQueues'
+    this.description = 'I return the results of api.tasks.workers'
+    this.inputs = {}
+  }
+
+  async run ({response}) {
+    response.workerQueues = await api.tasks.workers()
+  }
+}
+
+exports.ResuqeForceCleanWorker = class ResuqeForceCleanWorker extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:forceCleanWorker'
+    this.description = 'I remove a worker from resque'
+    this.inputs = {
+      workerName: { required: true }
+    }
+  }
+
+  async run ({params, response}) {
+    response.generatedErrorPayload = await api.resque.queue.forceCleanWorker(params.workerName)
+  }
+}
+
+exports.ResuqeFailedCount = class ResuqeFailedCount extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:resqueFailedCount'
+    this.description = 'I return a count of failed jobs'
+    this.inputs = {}
+  }
+
+  async run ({response}) {
+    response.failedCount = await api.tasks.failedCount()
+  }
+}
+
+exports.ResuqeQueued = class ResuqeQueued extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:queued'
+    this.description = 'I list enqueued jobs'
+    this.inputs = {
+      queue: {
+        required: true
+      },
+      start: {
+        required: true,
+        formatter: function (p) { return parseInt(p) },
+        default: 0
+      },
+      stop: {
+        required: true,
+        formatter: function (p) { return parseInt(p) },
+        default: 99
       }
     }
   }
-}
 
-exports.resqueDetails = {
-  name: 'resque:resqueDetails',
-  description: 'I return the results of api.tasks.details',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  run: function (api, data, next) {
-    api.tasks.details(function (error, resqueDetails) {
-      data.response.resqueDetails = resqueDetails
-      next(error)
-    })
+  async run ({params, response}) {
+    response.queueLength = await api.resque.queue.length(params.queue)
+    response.jobs = await api.tasks.queued(params.queue, params.start, params.stop)
   }
 }
 
-exports.loadWorkerQueues = {
-  name: 'resque:loadWorkerQueues',
-  description: 'I return the results of api.tasks.workers',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  run: function (api, data, next) {
-    api.tasks.workers(function (error, workerQueues) {
-      data.response.workerQueues = workerQueues
-      next(error)
-    })
-  }
-}
-
-exports.forceCleanWorker = {
-  name: 'resque:forceCleanWorker',
-  description: 'I remove a worker from resque',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    workerName: { required: true }
-  },
-
-  run: function (api, data, next) {
-    api.resque.queue.forceCleanWorker(data.params.workerName, function (error, generatedErrorPayload) {
-      data.response.generatedErrorPayload = generatedErrorPayload
-      next(error)
-    })
-  }
-}
-
-exports.resqueFailedCount = {
-  name: 'resque:resqueFailedCount',
-  description: 'I return a count of failed jobs',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  run: function (api, data, next) {
-    api.tasks.failedCount(function (error, failedCount) {
-      data.response.failedCount = failedCount
-      next(error)
-    })
-  }
-}
-
-exports.queued = {
-  name: 'resque:queued',
-  description: 'I list enqueued jobs',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    queue: {
-      required: true
-    },
-    start: {
-      required: true,
-      formatter: function (p) { return parseInt(p) },
-      default: 0
-    },
-    stop: {
-      required: true,
-      formatter: function (p) { return parseInt(p) },
-      default: 99
+exports.ResuqeDelQueue = class ResuqeDelQueue extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:delQueue'
+    this.description = 'I delete a queue'
+    this.inputs = {
+      queue: { required: true }
     }
-  },
+  }
 
-  run: function (api, data, next) {
-    api.resque.queue.length(data.params.queue, function (error, length) {
-      if (error) { return next(error) }
-      data.response.queueLength = length
-      api.tasks.queued(data.params.queue, data.params.start, data.params.stop, function (error, jobs) {
-        data.response.jobs = jobs
-        next(error)
-      })
-    })
+  async run ({response, params}) {
+    response.deleted = await api.tasks.delQueue(params.queue)
   }
 }
 
-exports.delQueue = {
-  name: 'resque:delQueue',
-  description: 'I delete a queue',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    queue: {
-      required: true
-    }
-  },
-
-  run: function (api, data, next) {
-    api.tasks.delQueue(data.params.queue, next)
-  }
-}
-
-exports.resqueFailed = {
-  name: 'resque:resqueFailed',
-  description: 'I return failed jobs',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    start: {
-      required: true,
-      formatter: function (p) { return parseInt(p) },
-      default: 0
-    },
-    stop: {
-      required: true,
-      formatter: function (p) { return parseInt(p) },
-      default: 99
-    }
-  },
-
-  run: function (api, data, next) {
-    api.tasks.failed(data.params.start, data.params.stop, function (error, failed) {
-      data.response.failed = failed
-      next(error)
-    })
-  }
-}
-
-exports.removeFailed = {
-  name: 'resque:removeFailed',
-  description: 'I remove a failed job',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    id: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
-    }
-  },
-
-  run: function (api, data, next) {
-    api.tasks.failed(data.params.id, data.params.id, function (error, failed) {
-      if (error) { return next(error) }
-      if (!failed) { return next(new Error('failed job not found')) }
-      api.tasks.removeFailed(failed[0], next)
-    })
-  }
-}
-
-exports.removeAllFailed = {
-  name: 'resque:removeAllFailed',
-  description: 'I remove all failed jobs',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  run: function (api, data, next) {
-    var failedJob
-    var act = function (done) {
-      api.tasks.failed(0, 0, function (error, failed) {
-        if (error) { return done(error) }
-        failedJob = failed[0]
-        if (!failed || failed.length === 0) { return done() }
-        api.tasks.removeFailed(failedJob, done)
-      })
-    }
-
-    var check = function () {
-      return !(failedJob === undefined)
-    }
-
-    async.doWhilst(act, check, next)
-  }
-}
-
-exports.retryAndRemoveFailed = {
-  name: 'resque:retryAndRemoveFailed',
-  description: 'I retry a failed job',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    id: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
-    }
-  },
-
-  run: function (api, data, next) {
-    api.tasks.failed(data.params.id, data.params.id, function (error, failed) {
-      if (error) { return next(error) }
-      if (!failed) { return next(new Error('failed job not found')) }
-      api.tasks.retryAndRemoveFailed(failed[0], next)
-    })
-  }
-}
-
-exports.retryAndRemoveAllFailed = {
-  name: 'resque:retryAndRemoveAllFailed',
-  description: 'I retry all failed jobs',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  run: function (api, data, next) {
-    var failedJob
-    var act = function (done) {
-      api.tasks.failed(0, 0, function (error, failed) {
-        if (error) { return done(error) }
-        failedJob = failed[0]
-        if (!failed || failed.length === 0) { return done() }
-        api.tasks.retryAndRemoveFailed(failedJob, done)
-      })
-    }
-
-    var check = function () {
-      return !(failedJob === undefined)
-    }
-
-    async.doWhilst(act, check, next)
-  }
-}
-
-exports.locks = {
-  name: 'resque:locks',
-  description: 'I return all locks',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  run: function (api, data, next) {
-    api.tasks.locks(function (error, locks) {
-      data.response.locks = locks
-      next(error)
-    })
-  }
-}
-
-exports.delLock = {
-  name: 'resque:delLock',
-  description: 'I delte a lock',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    lock: { required: true }
-  },
-
-  run: function (api, data, next) {
-    api.tasks.delLock(data.params.lock, function (error, count) {
-      data.response.count = count
-      next(error)
-    })
-  }
-}
-
-exports.delayedjobs = {
-  name: 'resque:delayedjobs',
-  description: 'I return paginated lists of delayedjobs',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    start: {
-      required: true,
-      formatter: function (p) { return parseInt(p) },
-      default: 0
-    },
-    stop: {
-      required: true,
-      formatter: function (p) { return parseInt(p) },
-      default: 99
-    }
-  },
-
-  run: function (api, data, next) {
-    var jobs = []
-    var timestamps = []
-    var delayedjobs = {}
-
-    api.tasks.timestamps(function (error, allTimestmps) {
-      if (error) { next(error) }
-      if (allTimestmps.length === 0) { return next() }
-
-      for (var i = 0; i < allTimestmps.length; i++) {
-        if (i >= data.params.start && i <= data.params.stop) { timestamps.push(allTimestmps[i]) }
+exports.ResuqeResqueFailed = class ResuqeResqueFailed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:resqueFailed'
+    this.description = 'I return failed jobs'
+    this.inputs = {
+      start: {
+        required: true,
+        formatter: function (p) { return parseInt(p) },
+        default: 0
+      },
+      stop: {
+        required: true,
+        formatter: function (p) { return parseInt(p) },
+        default: 99
       }
+    }
+  }
 
-      timestamps.forEach(function (timestamp) {
-        jobs.push(function (done) {
-          api.tasks.delayedAt(timestamp, function (error, delayed) {
-            delayedjobs[timestamp] = delayed
-            done(error)
-          })
-        })
-      })
-
-      async.series(jobs, function (error) {
-        data.response.delayedjobs = delayedjobs
-        data.response.timestampsCount = allTimestmps.length
-        next(error)
-      })
-    })
+  async run ({response, params}) {
+    response.failed = await api.tasks.failed(params.start, params.stop)
   }
 }
 
-exports.delDelayed = {
-  name: 'resque:delDelayed',
-  description: 'I delete a delayed job',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
-
-  inputs: {
-    timestamp: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
-    },
-    count: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
-    }
-  },
-
-  run: function (api, data, next) {
-    api.tasks.delayedAt(data.params.timestamp, function (error, delayed) {
-      if (error) { return next(error) }
-      if (delayed.length === 0 || !delayed[data.params.count]) {
-        return next(new Error('delayed job not found'))
+exports.ResuqeRemoveFailed = class ResuqeRemoveFailed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:removeFailed'
+    this.description = 'I remove a failed job'
+    this.inputs = {
+      id: {
+        required: true,
+        formatter: function (p) { return parseInt(p) }
       }
+    }
+  }
 
-      var job = delayed[data.params.count]
-      api.tasks.delDelayed(job.queue, job.class, job.args, next)
-    })
+  async run ({params}) {
+    let failed = await api.tasks.failed(params.id, params.id)
+    if (!failed) { throw Error('failed job not found') }
+    await api.tasks.removeFailed(failed[0])
   }
 }
 
-exports.runDelayed = {
-  name: 'resque:runDelayed',
-  description: 'I run a delayed job now',
-  middleware: ['ah-resque-ui-proxy-middleware'],
-  outputExample: {},
-  logLevel: 'debug',
-  toDocument: false,
+exports.ResuqeRemoveAllFailed = class ResuqeRemoveAllFailed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:removeAllFailed'
+    this.description = 'I remove all failed jobs'
+    this.inputs = {}
+  }
 
-  inputs: {
-    timestamp: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
-    },
-    count: {
-      required: true,
-      formatter: function (p) { return parseInt(p) }
+  async run () {
+    let failed = await api.tasks.failed(0, 0)
+    if (failed && failed.length > 0) {
+      let failedJob = failed[0]
+      await api.tasks.removeFailed(failedJob)
+      return this.run()
     }
-  },
+  }
+}
 
-  run: function (api, data, next) {
-    api.tasks.delayedAt(data.params.timestamp, function (error, delayed) {
-      if (error) { return next(error) }
-      if (delayed.length === 0 || !delayed[data.params.count]) {
-        return next(new Error('delayed job not found'))
+exports.ResuqeRetryAndRemoveFailed = class ResuqeRetryAndRemoveFailed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:retryAndRemoveFailed'
+    this.description = 'I retry a failed job'
+    this.inputs = {
+      id: {
+        required: true,
+        formatter: function (p) { return parseInt(p) }
       }
+    }
+  }
 
-      var job = delayed[data.params.count]
-      api.tasks.delDelayed(job.queue, job.class, job.args, function (error) {
-        if (error) { return next(error) }
-        api.tasks.enqueue(job.class, job.args, job.queue, next)
-      })
-    })
+  async run ({params}) {
+    let failed = await api.tasks.failed(params.id, params.id)
+    if (!failed) { throw new Error('failed job not found') }
+    await api.tasks.retryAndRemoveFailed(failed[0])
+  }
+}
+
+exports.ResuqeRetryAndRemoveAllFailed = class ResuqeRetryAndRemoveAllFailed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:retryAndRemoveAllFailed'
+    this.description = 'I retry all failed jobs'
+    this.inputs = {}
+  }
+
+  async run () {
+    let failed = await api.tasks.failed(0, 0)
+    if (failed && failed.length > 0) {
+      let failedJob = failed[0]
+      await api.tasks.retryAndRemoveFailed(failedJob)
+      return this.run()
+    }
+  }
+}
+
+exports.ResuqeLocks = class ResuqeLocks extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:locks'
+    this.description = 'I return all locks'
+    this.inputs = {}
+  }
+
+  async run ({response}) {
+    response.locks = await api.tasks.locks()
+  }
+}
+
+exports.ResuqeDelLock = class ResuqeDelLock extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:delLock'
+    this.description = 'I delte a lock'
+    this.inputs = {
+      lock: { required: true }
+    }
+  }
+
+  async run ({response, params}) {
+    response.count = await api.tasks.delLock(params.lock)
+  }
+}
+
+exports.ResuqeDelayedJobs = class ResuqeDelayedJobs extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:delayedjobs'
+    this.description = 'I return paginated lists of delayedjobs'
+    this.inputs = {
+      start: {
+        required: true,
+        formatter: function (p) { return parseInt(p) },
+        default: 0
+      },
+      stop: {
+        required: true,
+        formatter: function (p) { return parseInt(p) },
+        default: 99
+      }
+    }
+  }
+
+  async run ({response, params}) {
+    let timestamps = []
+    let delayedjobs = {}
+
+    response.timestampsCount = 0
+    let allTimestamps = await api.tasks.timestamps()
+    if (allTimestamps.lenght === 0) { return }
+
+    response.timestampsCount = allTimestamps.length
+
+    for (let i = 0; i < allTimestamps.length; i++) {
+      if (i >= params.start && i <= params.stop) { timestamps.push(allTimestamps[i]) }
+    }
+
+    for (let j in timestamps) {
+      let timestamp = timestamps[j]
+      delayedjobs[timestamp] = await api.tasks.delayedAt(timestamp)
+    }
+
+    response.delayedjobs = delayedjobs
+  }
+}
+
+exports.ResuqeDelDelayed = class ResuqeDelDelayed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:delDelayed'
+    this.description = 'I delete a delayed job'
+    this.inputs = {
+      timestamp: {
+        required: true,
+        formatter: function (p) { return parseInt(p) }
+      },
+      count: {
+        required: true,
+        formatter: function (p) { return parseInt(p) }
+      }
+    }
+  }
+
+  async run ({params}) {
+    let delayed = api.tasks.delayedAt(params.timestamp)
+    if (delayed.tasks.length === 0 || !delayed.tasks[params.count]) { throw new Error('delayed job not found') }
+
+    let job = delayed.tasks[params.count]
+    await api.tasks.delDelayed(job.queue, job.class, job.args)
+  }
+}
+
+exports.ResuqeRunDelayed = class ResuqeRunDelayed extends RequeAction {
+  constructor () {
+    super()
+    this.name = 'resque:runDelayed'
+    this.description = 'I run a delayed job now'
+    this.inputs = {
+      timestamp: {
+        required: true,
+        formatter: function (p) { return parseInt(p) }
+      },
+      count: {
+        required: true,
+        formatter: function (p) { return parseInt(p) }
+      }
+    }
+  }
+
+  async run ({params}) {
+    let delayed = await api.tasks.delayedAt(params.timestamp)
+    if (delayed.tasks.length === 0 || !delayed.tasks[params.count]) { throw new Error('delayed job not found') }
+
+    let job = delayed.tasks[params.count]
+    await api.tasks.delDelayed(job.queue, job.class, job.args)
+    await api.tasks.enqueue(job.class, job.args, job.queue)
   }
 }

@@ -126,7 +126,7 @@ const Delayed = React.createClass({
                         </thead>
                         <tbody>
                           {
-                            this.state.delayedjobs[t.key].map((job) => {
+                            this.state.delayedjobs[t.key].tasks.map((job) => {
                               index++
                               return (
                                 <tr key={`${t.date.getTime()}-${job.queue}-${JSON.stringify(job.args)}`}>
