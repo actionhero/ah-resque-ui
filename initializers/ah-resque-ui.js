@@ -44,7 +44,8 @@ module.exports = class AHResqueUI extends Initializer {
     if (api.config['ah-resque-ui'].middleware && api.config['ah-resque-ui'].middleware.length > 0) {
       middleware['ah-resque-ui-proxy-middleware'].preProcessor = async (data) => {
         for (let i in api.config['ah-resque-ui'].middleware) {
-          let middleware = api.config['ah-resque-ui'].middleware[i]
+          let middlewareName = api.config['ah-resque-ui'].middleware[i]
+          let middleware = api.actions.middleware[middlewareName]
           if (typeof middleware.preProcessor === 'function') {
             await middleware.preProcessor(data)
           }
@@ -53,7 +54,8 @@ module.exports = class AHResqueUI extends Initializer {
 
       middleware['ah-resque-ui-proxy-middleware'].postProcessor = async (data) => {
         for (let i in api.config['ah-resque-ui'].middleware) {
-          let middleware = api.config['ah-resque-ui'].middleware[i]
+          let middlewareName = api.config['ah-resque-ui'].middleware[i]
+          let middleware = api.actions.middleware[middlewareName]
           if (typeof middleware.postProcessor === 'function') {
             await middleware.postProcessor(data)
           }
