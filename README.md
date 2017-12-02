@@ -32,15 +32,7 @@ exports['default'] = {
 3. Create a new config file, `./config/ah-resque-ui.js`
 
 ```js
-exports.default = {
-  'ah-resque-ui': (api) => {
-    return {
-      // the name of the middleware(s) which will protect all actions in this plugin
-      // ie middleware: ['logged-in-session', 'role-admin']
-      middleware: null
-    }
-  }
-}
+ah
 ```
 
 4. visit `http://localhost:8080/resque`
@@ -77,6 +69,8 @@ post: [
 ```
 
 ## Authentication Via Middleware
+**Version 0.3+ of ah-resque-ui only work with ActionHero v18+!**
+
 This package exposes some potentially dangerous actions which would allow folks to see user data (if you keep such in your task params), and modify your task queues.  To protect these actions, you should configure this package to use [action middleware](http://www.actionherojs.com/docs/#action-middleware) which would restrict these actions to only certain clients.
 
 An example middleware would be one which requires a valid user to be logged in:
