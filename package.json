@@ -24,7 +24,7 @@
     "actionhero": "^18.0.0"
   },
   "devDependencies": {
-    "actionhero": "^18.0.0",
+    "actionhero": "^18.1.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^6.4.1",
     "babel-plugin-transform-runtime": "^6.15.0",

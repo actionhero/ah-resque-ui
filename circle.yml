@@ -6,6 +6,10 @@ machine:
   services:
     - redis
 
+dependencies:
+  pre:
+    - npm install -g npm@5.2.0
+
 test:
   override:
     - 'npm test'
