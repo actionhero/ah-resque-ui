@@ -32,7 +32,15 @@ exports['default'] = {
 3. Create a new config file, `./config/ah-resque-ui.js`
 
 ```js
-ah
+exports.default = {
+  'ah-resque-ui': (api) => {
+    return {
+      // the name of the middleware(s) which will protect all actions in this plugin
+      // ie middleware: ['logged-in-session', 'role-admin']
+      middleware: null
+    }
+  }
+}
 ```
 
 4. visit `http://localhost:8080/resque`
