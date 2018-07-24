@@ -120,7 +120,7 @@ const Failed = React.createClass({
   },
 
   render () {
-    let index = -1
+    let index = -1 + (this.state.perPage * this.state.page)
     let argCounter = -1
 
     return (
