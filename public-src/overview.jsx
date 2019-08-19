@@ -40,7 +40,7 @@ const Overview = React.createClass({
           verticalAlign: 'top',
           floating: true
         },
-        exporting: {enabled: true},
+        exporting: { enabled: true },
         series: []
       }
     }
@@ -48,7 +48,7 @@ const Overview = React.createClass({
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.refreshInterval !== this.state.refreshInterval) {
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, () => {
         this.loadDetails()
       })
     }
@@ -65,9 +65,9 @@ const Overview = React.createClass({
   loadFailedCount () {
     const client = this.props.client
     client.action({}, '/api/resque/resqueFailedCount', 'GET', (data) => {
-      let counts = this.state.counts
+      const counts = this.state.counts
       counts.failed = data.failedCount
-      this.setState({counts: counts})
+      this.setState({ counts: counts })
     })
   },
 
@@ -96,7 +96,7 @@ const Overview = React.createClass({
 
         Object.keys(this.state.queues).forEach((q) => {
           let found = false
-          let point = {x: new Date().getTime(), y: this.state.queues[q].length}
+          const point = { x: new Date().getTime(), y: this.state.queues[q].length }
           this.state.chartConfig.series.forEach((s) => {
             if (s.name === q) {
               found = true
@@ -113,7 +113,7 @@ const Overview = React.createClass({
           }
         })
 
-        this.setState({chartConfig: this.state.chartConfig})
+        this.setState({ chartConfig: this.state.chartConfig })
 
         Object.keys(this.state.workers).forEach((workerName) => {
           var worker = this.state.workers[workerName]
@@ -144,7 +144,7 @@ const Overview = React.createClass({
 
                 {
                   Object.keys(this.state.stats).map((k) => {
-                    let v = this.state.stats[k]
+                    const v = this.state.stats[k]
                     if (k.indexOf(':') > 0) { return null }
 
                     return (
@@ -170,13 +170,14 @@ const Overview = React.createClass({
                   height: '300px',
                   margin: '0'
                 }
-              }} />
+              }}
+            />
           </Col>
         </Row>
 
         <Row>
           <Col md={4}>
-            <h2>Queues ({ this.state.counts.queues })</h2>
+            <h2>Queues ({this.state.counts.queues})</h2>
 
             <table className='table table-striped table-hover '>
               <thead>
@@ -188,26 +189,26 @@ const Overview = React.createClass({
               <tbody>
                 <tr className={this.state.counts.failed > 0 ? 'danger' : ''}>
                   <td><strong><Link to='failed'>failed</Link></strong></td>
-                  <td><strong>{ this.state.counts.failed || 0 }</strong></td>
+                  <td><strong>{this.state.counts.failed || 0}</strong></td>
                 </tr>
 
                 {
-                Object.keys(this.state.queues).map((q) => {
-                  return (
-                    <tr key={q}>
-                      <td><Link to={`queue/${q}`}>{ q }</Link></td>
-                      <td>{this.state.queues[q].length}</td>
-                    </tr>
-                  )
-                })
-              }
+                  Object.keys(this.state.queues).map((q) => {
+                    return (
+                      <tr key={q}>
+                        <td><Link to={`queue/${q}`}>{q}</Link></td>
+                        <td>{this.state.queues[q].length}</td>
+                      </tr>
+                    )
+                  })
+                }
 
               </tbody>
             </table>
           </Col>
 
           <Col md={8}>
-            <h2>Workers ({ this.state.counts.workers })</h2>
+            <h2>Workers ({this.state.counts.workers})</h2>
 
             <table className='table table-striped table-hover '>
               <thead>
@@ -219,16 +220,16 @@ const Overview = React.createClass({
               <tbody>
 
                 {
-                Object.keys(this.state.workers).map((name) => {
-                  let worker = this.state.workers[name]
-                  return (
-                    <tr key={name}>
-                      <td><span className={worker.delta > 0 ? 'text-success' : ''}>{ name }</span></td>
-                      <td><span className={worker.delta > 0 ? 'text-success' : ''}>{ worker.statusString }</span></td>
-                    </tr>
-                  )
-                })
-              }
+                  Object.keys(this.state.workers).map((name) => {
+                    const worker = this.state.workers[name]
+                    return (
+                      <tr key={name}>
+                        <td><span className={worker.delta > 0 ? 'text-success' : ''}>{name}</span></td>
+                        <td><span className={worker.delta > 0 ? 'text-success' : ''}>{worker.statusString}</span></td>
+                      </tr>
+                    )
+                  })
+                }
 
               </tbody>
             </table>

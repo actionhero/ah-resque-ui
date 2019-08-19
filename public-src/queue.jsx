@@ -17,13 +17,13 @@ const Queues = React.createClass({
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.refreshInterval !== this.state.refreshInterval) {
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, () => {
         this.loadQueue()
       })
     }
 
     if (nextProps.params && nextProps.params.page) {
-      this.setState({page: nextProps.params.page}, () => {
+      this.setState({ page: nextProps.params.page }, () => {
         this.loadQueue()
       })
     }
@@ -78,7 +78,7 @@ const Queues = React.createClass({
 
     return (
       <div>
-        <h1>{ this.state.queue } ({ this.state.queueLength })</h1>
+        <h1>{this.state.queue} ({this.state.queueLength})</h1>
 
         <p>
           <button onClick={this.delQueue} className='btn btn-xs btn-danger'>Delete Queue</button>
@@ -99,8 +99,8 @@ const Queues = React.createClass({
 
                 return (
                   <tr key={JSON.stringify(job)}>
-                    <td>{ (this.state.page * this.state.perPage) + (index + 1) }</td>
-                    <td>{ job.class }</td>
+                    <td>{(this.state.page * this.state.perPage) + (index + 1)}</td>
+                    <td>{job.class}</td>
                     <td>
                       <ul>
                         {

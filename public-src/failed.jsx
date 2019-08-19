@@ -19,13 +19,13 @@ const Failed = React.createClass({
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.refreshInterval !== this.state.refreshInterval) {
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, () => {
         this.loadFailed()
       })
     }
 
     if (nextProps.params && nextProps.params.page) {
-      this.setState({page: nextProps.params.page}, () => {
+      this.setState({ page: nextProps.params.page }, () => {
         this.loadFailed()
       })
     }
@@ -42,7 +42,7 @@ const Failed = React.createClass({
   loadFailedCount () {
     const client = this.props.client
     client.action({}, '/api/resque/resqueFailedCount', 'GET', (data) => {
-      this.setState({counts: {failed: data.failedCount}})
+      this.setState({ counts: { failed: data.failedCount } })
       // $scope.pagination = $rootScope.genratePagination($scope.currentPage, $scope.perPage, $scope.counts.failed);
     })
   },
@@ -60,7 +60,7 @@ const Failed = React.createClass({
       start: (this.state.page * this.state.perPage),
       stop: ((this.state.page * this.state.perPage) + (this.state.perPage - 1))
     }, '/api/resque/resqueFailed', 'GET', (data) => {
-      this.setState({failed: data.failed}, () => {
+      this.setState({ failed: data.failed }, () => {
         this.loadFailedCount()
       })
     })
@@ -103,7 +103,7 @@ const Failed = React.createClass({
   },
 
   renderFailureStack (index) {
-    let focusedException = this.state.failed[index]
+    const focusedException = this.state.failed[index]
     focusedException.renderedStack = ''
     if (focusedException.backtrace) {
       focusedException.renderedStack = focusedException.backtrace.join('\r\n')
@@ -116,7 +116,7 @@ const Failed = React.createClass({
   },
 
   onHide () {
-    this.setState({showModal: false})
+    this.setState({ showModal: false })
   },
 
   render () {
@@ -126,7 +126,7 @@ const Failed = React.createClass({
     return (
       <div>
 
-        <h1>Failed Jobs ({ this.state.counts.failed })</h1>
+        <h1>Failed Jobs ({this.state.counts.failed})</h1>
 
         <p>
           <button onClick={this.retryAllFailedJobs} className='btn btn-sm btn-warning'>Retry All</button> <button onClick={this.removeAllFailedJobs} className='btn btn-sm btn-danger'>Remove All</button>
@@ -151,36 +151,36 @@ const Failed = React.createClass({
               </thead>
               <tbody>
                 {
-                    this.state.failed.map((f) => {
-                      index++
+                  this.state.failed.map((f) => {
+                    index++
 
-                      return (
-                        <tr key={`failure-${index}`}>
-                          <td>{ (this.state.page * this.state.perPage) + (index + 1) }</td>
-                          <td>{ f.failed_at }</td>
-                          <td>
-                            <a onClick={this.renderFailureStack.bind(null, index)} ><span className='glyphicon glyphicon-plus-sign' /></a>&nbsp;
-                            <strong>{ f.exception }: { f.error }</strong>
-                          </td>
-                          <td><span className='text-success'><Link to={`queue/${f.queue}`}>{ f.queue }</Link></span></td>
-                          <td>{ f.payload.class }</td>
-                          <td>{ f.worker }</td>
-                          <td>
-                            <ul>
-                              {
-                                f.payload.args.map((a) => {
-                                  argCounter++
-                                  return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>
-                                })
-                              }
-                            </ul>
-                          </td>
-                          <td><button onClick={this.retryFailedJob.bind(null, index)} className='btn btn-xs btn-warning'>Retry</button></td>
-                          <td><button onClick={this.removeFailedJob.bind(null, index)} className='btn btn-xs btn-danger'>Remove</button></td>
-                        </tr>
-                      )
-                    })
-                  }
+                    return (
+                      <tr key={`failure-${index}`}>
+                        <td>{(this.state.page * this.state.perPage) + (index + 1)}</td>
+                        <td>{f.failed_at}</td>
+                        <td>
+                          <a onClick={this.renderFailureStack.bind(null, index)}><span className='glyphicon glyphicon-plus-sign' /></a>&nbsp;
+                          <strong>{f.exception}: {f.error}</strong>
+                        </td>
+                        <td><span className='text-success'><Link to={`queue/${f.queue}`}>{f.queue}</Link></span></td>
+                        <td>{f.payload.class}</td>
+                        <td>{f.worker}</td>
+                        <td>
+                          <ul>
+                            {
+                              f.payload.args.map((a) => {
+                                argCounter++
+                                return <li key={`arg-${argCounter}`}>{JSON.stringify(a)}</li>
+                              })
+                            }
+                          </ul>
+                        </td>
+                        <td><button onClick={this.retryFailedJob.bind(null, index)} className='btn btn-xs btn-warning'>Retry</button></td>
+                        <td><button onClick={this.removeFailedJob.bind(null, index)} className='btn btn-xs btn-danger'>Remove</button></td>
+                      </tr>
+                    )
+                  })
+                }
               </tbody>
             </table>
 
@@ -195,7 +195,7 @@ const Failed = React.createClass({
         </Row>
 
         <Modal show={this.state.showModal} onHide={this.state.onHide}>
-          <Modal.Header>{ this.state.focusedException.exception }: { this.state.focusedException.error }</Modal.Header>
+          <Modal.Header>{this.state.focusedException.exception}: {this.state.focusedException.error}</Modal.Header>
           <Modal.Body>
             <p><strong>Queue</strong>: {this.state.focusedException.queue} </p>
             <p><strong>Worker</strong>: {this.state.focusedException.worker} </p>
@@ -206,7 +206,7 @@ const Failed = React.createClass({
               }
             </pre>
             <p><strong>Stack</strong>:</p>
-            <pre>{ this.state.focusedException.renderedStack }</pre>
+            <pre>{this.state.focusedException.renderedStack}</pre>
           </Modal.Body>
           <Modal.Footer>
             <button className='btn btn-xs' onClick={this.onHide}>Close</button>

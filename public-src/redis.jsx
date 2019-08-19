@@ -16,7 +16,7 @@ const Redis = React.createClass({
     const client = this.props.client
 
     client.action({}, '/api/resque/redisInfo', 'GET', (data) => {
-      this.setState({redisInfo: data.redisInfo})
+      this.setState({ redisInfo: data.redisInfo })
     })
   },
 
@@ -39,7 +39,7 @@ const Redis = React.createClass({
               <tbody>
                 {
                   this.state.redisInfo.map((row) => {
-                    let parts = row.split(':')
+                    const parts = row.split(':')
                     if (parts.length === 1 && row.length < 2) {
                       return null
                     } else if (parts.length === 1) {

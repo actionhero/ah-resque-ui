@@ -12,7 +12,7 @@ const Locks = React.createClass({
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.refreshInterval !== this.state.refreshInterval) {
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, () => {
         this.loadLocks()
       })
     }
@@ -37,12 +37,12 @@ const Locks = React.createClass({
     }
 
     client.action({}, '/api/resque/locks', 'GET', (data) => {
-      let locks = []
+      const locks = []
       Object.keys(data.locks).forEach(function (l) {
-        locks.push({lock: l, at: new Date(parseInt(data.locks[l]) * 1000)})
+        locks.push({ lock: l, at: new Date(parseInt(data.locks[l]) * 1000) })
       })
 
-      this.setState({locks: locks})
+      this.setState({ locks: locks })
     })
   },
 
@@ -63,7 +63,7 @@ const Locks = React.createClass({
 
     return (
       <div>
-        <h1>Locks ({ this.state.locks.length })</h1>
+        <h1>Locks ({this.state.locks.length})</h1>
 
         <Row>
           <Col md={12}>
@@ -83,9 +83,9 @@ const Locks = React.createClass({
                     index++
                     return (
                       <tr key={`${index}-${l.at.getTime()}`}>
-                        <td>{ (index + 1) }</td>
-                        <td>{ l.lock }</td>
-                        <td>{ l.at.toString() }</td>
+                        <td>{(index + 1)}</td>
+                        <td>{l.lock}</td>
+                        <td>{l.at.toString()}</td>
                         <td><button onClick={this.delLock.bind(null, l.lock)} className='btn btn-xs btn-warning'>Delete</button></td>
                       </tr>
                     )

@@ -12,23 +12,25 @@ const Page = React.createClass({
       client: new Client(),
       user: {},
       refreshInterval: 5,
-      error: {show: false}
+      error: { show: false }
     }
   },
 
   notify (message, level) {
     clearTimeout(this.state.error.timer)
 
-    let timer = setTimeout(() => {
-      this.setState({error: {show: false}})
+    const timer = setTimeout(() => {
+      this.setState({ error: { show: false } })
     }, 5000)
 
-    this.setState({error: {
-      show: true,
-      timer: timer,
-      level: level,
-      message: message
-    }})
+    this.setState({
+      error: {
+        show: true,
+        timer: timer,
+        level: level,
+        message: message
+      }
+    })
   },
 
   componentDidMount: function () {
@@ -41,7 +43,7 @@ const Page = React.createClass({
   },
 
   handleRefreshIntervalChangeUpdate (event) {
-    this.setState({refreshInterval: event.target.value})
+    this.setState({ refreshInterval: event.target.value })
   },
 
   render: function () {

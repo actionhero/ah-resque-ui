@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -ex
+
+cd "$(dirname "$0")/../"
+PROJECT_PATH=`pwd`
+ACTIONHERO_TOP_PATH=$1
+
+if [ -z "$1" ]
+  then
+    echo "No path supplied for top-level actionhero project"
+    exit 1
+fi
+
+echo "*** Building an actionhero project at $1; linking it to $PROJECT_PATH ***"
+
+## run NPM LINK to set this project up for local use
+npm unlink
+npm link
+
+## Make a new actionhero project
+mkdir -p $ACTIONHERO_TOP_PATH
+cd $ACTIONHERO_TOP_PATH
+npm install actionhero
+./node_modules/.bin/actionhero generate
+
+## symlink back the new project's node_modules to this project
+## this is needed so the required actionhero package is the same in both projets (TODO, this is confusing)
+rm -rf "$ACTIONHERO_TOP_PATH/node_modules"
+ln -s "$PROJECT_PATH/node_modules" "$ACTIONHERO_TOP_PATH/node_modules"
+cd "$ACTIONHERO_TOP_PATH" && npm install
+
+## symlink this node-resque project in as a dependency
+npm link ah-resque-ui
+
+## copy config files
+cd "$ACTIONHERO_TOP_PATH/config"
+cp "$PROJECT_PATH/config/ah-resque-ui.js" .
+cp "$PROJECT_PATH/config/plugins.js" .
+cd ..
+
+echo "start the development server with \"cd $ACTIONHERO_TOP_PATH && npm start\""

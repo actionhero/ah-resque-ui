@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router'
 
-const _NavItem = React.createClass({
+const NavItem = React.createClass({
   render () {
     let active = false
-    let simpleHash = (window.location.hash.split('/')).pop()
+    const simpleHash = (window.location.hash.split('/')).pop()
     if (simpleHash === this.props.path) { active = true }
 
     return (
@@ -19,7 +19,7 @@ const _NavItem = React.createClass({
 
 const Nav = React.createClass({
   getInitialState () {
-    return ({refreshInterval: this.props.refreshInterval})
+    return ({ refreshInterval: this.props.refreshInterval })
   },
 
   handleRefreshIntervalChangeUpdate (event) {
@@ -47,12 +47,12 @@ const Nav = React.createClass({
             <div className='collapse navbar-collapse' id='navbar-collapse-1'>
 
               <ul className='nav navbar-nav'>
-                <_NavItem path='overview' />
-                <_NavItem path='failed' />
-                <_NavItem path='workers' />
-                <_NavItem path='delayed' />
-                <_NavItem path='locks' />
-                <_NavItem path='redis' />
+                <NavItem path='overview' />
+                <NavItem path='failed' />
+                <NavItem path='workers' />
+                <NavItem path='delayed' />
+                <NavItem path='locks' />
+                <NavItem path='redis' />
               </ul>
 
               <form className='navbar-form navbar-right' role='search'>

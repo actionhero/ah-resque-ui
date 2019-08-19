@@ -15,7 +15,7 @@ const Workers = React.createClass({
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.refreshInterval !== this.state.refreshInterval) {
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, () => {
         this.loadWorkers()
       })
     }
@@ -46,7 +46,7 @@ const Workers = React.createClass({
           workers: Object.keys(data.resqueDetails.workers).length
         }
       }, () => {
-        this.setState({chartConfig: this.state.chartConfig})
+        this.setState({ chartConfig: this.state.chartConfig })
 
         Object.keys(this.state.workers).forEach((workerName) => {
           var worker = this.state.workers[workerName]
@@ -70,12 +70,12 @@ const Workers = React.createClass({
     const client = this.props.client
 
     client.action({}, '/api/resque/loadWorkerQueues', 'GET', (data) => {
-      let workerQueues = []
+      const workerQueues = []
       Object.keys(data.workerQueues).forEach((workerName) => {
-        let parts = workerName.split(':')
-        let id = parts.pop()
-        let host = parts.join(':')
-        let queues = data.workerQueues[workerName].split(',')
+        const parts = workerName.split(':')
+        const id = parts.pop()
+        const host = parts.join(':')
+        const queues = data.workerQueues[workerName].split(',')
 
         let worker = {}
         if (this.state.workers[workerName]) {
@@ -87,7 +87,7 @@ const Workers = React.createClass({
         })
       })
 
-      this.setState({workerQueues: workerQueues})
+      this.setState({ workerQueues: workerQueues })
     })
   },
 
@@ -95,7 +95,7 @@ const Workers = React.createClass({
     const client = this.props.client
 
     if (confirm('Are you sure?')) {
-      client.action({workerName: workerName}, '/api/resque/forceCleanWorker', 'POST', (data) => {
+      client.action({ workerName: workerName }, '/api/resque/forceCleanWorker', 'POST', (data) => {
         this.loadWorkers()
       })
     }
@@ -104,7 +104,7 @@ const Workers = React.createClass({
   render () {
     return (
       <div>
-        <h1>Workers ({ this.state.counts.workers })</h1>
+        <h1>Workers ({this.state.counts.workers})</h1>
 
         <Row>
           <Col md={12}>
@@ -124,22 +124,22 @@ const Workers = React.createClass({
                   this.state.workerQueues.map((w) => {
                     return (
                       <tr key={w.workerName}>
-                        <td>{ w.id }</td>
-                        <td>{ w.host }</td>
+                        <td>{w.id}</td>
+                        <td>{w.host}</td>
                         <td>
                           <ul>
                             {
                               w.queues.map((q) => {
                                 return (
                                   <li key={`${w}-${q}`}>
-                                    <Link to={`queue/${q}`}>{ q }</Link>
+                                    <Link to={`queue/${q}`}>{q}</Link>
                                   </li>
                                 )
                               })
                             }
                           </ul>
                         </td>
-                        <td><span className={w.worker.delta > 0 ? 'text-success' : ''}>{ w.worker.statusString }</span></td>
+                        <td><span className={w.worker.delta > 0 ? 'text-success' : ''}>{w.worker.statusString}</span></td>
                         <td><button onClick={this.forceCleanWorker.bind(null, w.workerName)} className='btn btn-xs btn-danger'>Remove Worker</button></td>
                       </tr>
                     )

@@ -18,13 +18,13 @@ const Delayed = React.createClass({
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.refreshInterval !== this.state.refreshInterval) {
-      this.setState({refreshInterval: parseInt(nextProps.refreshInterval)}, () => {
+      this.setState({ refreshInterval: parseInt(nextProps.refreshInterval) }, () => {
         this.loadDelayedJobs()
       })
     }
 
     if (nextProps.params && nextProps.params.page) {
-      this.setState({page: nextProps.params.page}, () => {
+      this.setState({ page: nextProps.params.page }, () => {
         this.loadDelayedJobs()
       })
     }
@@ -52,7 +52,7 @@ const Delayed = React.createClass({
       start: (this.state.page * this.state.perPage),
       stop: ((this.state.page * this.state.perPage) + (this.state.perPage - 1))
     }, '/api/resque/delayedjobs', 'GET', (data) => {
-      let timestamps = []
+      const timestamps = []
       if (data.delayedjobs) {
         Object.keys(data.delayedjobs).forEach(function (t) {
           timestamps.push({
@@ -63,7 +63,7 @@ const Delayed = React.createClass({
       }
 
       this.setState({
-        counts: {timestamps: data.timestampsCount},
+        counts: { timestamps: data.timestampsCount },
         delayedjobs: data.delayedjobs,
         timestamps: timestamps
       })
@@ -110,7 +110,7 @@ const Delayed = React.createClass({
                 return (
                   <div key={t.date.getTime()} className='panel panel-primary'>
                     <div className='panel-heading'>
-                      <h3 className='panel-title'>{ t.date.toString() }</h3>
+                      <h3 className='panel-title'>{t.date.toString()}</h3>
                     </div>
                     <div className='panel-body'>
 
@@ -130,8 +130,8 @@ const Delayed = React.createClass({
                               index++
                               return (
                                 <tr key={`${t.date.getTime()}-${job.queue}-${JSON.stringify(job.args)}`}>
-                                  <td>{ job.class }</td>
-                                  <td><Link to={`queue/${job.queue}`}>{ job.queue }</Link></td>
+                                  <td>{job.class}</td>
+                                  <td><Link to={`queue/${job.queue}`}>{job.queue}</Link></td>
                                   <td>
                                     <ul>
                                       {

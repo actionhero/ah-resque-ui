@@ -32,11 +32,11 @@ class Client {
       if (data[i] === null || data[i] === undefined) { delete data[i] }
     }
 
-    let options = {
+    const options = {
       credentials: 'include',
       method: verb,
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json'
       }
     }
