@@ -14,38 +14,27 @@ fi
 
 echo "*** Building an actionhero project at $1; linking it to $PROJECT_PATH ***"
 
-## run NPM LINK to set this project up for local use
-npm unlink
-npm link
-
 ## Make a new actionhero project
 mkdir -p $ACTIONHERO_TOP_PATH
 cd $ACTIONHERO_TOP_PATH
 npm install actionhero
 ./node_modules/.bin/actionhero generate
+npm install
+npm install "$PROJECT_PATH" # install via local path
 
-## symlink back the new project's node_modules to this project
-## this is needed so the required actionhero package is the same in both projets (TODO, this is confusing)
-rm -rf "$ACTIONHERO_TOP_PATH/node_modules"
-ln -s "$PROJECT_PATH/node_modules" "$ACTIONHERO_TOP_PATH/node_modules"
-cd "$ACTIONHERO_TOP_PATH" && npm install
+## We need to ensure that both the TOP actionhero project and this repository share the same actionhero package
+## it's a rabbit hole of REQUIRE() problems...
+cd $ACTIONHERO_TOP_PATH/node_modules
+rm -rf actionhero
+ln -s $PROJECT_PATH/node_modules/actionhero .
 
 ## copy config files
 cd "$ACTIONHERO_TOP_PATH/config"
 cp "$PROJECT_PATH/config/ah-resque-ui.js" .
 cp "$PROJECT_PATH/config/plugins.js" .
 cd "$ACTIONHERO_TOP_PATH/tasks"
-cp "$PROJECT_PATH/tasks/fastTask.js" .
-cp "$PROJECT_PATH/tasks/slowTask.js" .
+cp "$PROJECT_PATH/sample-tasks/fastTask.js" .
+cp "$PROJECT_PATH/sample-tasks/slowTask.js" .
 cd ..
-
-## re-install local packages in the right order
-cd "$PROJECT_PATH"
-npm install
-
-## symlink this node-resque project in as a dependency
-cd "$ACTIONHERO_TOP_PATH"
-npm link ah-resque-ui
-npm install
 
 echo "start the development server with \"cd $ACTIONHERO_TOP_PATH && npm start\""
