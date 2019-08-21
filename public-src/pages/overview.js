@@ -6,7 +6,7 @@ import { ResponsiveAreaBump } from '@nivo/Bump'
 import Page from '../layouts/page'
 
 const pollingInterval = 5000
-const maxSampleLength = 15
+const maxSampleLength = 13
 
 function timeFormatter (time) {
   return ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2)
