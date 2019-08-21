@@ -35,6 +35,7 @@ cp "$PROJECT_PATH/config/plugins.js" .
 cd "$ACTIONHERO_TOP_PATH/tasks"
 cp "$PROJECT_PATH/sample-tasks/fastTask.js" .
 cp "$PROJECT_PATH/sample-tasks/slowTask.js" .
+cp "$PROJECT_PATH/sample-tasks/spawnTask.js" .
 cd ..
 
 echo "start the development server with \"cd $ACTIONHERO_TOP_PATH && npm start\""

@@ -9,13 +9,13 @@ module.exports = class MyTask extends Task {
     super()
     this.name = 'fastTask'
     this.description = 'an actionhero task'
-    this.frequency = 5000
-    this.queue = 'default'
+    this.frequency = 10
+    this.queue = 'fast-queue'
     this.middleware = []
   }
 
   async run (data) {
-    await sleep(500)
+    await sleep(100)
     return new Date().getTime()
   }
 }

@@ -10,7 +10,7 @@ module.exports = class MyTask extends Task {
     this.name = 'slowTask'
     this.description = 'an actionhero task'
     this.frequency = 5000
-    this.queue = 'default'
+    this.queue = 'slow-queue'
     this.middleware = []
   }
 

@@ -2,20 +2,27 @@ import React, { useState, useEffect } from 'react'
 import useInterval from './../hooks/useInterval'
 import { Row, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import { ResponsiveAreaBump } from '@nivo/Bump'
 import Page from '../layouts/page'
 
 const pollingInterval = 5000
+const maxSampleLength = 15
+
+function timeFormatter (time) {
+  return ('0' + time.getHours()).slice(-2) + ':' + ('0' + time.getMinutes()).slice(-2) + ':' + ('0' + time.getSeconds()).slice(-2)
+}
 
 function OverviewPage ({ client }) {
   const [data, setData] = useState({
     queues: {},
     workers: [],
     stats: {},
-    counts: {}
+    counts: {},
+    samples: []
   })
 
   useEffect(() => { loadData() }, [])
-  useInterval(() => { loadData() }, [5000])
+  useInterval(() => { loadData() }, [pollingInterval])
 
   async function loadData () {
     let queues = {}
@@ -48,15 +55,67 @@ function OverviewPage ({ client }) {
       }
     })
 
-    setData({ queues, stats, counts, workers })
+    const samples = data.samples
+    const time = timeFormatter(new Date())
+
+    for (const name in queues) {
+      let found = false
+      samples.forEach((sample) => {
+        if (sample.id === name) { found = true }
+      })
+
+      if (!found) { samples.push({ id: name, data: [] }) }
+
+      for (const i in samples) {
+        if (samples[i].id === name) {
+          samples[i].data.push({ x: time, y: queues[name].length })
+          console.log(samples[i].data.length)
+          if (samples[i].data.length > maxSampleLength) { samples[i].data.shift() }
+        }
+      }
+    }
+
+    setData({ queues, stats, counts, workers, samples })
   }
+
+  const chartData = []
+  data.samples.forEach((series) => { chartData.push(series) })
 
   return (
     <Page client={client}>
       <h1>Resque Overview</h1>
 
       <Row>
-        <Col md={3}>
+        <Col md={12} style={{ height: 450 }}>
+          <ResponsiveAreaBump
+            data={chartData}
+            margin={{ top: 40, right: 100, bottom: 40, left: 100 }}
+            spacing={8}
+            colors={{ scheme: 'category10' }}
+            blendMode='multiply'
+            animate={false}
+            axisTop={{
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: '',
+              legendPosition: 'middle',
+              legendOffset: -36
+            }}
+            axisBottom={{
+              tickSize: 5,
+              tickPadding: 5,
+              tickRotation: 0,
+              legend: '',
+              legendPosition: 'middle',
+              legendOffset: 32
+            }}
+          />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col md={2}>
           <h3>Stats:</h3>
           <table className='table table-hover'>
             <tbody>
@@ -76,23 +135,7 @@ function OverviewPage ({ client }) {
             </tbody>
           </table>
         </Col>
-        <Col md={9}>
-          {/* <ReactHighcharts
-            isPureConfig={false}
-            ref='chart'
-            config={data.chartConfig}
-            domProps={{
-              style: {
-                minWidth: '310px',
-                height: '300px',
-                margin: '0'
-              }
-            }}
-          /> */}
-        </Col>
-      </Row>
 
-      <Row>
         <Col md={4}>
           <h2>Queues ({data.counts.queues})</h2>
 
@@ -124,7 +167,7 @@ function OverviewPage ({ client }) {
           </table>
         </Col>
 
-        <Col md={8}>
+        <Col md={5}>
           <h2>Workers ({data.counts.workers})</h2>
 
           <table className='table table-striped table-hover '>
