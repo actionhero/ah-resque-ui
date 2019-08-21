@@ -9,7 +9,7 @@ function NavItem ({ path, name }) {
   if (path !== '/' && simpleHash === path) { active = true }
 
   return (
-    <LinkContainer exact to={path}>
+    <LinkContainer exact to={`/${path}`}>
       <Nav.Link className={active ? 'active' : ''}>
         {name || (path.charAt(0).toUpperCase() + path.slice(1).toLowerCase())}
       </Nav.Link>
