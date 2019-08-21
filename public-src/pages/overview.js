@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import useInterval from './../hooks/useInterval'
 import { Row, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { ResponsiveAreaBump } from '@nivo/Bump'
 import Page from '../layouts/page'
+import BumpChart from '../components/bumpChart'
 
 const pollingInterval = 5000
 const maxSampleLength = 13
@@ -69,7 +69,6 @@ function OverviewPage ({ client }) {
       for (const i in samples) {
         if (samples[i].id === name) {
           samples[i].data.push({ x: time, y: queues[name].length })
-          console.log(samples[i].data.length)
           if (samples[i].data.length > maxSampleLength) { samples[i].data.shift() }
         }
       }
@@ -87,30 +86,7 @@ function OverviewPage ({ client }) {
 
       <Row>
         <Col md={12} style={{ height: 450 }}>
-          <ResponsiveAreaBump
-            data={chartData}
-            margin={{ top: 40, right: 100, bottom: 40, left: 100 }}
-            spacing={8}
-            colors={{ scheme: 'category10' }}
-            blendMode='multiply'
-            animate={false}
-            axisTop={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 0,
-              legend: '',
-              legendPosition: 'middle',
-              legendOffset: -36
-            }}
-            axisBottom={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 0,
-              legend: '',
-              legendPosition: 'middle',
-              legendOffset: 32
-            }}
-          />
+          <BumpChart data={chartData} />
         </Col>
       </Row>
 

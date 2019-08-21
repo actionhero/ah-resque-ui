@@ -18,6 +18,7 @@ function ApplicationRouter () {
   return (
     <Router>
       <Route exact path='/' render={(props) => <Overview {...props} client={client} />} />
+      <Route exact path='/overview' render={(props) => <Overview {...props} client={client} />} />
       {/* <Route path='overview' component={Overview} />
       <Route path='failed' component={Failed} />
       <Route path='failed/:page' component={Failed} />

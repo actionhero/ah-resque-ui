@@ -2,7 +2,7 @@ import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 
 // import NotificationZone from '../components/notificationZone'
-// import Navigation from '../components/navigation'
+import Navigation from '../components/navigation'
 import Footer from '../components/footer'
 
 function Page ({ children, client }) {
@@ -50,8 +50,7 @@ function Page ({ children, client }) {
 
       <Row>
         <Col md={12}>
-          {/* <Navigation {...this.state} handleRefreshIntervalChangeUpdate={this.handleRefreshIntervalChangeUpdate} /> */}
-          <p>NAVIGATION</p>
+          <Navigation />
         </Col>
       </Row>
 
