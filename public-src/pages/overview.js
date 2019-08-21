@@ -161,7 +161,7 @@ function OverviewPage ({ client }) {
                   return (
                     <tr key={name}>
                       <td><span className={worker.delta > 0 ? 'text-success' : ''}>{name}</span></td>
-                      <td><span className={worker.delta > 0 ? 'text-success' : ''}>{worker.statusString}</span></td>
+                      <td><span className={worker.delta > 0 ? 'text-info' : ''}>{worker.statusString}</span></td>
                     </tr>
                   )
                 })

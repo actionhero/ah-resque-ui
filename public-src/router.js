@@ -9,7 +9,7 @@ import Failed from './pages/failed'
 import Workers from './pages/workers'
 // import Delayed from './delayed.jsx'
 import Queue from './pages/queue'
-// import Locks from './locks.jsx'
+import Locks from './pages/locks'
 import Redis from './pages/redis'
 
 function PageNotFound () {
@@ -28,7 +28,7 @@ function ApplicationRouter () {
         <Route exact path='/workers' render={(props) => <Workers {...props} client={client} />} />
         {/* <Route path='delayed' component={Delayed} /> */}
         {/* <Route path='delayed/:page' component={Delayed} /> */}
-        {/* <Route path='locks' component={Locks} /> */}
+        <Route exact path='/locks' render={(props) => <Locks {...props} client={client} />} />
         <Route exact path='/redis' render={(props) => <Redis {...props} client={client} />} />
         <Route component={PageNotFound} />
       </Switch>
