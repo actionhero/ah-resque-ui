@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom'
 import { Nav, Navbar } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
-function NavItem ({ path }) {
+function NavItem ({ path, name }) {
   let active = false
   const simpleHash = (window.location.hash.split('/')).pop()
-  if (simpleHash === path) { active = true }
+  if (path !== '/' && simpleHash === path) { active = true }
 
   return (
-    <LinkContainer to={path}>
+    <LinkContainer exact to={path}>
       <Nav.Link className={active ? 'active' : ''}>
-        {(path.charAt(0).toUpperCase() + path.slice(1).toLowerCase())}
+        {name || (path.charAt(0).toUpperCase() + path.slice(1).toLowerCase())}
       </Nav.Link>
     </LinkContainer>
   )
@@ -23,12 +23,12 @@ function Navigation () {
       <br />
       <Navbar bg='light' expand='lg'>
         <Navbar.Brand>
-          <Link className='navbar-brand' to='overview'><img src='/resque/img/resque-logo.png' style={{ maxHeight: 30 }} /></Link>
+          <Link className='navbar-brand' to='/'><img src='/resque/img/resque-logo.png' style={{ maxHeight: 30 }} /></Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mr-auto'>
-            <NavItem path='overview' />
+            <NavItem path='/' name='Overview' />
             <NavItem path='failed' />
             <NavItem path='workers' />
             <NavItem path='delayed' />

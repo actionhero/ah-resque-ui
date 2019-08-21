@@ -10,7 +10,7 @@ import Overview from './pages/overview'
 // import Delayed from './delayed.jsx'
 // import Queue from './queue.jsx'
 // import Locks from './locks.jsx'
-// import Redis from './redis.jsx'
+import Redis from './pages/redis'
 
 function ApplicationRouter () {
   const client = new Client()
@@ -18,17 +18,15 @@ function ApplicationRouter () {
   return (
     <Router>
       <Route exact path='/' render={(props) => <Overview {...props} client={client} />} />
-      <Route exact path='/overview' render={(props) => <Overview {...props} client={client} />} />
-      {/* <Route path='overview' component={Overview} />
-      <Route path='failed' component={Failed} />
-      <Route path='failed/:page' component={Failed} />
-      <Route path='workers' component={Workers} />
-      <Route path='queue/:queue' component={Queue} />
-      <Route path='queue/:queue/:page' component={Queue} />
-      <Route path='delayed' component={Delayed} />
-      <Route path='delayed/:page' component={Delayed} />
-      <Route path='locks' component={Locks} />
-      <Route path='redis' component={Redis} /> */}
+      {/* <Route path='failed' component={Failed} /> */}
+      {/* <Route path='failed/:page' component={Failed} /> */}
+      {/* <Route path='workers' component={Workers} /> */}
+      {/* <Route path='queue/:queue' component={Queue} /> */}
+      {/* <Route path='queue/:queue/:page' component={Queue} /> */}
+      {/* <Route path='delayed' component={Delayed} /> */}
+      {/* <Route path='delayed/:page' component={Delayed} /> */}
+      {/* <Route path='locks' component={Locks} /> */}
+      <Route exact path='/redis' render={(props) => <Redis {...props} client={client} />} />
     </Router>
   )
 }

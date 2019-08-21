@@ -51,6 +51,7 @@ function Page ({ children, client }) {
       <Row>
         <Col md={12}>
           <Navigation />
+          <br />
         </Col>
       </Row>
 
