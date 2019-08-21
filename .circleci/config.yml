@@ -96,29 +96,19 @@ workflows:
   test-all-node-versions:
     jobs:
       - build:
-          filters:
-            <<: *ignored-branches
 
       - linter:
-          filters:
-            <<: *ignored-branches
           requires:
             - build
 
       - test-node-v8:
-          filters:
-            <<: *ignored-branches
           requires:
             - linter
 
       - test-node-v10:
-          filters:
-            <<: *ignored-branches
           requires:
             - linter
 
       - test-node-v12:
-          filters:
-            <<: *ignored-branches
           requires:
             - linter
