@@ -81,64 +81,41 @@ post: [
 
 This package exposes some potentially dangerous actions which would allow folks to see user data (if you keep such in your task params), and modify your task queues.  To protect these actions, you should configure this package to use [action middleware](http://www.actionherojs.com/docs/#action-middleware) which would restrict these actions to only certain clients.
 
-An example middleware would be one which requires a valid user to be logged in:
+The most basic middleware would be one to enforce a Basic Auth Password:
+
+`npm install basic-auth --save`
 
 ```js
-// from initializers/session
-const {api, Initializer} from 'actionhero'
+// File: initializers/basicAuthMiddleware.js
+const { api, Initializer } = require('actionhero')
+const auth = require('basic-auth') // don't forget to `npm install basic-auth --save`
 
-module.exports =  new class SessionInitializer extends Initializer {
+module.exports = class BasicAuthInitializer extends Initializer {
   constructor () {
-    this.name = 'sessionInitializer'
+    super()
+    this.name = 'basicAuthInitializer'
+    this.correctPassword = api.config.general.serverToken
   }
 
   initialize () {
-    const redis = api.redis.clients.client
-
-    api.session = {
-      prefix: 'session:',
-      ttl: 60 * 60 * 24, // 1 day
-
-      async load: (connection) => {
-        const key = api.session.prefix + connection.fingerprint
-        const data = await redis.get(key)
-        if (!data) { return false }
-        return JSON.parse(data)
-      },
-
-      async create (connection, user) => {
-        const key = api.session.prefix + connection.fingerprint
-        const sessionData = {
-          userId:          user.id,
-          status:          user.status,
-          sesionCreatedAt: new Date().getTime()
-        };
-
-        await redis.set(key, JSON.stringify(sessionData))
-        await redis.expire(key, api.session.ttl)
-      },
-
-      middleware: {
-        // These actions are restricted to the website (and you need a CSRF token)
-        'logged-in-session': {
-          name: 'logged-in-session',
-          global: false,
-          priority: 1000,
-          preProcessor: (data) => {
-            const sessionData = await api.session.load(data.connection)
-            if (!sessionData) { throw new Error('Please log in to continue') }
-
-            data.session = sessionData
-            const key = api.session.prefix + data.connection.fingerprint
-            await redis.expire(key, api.session.ttl)
-          }
+    const middleware = {
+      name: 'logged-in-session',
+      global: false,
+      priority: 1000,
+      preProcessor: ({ connection }) => {
+        const credentials = auth(connection.rawConnection.req)
+        if (!credentials || credentials.pass !== this.correctPassword) {
+          connection.rawConnection.res.statusCode = 401
+          connection.rawConnection.res.setHeader('WWW-Authenticate', 'Basic realm="Actionhero Resque UI"')
+          connection.rawConnection.res.end('Access denied')
+          return false
         }
       }
     }
 
-    api.actions.addMiddleware(api.session.middleware['logged-in-session']);
+    api.actions.addMiddleware(middleware)
   }
-};
+}
 ```
 
 Now you can apply the `logged-in-session` middleware to your actions to protect them.
@@ -147,11 +124,9 @@ To inform ah-resque-ui to use a middleware determined elsewhere like this, set `
 
 ## React
 
-This project is build using React and contains various components you might want to include into your own project. These components can be loaded from `public-src`, ie: `include WorkersList from '/node-modules/ah-resque-ui/public-src/workers.jsx'`
+This project is build using React and contains various components you might want to include into your own project. These components can be loaded from `public-src`, ie: `include WorkersList from '/node-modules/ah-resque-ui/public-src/pages/workers.js'`
 
 The main point of configuration will be the React client's `baseRoute` which is where you enter in the API server's URL. Simply set `this.props.baseRoute` on any component which uses the client and it should be passed down.  `window.location.origin` is the default, but that may not be appropriate for all use cases.
-
-The client can be assigned a `notify(errorMessage, severity)` to plug into your error reporters for failed requests.
 
 ## Testing & Developing
 * run `./bin/setup-development PATH_TO_PROJECT` from this project!  It will create a top-level actionhero project with your development project symlinked in at the directory PATH_TO_PROJECT.  ie: `./bin/setup-development ~/desktop/actionhero-top`
@@ -165,7 +140,6 @@ The client can be assigned a `notify(errorMessage, severity)` to plug into your 
 
 ## Thanks
 - [Theme](https://bootswatch.com)
-- [HighCharts](http://www.highcharts.com/)
 - [React](https://facebook.github.io/react/)
 - [Delicious Hat](https://www.delicioushat.com)
 - [TaskRabbit](https://www.taskrabbit.com)
