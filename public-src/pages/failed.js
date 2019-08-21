@@ -120,7 +120,7 @@ function FailedPage ({ client, history, match }) {
 
                   return (
                     <tr key={`failure-${index}`}>
-                      <td>{(data.page * data.perPage) + (index + 1)}</td>
+                      <td>{(index + 1)}</td>
                       <td>{f.failed_at}</td>
                       <td>
                         <a onClick={renderFailureStack.bind(null, index)}>➕</a>&nbsp;

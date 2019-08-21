@@ -5,9 +5,10 @@ import { LinkContainer } from 'react-router-bootstrap'
 
 function NavItem ({ path, name }) {
   let active = false
-  const simpleHash = (window.location.hash.split('/')).pop()
-  if (path !== '/' && simpleHash === path) { active = true }
+  const simpleHash = window.location.hash.replace('#/', '')
+  if (path !== '/' && simpleHash.indexOf(path) === 0) { active = true }
 
+  if (path === '/') { path = '' }
   return (
     <LinkContainer exact to={`/${path}`}>
       <Nav.Link className={active ? 'active' : ''}>
