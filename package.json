@@ -48,7 +48,6 @@
       "fetch",
       "FormData",
       "confirm",
-      "prompt",
       "before",
       "after",
       "it",
