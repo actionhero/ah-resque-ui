@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ButtonToolbar, Button, Table, Modal, Row, Col } from 'react-bootstrap'
+import { Button, Table, Row, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import Page from '../layouts/page'
 import Pagination from '../components/pagination'

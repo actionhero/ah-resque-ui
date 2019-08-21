@@ -8,10 +8,7 @@ function PaginationHelper ({ base, page = 0, total, perPage, history }) {
   // perPage     => How many items are shown per page?
 
   function handleSelect (page) {
-    // location.push(`${base}/${page}`)
     history.replace(`${base}/${page}`)
-    // window.location.push(base + '/' + (page - 1)) //TODO
-    // window.location.reload() // TODO: FIX THIS TERRIBLE HACK
   }
 
   const lastPage = Math.ceil(total / perPage) - 1
@@ -31,18 +28,6 @@ function PaginationHelper ({ base, page = 0, total, perPage, history }) {
       {lastPage > page ? <Pagination.Next onClick={() => handleSelect(page + 1)} /> : null}
       {lastPage > page ? <Pagination.Last onClick={() => handleSelect(lastPage)} /> : null}
     </Pagination>
-
-    // <Pagination
-    //   prev={page !== 0 ? true : undefined}
-    //   first={page !== 0 ? true : undefined}
-    //   next={lastPage > page ? true : undefined}
-    //   last={lastPage > page ? true : undefined}
-    //   ellipsis
-    //   items={(lastPage + 1)}
-    //   maxButtons={5}
-    //   activePage={(page + 1)}
-    //   onSelect={handleSelect}
-    // />
   )
 }
 
