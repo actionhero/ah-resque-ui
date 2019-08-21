@@ -124,7 +124,7 @@ function OverviewPage ({ client }) {
             </thead>
             <tbody>
               <tr className='table-warning'>
-                <td><strong><Link to='failed'>failed</Link></strong></td>
+                <td><strong><Link to='/failed'>failed</Link></strong></td>
                 <td><strong>{data.counts.failed || 0}</strong></td>
               </tr>
 
@@ -132,7 +132,7 @@ function OverviewPage ({ client }) {
                 Object.keys(data.queues).map((q) => {
                   return (
                     <tr key={q}>
-                      <td><Link to={`queue/${q}`}>{q}</Link></td>
+                      <td><Link to={`/queue/${q}`}>{q}</Link></td>
                       <td>{data.queues[q].length}</td>
                     </tr>
                   )

@@ -8,7 +8,7 @@ import Overview from './pages/overview'
 import Failed from './pages/failed'
 import Workers from './pages/workers'
 // import Delayed from './delayed.jsx'
-// import Queue from './queue.jsx'
+import Queue from './pages/queue'
 // import Locks from './locks.jsx'
 import Redis from './pages/redis'
 
@@ -23,11 +23,9 @@ function ApplicationRouter () {
     <Router>
       <Switch>
         <Route exact path='/' render={(props) => <Overview {...props} client={client} />} />
+        <Route exact path={['/queue/:queue', '/queue/:queue/:page']} render={(props) => <Queue {...props} client={client} />} />
         <Route exact path={['/failed', '/failed/:page']} render={(props) => <Failed {...props} client={client} />} />
-        {/* <Route path='failed/:page' component={Failed} /> */}
         <Route exact path='/workers' render={(props) => <Workers {...props} client={client} />} />
-        {/* <Route path='queue/:queue' component={Queue} /> */}
-        {/* <Route path='queue/:queue/:page' component={Queue} /> */}
         {/* <Route path='delayed' component={Delayed} /> */}
         {/* <Route path='delayed/:page' component={Delayed} /> */}
         {/* <Route path='locks' component={Locks} /> */}
