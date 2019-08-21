@@ -8,35 +8,18 @@ class Client {
     if (level === 'error') { console.error(message) }
   }
 
-  action (data, path, verb, successCallback, errorCallback) {
+  async action (data = {}, path, verb = 'GET') {
     let i
-
-    // TODO
-    // $('button').prop('disabled', true);
-
-    if (typeof successCallback !== 'function') {
-      successCallback = (response) => {
-        let successMessage = 'OK!'
-        if (response.message) { successMessage = response.message }
-        this.notify(successMessage, 'success')
-      }
-    }
-
-    if (typeof errorCallback !== 'function') {
-      errorCallback = (errorMessage, error) => {
-        this.notify(errorMessage, 'danger')
-      }
-    }
 
     for (i in data) {
       if (data[i] === null || data[i] === undefined) { delete data[i] }
     }
 
-    let options = {
+    const options = {
       credentials: 'include',
       method: verb,
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json'
       }
     }
@@ -60,13 +43,9 @@ class Client {
       return response.json()
     }
 
-    fetch(this.baseRoute + path, options).then(parseJSON).then(function (response) {
-      // $('button').prop('disabled', false);
-      if (response.error) { return errorCallback(response.error) }
-      return successCallback(response)
-    }).catch(function (error) {
-      // $('button').prop('disabled', false);
-      return errorCallback(error.toString(), error)
+    return fetch(this.baseRoute + path, options).then(parseJSON).then(function (response) {
+      if (response.error) { throw response.error }
+      return response
     })
   }
 }

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+set -ex
+
+cd "$(dirname "$0")/../"
+PROJECT_PATH=`pwd`
+ACTIONHERO_TOP_PATH=$1
+
+if [ -z "$1" ]
+  then
+    echo "No path supplied for top-level actionhero project"
+    exit 1
+fi
+
+echo "*** Building an actionhero project at $1; linking it to $PROJECT_PATH ***"
+
+## Make a new actionhero project
+mkdir -p $ACTIONHERO_TOP_PATH
+cd $ACTIONHERO_TOP_PATH
+npm install actionhero
+./node_modules/.bin/actionhero generate
+npm install
+npm install "$PROJECT_PATH" # install via local path
+
+## We need to ensure that both the TOP actionhero project and this repository share the same actionhero package
+## it's a rabbit hole of REQUIRE() problems...
+cd $ACTIONHERO_TOP_PATH/node_modules
+rm -rf actionhero
+ln -s $PROJECT_PATH/node_modules/actionhero .
+
+## copy config files
+cd "$ACTIONHERO_TOP_PATH/config"
+cp "$PROJECT_PATH/config/ah-resque-ui.js" .
+cp "$PROJECT_PATH/config/plugins.js" .
+cd "$ACTIONHERO_TOP_PATH/tasks"
+cp "$PROJECT_PATH/sample-tasks/fastTask.js" .
+cp "$PROJECT_PATH/sample-tasks/slowTask.js" .
+cp "$PROJECT_PATH/sample-tasks/spawnTask.js" .
+cd ..
+
+echo "start the development server with \"cd $ACTIONHERO_TOP_PATH && npm start\""

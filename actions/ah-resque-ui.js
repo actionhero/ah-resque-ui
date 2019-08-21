@@ -1,7 +1,7 @@
 const path = require('path')
 const os = require('os')
 const packageJSON = require(path.join(__dirname, '..', 'package.json'))
-const {api, Action} = require('actionhero')
+const { api, Action } = require('actionhero')
 
 // A helper class
 
@@ -24,10 +24,13 @@ exports.ResuqePackageDetails = class ResuqePackageDetails extends RequeAction {
     this.inputs = {}
   }
 
-  async run ({response}) {
+  async run ({ response }) {
     response.packageDetails = {}
     response.packageDetails.packageJSON = packageJSON
     response.packageDetails.redis = api.config.redis.tasks.args
+    for (const i in response.packageDetails.redis) {
+      delete response.packageDetails.redis[i].password
+    }
   }
 }
 
@@ -39,8 +42,8 @@ exports.ResuqeRedisInfo = class ResuqeRedisInfo extends RequeAction {
     this.inputs = {}
   }
 
-  async run ({response}) {
-    let redisInfo = await api.resque.queue.connection.redis.info()
+  async run ({ response }) {
+    const redisInfo = await api.resque.queue.connection.redis.info()
     if (redisInfo) { response.redisInfo = redisInfo.split(os.EOL) }
   }
 }
@@ -53,7 +56,7 @@ exports.ResuqeResqueDetails = class ResuqeResqueDetails extends RequeAction {
     this.inputs = {}
   }
 
-  async run ({response}) {
+  async run ({ response }) {
     response.resqueDetails = await api.tasks.details()
   }
 }
@@ -66,7 +69,7 @@ exports.ResuqeLoadWorkerQueues = class ResuqeLoadWorkerQueues extends RequeActio
     this.inputs = {}
   }
 
-  async run ({response}) {
+  async run ({ response }) {
     response.workerQueues = await api.tasks.workers()
   }
 }
@@ -81,7 +84,7 @@ exports.ResuqeForceCleanWorker = class ResuqeForceCleanWorker extends RequeActio
     }
   }
 
-  async run ({params, response}) {
+  async run ({ params, response }) {
     response.generatedErrorPayload = await api.resque.queue.forceCleanWorker(params.workerName)
   }
 }
@@ -94,7 +97,7 @@ exports.ResuqeFailedCount = class ResuqeFailedCount extends RequeAction {
     this.inputs = {}
   }
 
-  async run ({response}) {
+  async run ({ response }) {
     response.failedCount = await api.tasks.failedCount()
   }
 }
@@ -121,7 +124,7 @@ exports.ResuqeQueued = class ResuqeQueued extends RequeAction {
     }
   }
 
-  async run ({params, response}) {
+  async run ({ params, response }) {
     response.queueLength = await api.resque.queue.length(params.queue)
     response.jobs = await api.tasks.queued(params.queue, params.start, params.stop)
   }
@@ -137,7 +140,7 @@ exports.ResuqeDelQueue = class ResuqeDelQueue extends RequeAction {
     }
   }
 
-  async run ({response, params}) {
+  async run ({ response, params }) {
     response.deleted = await api.tasks.delQueue(params.queue)
   }
 }
@@ -161,7 +164,7 @@ exports.ResuqeResqueFailed = class ResuqeResqueFailed extends RequeAction {
     }
   }
 
-  async run ({response, params}) {
+  async run ({ response, params }) {
     response.failed = await api.tasks.failed(params.start, params.stop)
   }
 }
@@ -179,8 +182,8 @@ exports.ResuqeRemoveFailed = class ResuqeRemoveFailed extends RequeAction {
     }
   }
 
-  async run ({params}) {
-    let failed = await api.tasks.failed(params.id, params.id)
+  async run ({ params }) {
+    const failed = await api.tasks.failed(params.id, params.id)
     if (!failed) { throw Error('failed job not found') }
     await api.tasks.removeFailed(failed[0])
   }
@@ -195,9 +198,9 @@ exports.ResuqeRemoveAllFailed = class ResuqeRemoveAllFailed extends RequeAction 
   }
 
   async run () {
-    let failed = await api.tasks.failed(0, 0)
+    const failed = await api.tasks.failed(0, 0)
     if (failed && failed.length > 0) {
-      let failedJob = failed[0]
+      const failedJob = failed[0]
       await api.tasks.removeFailed(failedJob)
       return this.run()
     }
@@ -217,8 +220,8 @@ exports.ResuqeRetryAndRemoveFailed = class ResuqeRetryAndRemoveFailed extends Re
     }
   }
 
-  async run ({params}) {
-    let failed = await api.tasks.failed(params.id, params.id)
+  async run ({ params }) {
+    const failed = await api.tasks.failed(params.id, params.id)
     if (!failed) { throw new Error('failed job not found') }
     await api.tasks.retryAndRemoveFailed(failed[0])
   }
@@ -233,9 +236,9 @@ exports.ResuqeRetryAndRemoveAllFailed = class ResuqeRetryAndRemoveAllFailed exte
   }
 
   async run () {
-    let failed = await api.tasks.failed(0, 0)
+    const failed = await api.tasks.failed(0, 0)
     if (failed && failed.length > 0) {
-      let failedJob = failed[0]
+      const failedJob = failed[0]
       await api.tasks.retryAndRemoveFailed(failedJob)
       return this.run()
     }
@@ -250,7 +253,7 @@ exports.ResuqeLocks = class ResuqeLocks extends RequeAction {
     this.inputs = {}
   }
 
-  async run ({response}) {
+  async run ({ response }) {
     response.locks = await api.tasks.locks()
   }
 }
@@ -265,7 +268,7 @@ exports.ResuqeDelLock = class ResuqeDelLock extends RequeAction {
     }
   }
 
-  async run ({response, params}) {
+  async run ({ response, params }) {
     response.count = await api.tasks.delLock(params.lock)
   }
 }
@@ -289,12 +292,12 @@ exports.ResuqeDelayedJobs = class ResuqeDelayedJobs extends RequeAction {
     }
   }
 
-  async run ({response, params}) {
-    let timestamps = []
-    let delayedjobs = {}
+  async run ({ response, params }) {
+    const timestamps = []
+    const delayedjobs = {}
 
     response.timestampsCount = 0
-    let allTimestamps = await api.tasks.timestamps()
+    const allTimestamps = await api.tasks.timestamps()
     if (allTimestamps.lenght === 0) { return }
 
     response.timestampsCount = allTimestamps.length
@@ -303,8 +306,8 @@ exports.ResuqeDelayedJobs = class ResuqeDelayedJobs extends RequeAction {
       if (i >= params.start && i <= params.stop) { timestamps.push(allTimestamps[i]) }
     }
 
-    for (let j in timestamps) {
-      let timestamp = timestamps[j]
+    for (const j in timestamps) {
+      const timestamp = timestamps[j]
       delayedjobs[timestamp] = await api.tasks.delayedAt(timestamp)
     }
 
@@ -329,11 +332,11 @@ exports.ResuqeDelDelayed = class ResuqeDelDelayed extends RequeAction {
     }
   }
 
-  async run ({params, response}) {
-    let delayed = await api.tasks.delayedAt(params.timestamp)
+  async run ({ params, response }) {
+    const delayed = await api.tasks.delayedAt(params.timestamp)
     if (delayed.tasks.length === 0 || !delayed.tasks[params.count]) { throw new Error('delayed job not found') }
 
-    let job = delayed.tasks[params.count]
+    const job = delayed.tasks[params.count]
     response.timestamps = await api.tasks.delDelayed(job.queue, job.class, job.args)
   }
 }
@@ -355,11 +358,11 @@ exports.ResuqeRunDelayed = class ResuqeRunDelayed extends RequeAction {
     }
   }
 
-  async run ({params}) {
-    let delayed = await api.tasks.delayedAt(params.timestamp)
+  async run ({ params }) {
+    const delayed = await api.tasks.delayedAt(params.timestamp)
     if (delayed.tasks.length === 0 || !delayed.tasks[params.count]) { throw new Error('delayed job not found') }
 
-    let job = delayed.tasks[params.count]
+    const job = delayed.tasks[params.count]
     await api.tasks.delDelayed(job.queue, job.class, job.args)
     await api.tasks.enqueue(job.class, job.args, job.queue)
   }

@@ -14,13 +14,13 @@ const sleep = (sleep) => {
 
 describe('ah-resque-ui', () => {
   before(async () => {
-    let configChanges = {
+    const configChanges = {
       'ah-resque-ui': { middleware: [] },
       tasks: { minTaskProcessors: 1, maxTaskProcessors: 1 },
-      plugins: {'ah-resque-ui': { path: path.join(__dirname, '..') }}
+      plugins: { 'ah-resque-ui': { path: path.join(__dirname, '..') } }
     }
 
-    api = await actionhero.start({configChanges})
+    api = await actionhero.start({ configChanges })
 
     api.tasks.tasks.testTask = {
       name: 'testTask',
@@ -46,14 +46,14 @@ describe('ah-resque-ui', () => {
   })
 
   it('server booted and normal actions work', async () => {
-    let response = await api.specHelper.runAction('status')
+    const response = await api.specHelper.runAction('status')
     response.id.match(/test-server/)
     should.not.exist(response.error)
   })
 
   it('resque:packageDetails', async () => {
     const pkg = require(path.join(__dirname, '/../package.json'))
-    let response = await api.specHelper.runAction('resque:packageDetails')
+    const response = await api.specHelper.runAction('resque:packageDetails')
     response.packageDetails.packageJSON.version.should.equal(pkg.version)
     response.packageDetails.packageJSON.license.should.equal('Apache-2.0')
     response.packageDetails.redis[0].port.should.equal(6379)
@@ -61,7 +61,7 @@ describe('ah-resque-ui', () => {
   })
 
   it('resque:redisInfo', async () => {
-    let response = await api.specHelper.runAction('resque:redisInfo')
+    const response = await api.specHelper.runAction('resque:redisInfo')
     response.redisInfo.join('\n').should.match(/redis_version/)
     response.redisInfo.join('\n').should.match(/used_memory/)
     response.redisInfo.join('\n').should.match(/used_memory_human/)
@@ -77,14 +77,14 @@ describe('ah-resque-ui', () => {
     afterEach(async () => { await api.resque.queue.connection.redis.del(api.resque.queue.connection.key('workerslock:lists:queueName:jobName:[{}]')) })
 
     it('resque:locks', async () => {
-      let response = await api.specHelper.runAction('resque:locks')
+      const response = await api.specHelper.runAction('resque:locks')
       Object.keys(response.locks).length.should.equal(2)
       response.locks['lock:lists:queueName:jobName:[{}]'].should.equal('123')
       response.locks['workerslock:lists:queueName:jobName:[{}]'].should.equal('456')
     })
 
     it('resque:delLock', async () => {
-      let response = await api.specHelper.runAction('resque:delLock', {lock: 'workerslock:lists:queueName:jobName:[{}]'})
+      let response = await api.specHelper.runAction('resque:delLock', { lock: 'workerslock:lists:queueName:jobName:[{}]' })
       response.count.should.equal(1)
       response = await api.specHelper.runAction('resque:locks')
       Object.keys(response.locks).length.should.equal(1)
@@ -94,20 +94,20 @@ describe('ah-resque-ui', () => {
 
   describe('with jobs', () => {
     beforeEach(async () => {
-      await api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'})
-      await api.tasks.enqueue('testTask', {a: 1}, 'testQueue')
-      await api.tasks.enqueue('testTask', {b: 2}, 'testQueue')
-      await api.tasks.enqueue('testTask', {c: 3}, 'testQueue')
+      await api.specHelper.runAction('resque:delQueue', { queue: 'testQueue' })
+      await api.tasks.enqueue('testTask', { a: 1 }, 'testQueue')
+      await api.tasks.enqueue('testTask', { b: 2 }, 'testQueue')
+      await api.tasks.enqueue('testTask', { c: 3 }, 'testQueue')
     })
 
     it('resque:resqueDetails', async () => {
-      let response = await api.specHelper.runAction('resque:resqueDetails')
+      const response = await api.specHelper.runAction('resque:resqueDetails')
       response.resqueDetails.queues.testQueue.length.should.equal(3)
       Object.keys(response.resqueDetails.workers).length.should.equal(1)
     })
 
     it('resque:loadWorkerQueues', async () => {
-      let response = await api.specHelper.runAction('resque:loadWorkerQueues')
+      const response = await api.specHelper.runAction('resque:loadWorkerQueues')
       const workerNames = Object.keys(response.workerQueues)
       workerNames.length.should.equal(1)
       // could be `testQueue` or `*`
@@ -115,27 +115,27 @@ describe('ah-resque-ui', () => {
     })
 
     it('resque:queued (good)', async () => {
-      const response = await api.specHelper.runAction('resque:queued', {queue: 'testQueue'})
+      const response = await api.specHelper.runAction('resque:queued', { queue: 'testQueue' })
       response.jobs.length.should.equal(3)
     })
 
     it('resque:queued (bad)', async () => {
-      let response = await api.specHelper.runAction('resque:queued', {queue: 'xxx'})
+      const response = await api.specHelper.runAction('resque:queued', { queue: 'xxx' })
       response.jobs.length.should.equal(0)
     })
 
     it('resque:delQueue', async () => {
-      await api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'})
-      const response = await api.specHelper.runAction('resque:queued', {queue: 'testQueue'})
+      await api.specHelper.runAction('resque:delQueue', { queue: 'testQueue' })
+      const response = await api.specHelper.runAction('resque:queued', { queue: 'testQueue' })
       response.jobs.length.should.equal(0)
     })
   })
 
   describe('with delayed jobs', () => {
     before(async () => {
-      await api.tasks.enqueueAt(1000, 'testTask', {a: 1}, 'testQueue')
-      await api.tasks.enqueueAt(2000, 'testTask', {b: 2}, 'testQueue')
-      await api.tasks.enqueueAt(3000, 'testTask', {c: 3}, 'testQueue')
+      await api.tasks.enqueueAt(1000, 'testTask', { a: 1 }, 'testQueue')
+      await api.tasks.enqueueAt(2000, 'testTask', { b: 2 }, 'testQueue')
+      await api.tasks.enqueueAt(3000, 'testTask', { c: 3 }, 'testQueue')
     })
 
     it('resque:delayedjobs (defaults)', async () => {
@@ -149,13 +149,13 @@ describe('ah-resque-ui', () => {
 
     it('resque:delayedjobs (pagination)', async () => {
       let response
-      response = await api.specHelper.runAction('resque:delayedjobs', {start: 0, stop: 1})
+      response = await api.specHelper.runAction('resque:delayedjobs', { start: 0, stop: 1 })
       response.timestampsCount.should.equal(3)
       Object.keys(response.delayedjobs).length.should.equal(2)
       response.delayedjobs['1000'].tasks[0].args[0].a.should.equal(1)
       response.delayedjobs['2000'].tasks[0].args[0].b.should.equal(2)
 
-      response = await api.specHelper.runAction('resque:delayedjobs', {start: 2, stop: 999})
+      response = await api.specHelper.runAction('resque:delayedjobs', { start: 2, stop: 999 })
       response.timestampsCount.should.equal(3)
       Object.keys(response.delayedjobs).length.should.equal(1)
       response.delayedjobs['3000'].tasks[0].args[0].c.should.equal(3)
@@ -167,11 +167,11 @@ describe('ah-resque-ui', () => {
 
   describe('with failed jobs', () => {
     beforeEach(async () => {
-      await api.specHelper.runAction('resque:delQueue', {queue: 'testQueue'})
+      await api.specHelper.runAction('resque:delQueue', { queue: 'testQueue' })
       await api.specHelper.runAction('resque:removeAllFailed')
-      await api.tasks.enqueue('testTask', {a: 1, fail: true}, 'testQueue')
-      await api.tasks.enqueue('testTask', {b: 2, fail: true}, 'testQueue')
-      await api.tasks.enqueue('testTask', {c: 3, fail: true}, 'testQueue')
+      await api.tasks.enqueue('testTask', { a: 1, fail: true }, 'testQueue')
+      await api.tasks.enqueue('testTask', { b: 2, fail: true }, 'testQueue')
+      await api.tasks.enqueue('testTask', { c: 3, fail: true }, 'testQueue')
 
       // should allow time to work the bad jobs
       await sleep(1000)
@@ -194,18 +194,18 @@ describe('ah-resque-ui', () => {
 
     it('resque:resqueFailed (pagination)', async () => {
       let response
-      response = await api.specHelper.runAction('resque:resqueFailed', {start: 0, stop: 1})
+      response = await api.specHelper.runAction('resque:resqueFailed', { start: 0, stop: 1 })
       response.failed.length.should.equal(2)
       response.failed[0].payload.args[0].a.should.equal(1)
       response.failed[1].payload.args[0].b.should.equal(2)
 
-      response = await api.specHelper.runAction('resque:resqueFailed', {start: 2, stop: 99})
+      response = await api.specHelper.runAction('resque:resqueFailed', { start: 2, stop: 99 })
       response.failed.length.should.equal(1)
       response.failed[0].payload.args[0].c.should.equal(3)
     })
 
     it('resque:removeFailed', async () => {
-      await api.specHelper.runAction('resque:removeFailed', {id: 1})
+      await api.specHelper.runAction('resque:removeFailed', { id: 1 })
       const response = await api.specHelper.runAction('resque:resqueFailed')
       response.failed.length.should.equal(2)
       response.failed[0].payload.args[0].a.should.equal(1)
@@ -219,7 +219,7 @@ describe('ah-resque-ui', () => {
     })
 
     it('resque:retryAndRemoveFailed', async () => {
-      await api.specHelper.runAction('resque:retryAndRemoveFailed', {id: 1})
+      await api.specHelper.runAction('resque:retryAndRemoveFailed', { id: 1 })
       const response = await api.specHelper.runAction('resque:resqueFailed')
       response.failed.length.should.equal(2)
       response.failed[0].payload.args[0].a.should.equal(1)

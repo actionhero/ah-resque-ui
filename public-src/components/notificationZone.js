@@ -15,7 +15,7 @@ export default React.createClass({
   },
 
   titleize: function (word) {
-    let words = []
+    const words = []
     let currentWord = ''
     let i = 0
 
@@ -38,7 +38,7 @@ export default React.createClass({
 
   sentanceize: function (sentance) {
     sentance = sentance[0].toUpperCase() + sentance.substring(1)
-    let end = sentance[(sentance.length - 1)]
+    const end = sentance[(sentance.length - 1)]
     if (['.', '!'].indexOf(end) < 0) {
       sentance = sentance + '.'
     }
@@ -68,6 +68,6 @@ export default React.createClass({
   },
 
   handleAlertDismiss () {
-    this.setState({show: false})
+    this.setState({ show: false })
   }
 })

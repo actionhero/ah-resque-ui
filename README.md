@@ -141,7 +141,7 @@ module.exports =  new class SessionInitializer extends Initializer {
 };
 ```
 
-Now you can apply the `logged-in-session` middleware to your actions to protect them.  
+Now you can apply the `logged-in-session` middleware to your actions to protect them.
 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['logged-in-session']` in the provided configuration file.
 
@@ -154,16 +154,10 @@ The main point of configuration will be the React client's `baseRoute` which is 
 The client can be assigned a `notify(errorMessage, severity)` to plug into your error reporters for failed requests.
 
 ## Testing & Developing
-* Create a new ActionHero project
-  * (in a new directory)
-  * `npm install actionhero`
-  * `./node_modules/.bin/actionhero generate`
-  * `npm install`
-  * Alternativley, you can use the `npm link` workflow https://docs.npmjs.com/cli/link
-* Creae a symlink to this project inside of the new ActionHero project's `node_modules` folder
-  * `cd node_modules && link -s ../../ah-resque-ui/ .`
-* Link the ActionHero plugin in `./config/plugins.js`
-* Start this ActionHero server
+* run `./bin/setup-development PATH_TO_PROJECT` from this project!  It will create a top-level actionhero project with your development project symlinked in at the directory PATH_TO_PROJECT.  ie: `./bin/setup-development ~/desktop/actionhero-top`
+
+* Start the actionhero server in PATH_TO_PROJECT server
+  * (in PATH_TO_PROJECT)
   * `npm start`
 * In another shell, run the webpack to regenerate your changes
   * (in this project)
