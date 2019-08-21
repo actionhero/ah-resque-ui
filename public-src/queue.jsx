@@ -1,6 +1,5 @@
 import React from 'react'
 import Pagination from './components/pagination.jsx'
-import { browserHistory } from 'react-router'
 
 const Queues = React.createClass({
   getInitialState: function () {
@@ -66,7 +65,7 @@ const Queues = React.createClass({
       client.action({
         queue: this.state.queue
       }, '/api/resque/delQueue', 'POST', function (data) {
-        browserHistory.push('/resque/#/overview')
+        window.location.push('/resque/#/overview') //TODO
         window.location.reload()
       })
     }

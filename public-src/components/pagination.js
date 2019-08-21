@@ -1,6 +1,5 @@
 import React from 'react'
 import { Pagination } from 'react-bootstrap'
-import { browserHistory } from 'react-router'
 
 const PaginationHelper = React.createClass({
   // this.props.base        => what is the base route for these pages?
@@ -9,7 +8,7 @@ const PaginationHelper = React.createClass({
   // this.props.perPage     => How many items are shown per page?
 
   handleSelect: function (page) {
-    browserHistory.push(this.props.base + '/' + (page - 1))
+    window.locatopn.push(this.props.base + '/' + (page - 1)) //TODO
     window.location.reload() // TODO: FIX THIS TERRIBLE HACK
   },
 

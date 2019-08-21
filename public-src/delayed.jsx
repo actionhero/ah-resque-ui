@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col } from 'react-bootstrap'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import Pagination from './components/pagination.jsx'
 
 const Delayed = React.createClass({

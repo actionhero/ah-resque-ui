@@ -28,6 +28,9 @@ exports.ResuqePackageDetails = class ResuqePackageDetails extends RequeAction {
     response.packageDetails = {}
     response.packageDetails.packageJSON = packageJSON
     response.packageDetails.redis = api.config.redis.tasks.args
+    for (const i in response.packageDetails.redis) {
+      delete response.packageDetails.redis[i].password
+    }
   }
 }
 

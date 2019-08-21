@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { Row, Col, Modal } from 'react-bootstrap'
 import Pagination from './components/pagination.jsx'
 

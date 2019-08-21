@@ -1,8 +1,9 @@
 const path = require('path')
+require('babel-polyfill')
 
 module.exports = {
   entry: {
-    app: path.join(__dirname, 'public-src', 'app.jsx')
+    app: ['babel-polyfill', path.join(__dirname, 'public-src', 'index.js')]
   },
   output: {
     filename: '[name].bundle.min.js',
