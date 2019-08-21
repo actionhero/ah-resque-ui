@@ -1,7 +1,7 @@
 # AH-RESQUE-UI
 A resque administration website for actionhero
 
-[![Build Status](https://circleci.com/gh/actionhero/ah-resque-ui.png)](https://circleci.com/gh/actionhero/ah-resque-ui.png)
+[![Build Status](https://circleci.com/gh/actionhero/ah-resque-ui.png)](https://circleci.com/gh/actionhero/ah-resque-ui)
 [![NPM Version](https://img.shields.io/npm/v/ah-resque-ui.svg?style=flat-square)](https://www.npmjs.com/package/ah-resque-ui)
 
 ![https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/overview.png](https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/overview.png)
