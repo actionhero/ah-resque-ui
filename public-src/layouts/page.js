@@ -1,13 +1,11 @@
 import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
-import Client from '../components/client'
+
 // import NotificationZone from '../components/notificationZone'
 // import Navigation from '../components/navigation'
 import Footer from '../components/footer'
 
-function Page (props) {
-  const client = new Client()
-
+function Page ({ children, client }) {
   // getInitialState: function () {
   //   return {
   //     client: new Client(),
@@ -69,7 +67,7 @@ function Page (props) {
 
       <Row>
         <Col md={12}>
-          {props.children}
+          {children}
         </Col>
       </Row>
 

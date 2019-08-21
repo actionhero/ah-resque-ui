@@ -1,5 +1,6 @@
 import React from 'react'
 import { HashRouter as Router, Route } from 'react-router-dom'
+import Client from './components/client'
 
 // import Page from './components/page.jsx'
 
@@ -12,9 +13,11 @@ import Overview from './pages/overview'
 // import Redis from './redis.jsx'
 
 function ApplicationRouter () {
+  const client = new Client()
+
   return (
     <Router>
-      <Route path='/' component={Overview} />
+      <Route exact path='/' render={(props) => <Overview {...props} client={client} />} />
       {/* <Route path='overview' component={Overview} />
       <Route path='failed' component={Failed} />
       <Route path='failed/:page' component={Failed} />
