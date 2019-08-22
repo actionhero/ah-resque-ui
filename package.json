@@ -60,6 +60,7 @@
     "pretest": "standard",
     "test": "NODE_ENV=test mocha",
     "ui:watch": "webpack --progress --colors --watch --mode development",
-    "ui:build": "webpack --mode production"
+    "ui:build": "webpack --mode production",
+    "prepublish": "npm run ui:build"
   }
 }
