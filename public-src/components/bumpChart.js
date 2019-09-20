@@ -1,9 +1,16 @@
 import React from 'react'
 import { ResponsiveAreaBump } from '@nivo/Bump'
+import { Spinner, Row, Col } from 'react-bootstrap'
 
 function BumpChart ({ data }) {
   if (!data[0] || data[0].data.length < 2) {
-    return <p>Loading...</p>
+    return (
+      <Row>
+        <Col md={12} style={{ textAlign: 'center', paddingTop: 100 }}>
+          <Spinner animation='border' />
+        </Col>
+      </Row>
+    )
   }
 
   return (
