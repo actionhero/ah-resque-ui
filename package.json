@@ -2,11 +2,11 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "ah-resque-ui",
   "description": "A resque administration website for actionhero",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/evantahler/ah-resque-ui.git"
+    "url": "git://github.com/actionhero/ah-resque-ui.git"
   },
   "keywords": [
     "resque",
@@ -18,30 +18,33 @@
     "react"
   ],
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=10.0.0"
   },
   "peerDependencies": {
-    "actionhero": ">=18.0.0"
+    "actionhero": ">=22.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/preset-react": "^7.0.0",
-    "@nivo/axes": "^0.59.2",
-    "@nivo/bump": "^0.59.1",
-    "actionhero": "^19.2.2",
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "@babel/preset-react": "^7.8.3",
+    "@nivo/axes": "^0.61.0",
+    "@nivo/bump": "^0.61.1",
+    "@types/react": "^16.9.23",
+    "actionhero": "^22.0.1",
     "babel-loader": "^8.0.6",
     "babel-polyfill": "^6.26.0",
-    "mocha": "^6.2.0",
-    "react": "^16.9.0",
-    "react-bootstrap": "^1.0.0-beta.12",
-    "react-dom": "^16.9.0",
+    "mocha": "^7.1.0",
+    "react": "^16.13.0",
+    "react-bootstrap": "^1.0.0-beta.17",
+    "react-dom": "^16.13.0",
     "react-router-bootstrap": "^0.25.0",
-    "react-router-dom": "^5.0.1",
+    "react-router-dom": "^5.1.2",
     "should": "^13.2.3",
-    "standard": "^14.1.0",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.7"
+    "standard": "^14.3.1",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   },
   "standard": {
     "globals": [
@@ -57,10 +60,14 @@
     ]
   },
   "scripts": {
+    "dev": "ts-node-dev --no-deps --transpile-only ./src/server.ts",
+    "start": "node ./dist/server.js",
     "pretest": "standard",
     "test": "NODE_ENV=test mocha",
+    "build": "npm run ui:build && npm run api:build",
     "ui:watch": "webpack --progress --colors --watch --mode development",
     "ui:build": "webpack --mode production",
-    "prepublish": "npm run ui:build"
+    "api:build": "rm -rf dist && ./node_modules/.bin/tsc --declaration",
+    "prepublish": "npm run build"
   }
 }
