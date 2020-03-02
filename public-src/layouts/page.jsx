@@ -1,17 +1,19 @@
 import React from "react";
 import { useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-
-import NotificationZone from "../components/notificationZone";
+import { Container, Row, Col, Alert, Button } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 
 function Page({ children, client }) {
-  const [notification, setNotification] = useState({
-    level: "info",
-    message: "",
-    show: false
-  });
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
+
+  client.notifiers = [
+    error => {
+      setError(error);
+      setShowError(true);
+    }
+  ];
 
   return (
     <Container>
@@ -24,11 +26,14 @@ function Page({ children, client }) {
 
       <Row>
         <Col md={12}>
-          <NotificationZone
-            level={notification.level}
-            message={notification.message}
-            show={notification.show}
-          />
+          <Alert
+            show={showError}
+            variant="danger"
+            onClose={() => setShowError(false)}
+            dismissible
+          >
+            <p>{error}</p>
+          </Alert>
         </Col>
       </Row>
 

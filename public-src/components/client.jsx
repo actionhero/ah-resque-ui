@@ -1,13 +1,16 @@
 class Client {
   constructor(baseRoute = null) {
     this.baseRoute = baseRoute || window.location.origin;
+    this.notifiers = [];
   }
 
-  notify(message, level) {
-    console.log(`[${level}]: ${message}`);
-    if (level === "error") {
-      console.error(message);
-    }
+  addNotifier(f) {
+    this.notifiers.push(f);
+  }
+
+  notify(message) {
+    console.error(`[API ERROR] ${message}`);
+    this.notifiers.map(n => n(message));
   }
 
   async action(data = { file: "" }, path, verb = "GET") {
@@ -62,6 +65,9 @@ class Client {
           throw response.error;
         }
         return response;
+      })
+      .catch(error => {
+        this.notify(error);
       });
   }
 }
