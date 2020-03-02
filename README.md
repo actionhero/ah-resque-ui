@@ -125,22 +125,16 @@ Now you can apply the `logged-in-session` middleware to your actions to protect 
 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['logged-in-session']` in the provided configuration file.
 
-## React
-
-This project is build using React and contains various components you might want to include into your own project. These components can be loaded from `public-src`, ie: `include WorkersList from '/node-modules/ah-resque-ui/public-src/pages/workers.js'`
-
-The main point of configuration will be the React client's `baseRoute` which is where you enter in the API server's URL. Simply set `this.props.baseRoute` on any component which uses the client and it should be passed down. `window.location.origin` is the default, but that may not be appropriate for all use cases.
-
 ## Testing & Developing
 
-- run `./bin/setup-development PATH_TO_PROJECT` from this project! It will create a top-level actionhero project with your development project symlinked in at the directory PATH_TO_PROJECT. ie: `./bin/setup-development ~/desktop/actionhero-top`
+You will need 2 terminals:
 
-- Start the actionhero server in PATH_TO_PROJECT server
-  - (in PATH_TO_PROJECT)
-  - `npm start`
+- Start the actionhero server
+  - `npm run dev`
 - In another shell, run the webpack to regenerate your changes
-  - (in this project)
   - `npm run ui:watch`
+
+Now visit `http://localhost:8080/resque` in your browser
 
 ## Thanks
 
