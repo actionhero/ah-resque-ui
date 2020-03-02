@@ -56,7 +56,7 @@
     "ui:watch": "webpack --progress --colors --watch --mode development",
     "ui:build": "webpack --mode production",
     "api:build": "rm -rf dist && ./node_modules/.bin/tsc --declaration",
-    "prepublishOnly": "npm run build"
+    "prepare": "npm run build"
   },
   "jest": {
     "transform": {
