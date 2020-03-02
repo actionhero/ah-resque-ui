@@ -79,8 +79,6 @@ post: [
 
 ## Authentication Via Middleware
 
-**Version 0.3+ of ah-resque-ui only work with ActionHero v18+!**
-
 This package exposes some potentially dangerous actions which would allow folks to see user data (if you keep such in your task params), and modify your task queues. To protect these actions, you should configure this package to use [action middleware](http://www.actionherojs.com/docs/#action-middleware) which would restrict these actions to only certain clients.
 
 The most basic middleware would be one to enforce a Basic Auth Password:
