@@ -1,13 +1,13 @@
-const path = require('path')
-require('babel-polyfill')
+const path = require("path");
+require("babel-polyfill");
 
 module.exports = {
   entry: {
-    app: ['babel-polyfill', path.join(__dirname, 'public-src', 'index.js')]
+    app: ["babel-polyfill", path.join(__dirname, "public-src", "index.jsx")]
   },
   output: {
-    filename: '[name].bundle.min.js',
-    path: path.join(__dirname, 'public', 'resque', 'js')
+    filename: "[name].bundle.min.js",
+    path: path.join(__dirname, "public", "resque", "js")
   },
 
   module: {
@@ -15,8 +15,11 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: { loader: 'babel-loader' }
+        use: { loader: "babel-loader" }
       }
     ]
+  },
+  resolve: {
+    extensions: [".js", ".jsx"]
   }
-}
+};
