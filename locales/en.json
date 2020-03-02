@@ -4,6 +4,7 @@
 			"fileNotProvided": "actionhero.errors.fileNotProvided",
 			"fileNotFound": "actionhero.errors.fileNotFound",
 			"unknownAction": "actionhero.errors.unknownAction"
-		}
+		},
+		"welcomeMessage": "actionhero.welcomeMessage"
 	}
 }
