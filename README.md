@@ -22,9 +22,9 @@ npm install --save ah-resque-ui
 
 ```ts
 export const DEFAULT = {
-  plugins: api => {
+  plugins: config => {
     return {
-      "ah-resque-ui": { path: __dirname + "/../node_modules/ah-resque-ui" }
+      "ah-resque-ui": { path: __dirname + "/../../node_modules/ah-resque-ui" }
     };
   }
 };
@@ -33,15 +33,15 @@ export const DEFAULT = {
 3. Create a new config file, `./src/config/ah-resque-ui.ts`
 
 ```ts
-export const DEFAULT {
-  'ah-resque-ui': (api) => {
+export const DEFAULT = {
+  "ah-resque-ui": config => {
     return {
       // the name of the middleware(s) which will protect all actions in this plugin
       // ie middleware: ['logged-in-session', 'role-admin']
       middleware: null
-    }
+    };
   }
-}
+};
 ```
 
 4. visit `http://localhost:8080/resque`
@@ -126,7 +126,6 @@ Now you can apply the `logged-in-session` middleware to your actions to protect 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['logged-in-session']` in the provided configuration file.
 
 ## Testing & Developing
-
 You will need 2 terminals:
 
 - Start the actionhero server
