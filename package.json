@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "ah-resque-ui",
   "description": "A resque administration website for actionhero",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -56,7 +56,7 @@
     "build": "npm run ui:build && npm run api:build",
     "ui:watch": "webpack --progress --colors --watch --mode development",
     "ui:build": "webpack --mode production",
-    "api:build": "rm -rf dist && ./node_modules/.bin/tsc --declaration && rm -rf dist/actions",
+    "api:build": "rm -rf dist && ./node_modules/.bin/tsc --declaration",
     "prepare": "npm run lint && npm run build"
   },
   "jest": {
