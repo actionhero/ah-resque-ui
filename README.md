@@ -22,11 +22,11 @@ npm install --save ah-resque-ui
 
 ```ts
 export const DEFAULT = {
-  plugins: config => {
+  plugins: (config) => {
     return {
-      "ah-resque-ui": { path: __dirname + "/../../node_modules/ah-resque-ui" }
+      "ah-resque-ui": { path: __dirname + "/../../node_modules/ah-resque-ui" },
     };
-  }
+  },
 };
 ```
 
@@ -34,13 +34,13 @@ export const DEFAULT = {
 
 ```ts
 export const DEFAULT = {
-  "ah-resque-ui": config => {
+  "ah-resque-ui": (config) => {
     return {
       // the name of the middleware(s) which will protect all actions in this plugin
       // ie middleware: ['logged-in-session', 'role-admin']
-      middleware: null
+      middleware: null,
     };
-  }
+  },
 };
 ```
 
@@ -86,39 +86,42 @@ The most basic middleware would be one to enforce a Basic Auth Password:
 `npm install basic-auth --save`
 
 ```js
-// File: initializers/basicAuthMiddleware.js
-const { api, Initializer } = require("actionhero");
-const auth = require("basic-auth"); // don't forget to `npm install basic-auth --save`
+// File: src/initializers/basic-auth-middleware.js
+import { Initializer, api, action } from "actionhero";
+import auth from "basic-auth";
 
-module.exports = class BasicAuthInitializer extends Initializer {
+export class BasicAuthInitializer extends Initializer {
   constructor() {
     super();
-    this.name = "basicAuthInitializer";
-    this.correctPassword = api.config.general.serverToken;
+    this.name = "basic-auth";
   }
 
-  initialize() {
+  async initialize() {
+    const correctPassword = process.env.BASIC_AUTH_PASSWORD;
     const middleware = {
-      name: "logged-in-session",
+      name: "basic-auth",
       global: false,
       priority: 1000,
       preProcessor: ({ connection }) => {
+        if (!correctPassword) {
+          throw "basic auth password not set up in BASIC_AUTH_PASSWORD env";
+        }
         const credentials = auth(connection.rawConnection.req);
-        if (!credentials || credentials.pass !== this.correctPassword) {
+        if (!credentials || credentials.pass !== correctPassword) {
           connection.rawConnection.res.statusCode = 401;
           connection.rawConnection.res.setHeader(
             "WWW-Authenticate",
-            'Basic realm="Actionhero Resque UI"'
+            'Basic realm="Grouparoo Access"'
           );
           connection.rawConnection.res.end("Access denied");
           return false;
         }
-      }
+      },
     };
 
-    api.actions.addMiddleware(middleware);
+    action.addMiddleware(middleware);
   }
-};
+}
 ```
 
 Now you can apply the `logged-in-session` middleware to your actions to protect them.
@@ -126,6 +129,7 @@ Now you can apply the `logged-in-session` middleware to your actions to protect 
 To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['logged-in-session']` in the provided configuration file.
 
 ## Testing & Developing
+
 You will need 2 terminals:
 
 - Start the actionhero server
