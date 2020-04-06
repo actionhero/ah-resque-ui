@@ -37,7 +37,7 @@ export const DEFAULT = {
   "ah-resque-ui": (config) => {
     return {
       // the name of the middleware(s) which will protect all actions in this plugin
-      // ie middleware: ['logged-in-session', 'role-admin']
+      // ie middleware: ['basic-auth', 'role-admin']
       middleware: null,
     };
   },
@@ -102,7 +102,7 @@ export class BasicAuthInitializer extends Initializer {
       name: "basic-auth",
       global: false,
       priority: 1000,
-      preProcessor: ({ connection }) => {
+      preProcessor: (data) => {
         if (!correctPassword) {
           throw "basic auth password not set up in BASIC_AUTH_PASSWORD env";
         }
@@ -114,7 +114,7 @@ export class BasicAuthInitializer extends Initializer {
             'Basic realm="Admin Access"'
           );
           connection.rawConnection.res.end("Access denied");
-          return false;
+          data.toRender = false;
         }
       },
     };
@@ -124,9 +124,9 @@ export class BasicAuthInitializer extends Initializer {
 }
 ```
 
-Now you can apply the `logged-in-session` middleware to your actions to protect them.
+Now you can apply the `basic-auth` middleware to your actions to protect them.
 
-To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['logged-in-session']` in the provided configuration file.
+To inform ah-resque-ui to use a middleware determined elsewhere like this, set `api.config.ah-resque-ui.middleware = ['basic-auth']` in the provided configuration file.
 
 ## Testing & Developing
 
