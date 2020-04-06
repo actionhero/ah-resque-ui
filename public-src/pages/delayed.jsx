@@ -10,7 +10,7 @@ function DelayedPage({ client, history, match }) {
     delayedjobs: {},
     counts: { timestamps: 0 },
     perPage: 15,
-    page: parseInt(match.params.page || 0)
+    page: parseInt(match.params.page || 0),
   });
 
   useEffect(() => {
@@ -26,17 +26,17 @@ function DelayedPage({ client, history, match }) {
     const response = await client.action(
       {
         start: data.page * data.perPage,
-        stop: data.page * data.perPage + (data.perPage - 1)
+        stop: data.page * data.perPage + (data.perPage - 1),
       },
       "/api/1/resque/delayedjobs"
     );
     const timestamps = [];
 
     if (response.delayedjobs) {
-      Object.keys(response.delayedjobs).forEach(function(t) {
+      Object.keys(response.delayedjobs).forEach(function (t) {
         timestamps.push({
           date: new Date(parseInt(t)),
-          key: t
+          key: t,
         });
       });
     }
@@ -76,7 +76,7 @@ function DelayedPage({ client, history, match }) {
 
       <Row>
         <Col md={12}>
-          {data.timestamps.map(t => {
+          {data.timestamps.map((t) => {
             index = -1;
             return (
               <div key={t.date.getTime()} className="panel panel-primary">
@@ -101,7 +101,7 @@ function DelayedPage({ client, history, match }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.delayedjobs[t.key].tasks.map(job => {
+                      {data.delayedjobs[t.key].tasks.map((job) => {
                         index++;
                         return (
                           <tr
@@ -115,7 +115,7 @@ function DelayedPage({ client, history, match }) {
                             </td>
                             <td>
                               <ul>
-                                {job.args.map(a => {
+                                {job.args.map((a) => {
                                   argCounter++;
                                   return (
                                     <li key={`arg-${argCounter}`}>

@@ -4,7 +4,7 @@ import Page from "../layouts/page";
 
 function RedisPage({ client }) {
   const [data, setData] = useState({
-    redisInfo: []
+    redisInfo: [],
   });
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function RedisPage({ client }) {
               </tr>
             </thead>
             <tbody>
-              {data.redisInfo.map(row => {
+              {data.redisInfo.map((row) => {
                 const parts = row.split(":");
                 if (parts.length === 1 && row.length < 2) {
                   return null;

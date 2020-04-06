@@ -2,7 +2,7 @@ import * as path from "path";
 import { Process, task, api, specHelper } from "actionhero";
 
 const sleep = (zzz = 100) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, zzz);
   });
 };
@@ -22,11 +22,11 @@ describe("ah-resque-ui", () => {
       description: "testTask",
       queue: "testQueue",
       frequency: 0,
-      run: async params => {
+      run: async (params) => {
         if (params.fail === true) {
           throw new Error("broken");
         }
-      }
+      },
     };
 
     // api.resque.multiWorker.start();
@@ -93,7 +93,7 @@ describe("ah-resque-ui", () => {
 
     it("resque:delLock", async () => {
       let response = await specHelper.runAction("resque:delLock", {
-        lock: "workerslock:lists:queueName:jobName:[{}]"
+        lock: "workerslock:lists:queueName:jobName:[{}]",
       });
       expect(response.count).toEqual(1);
       response = await specHelper.runAction("resque:locks");
@@ -127,14 +127,14 @@ describe("ah-resque-ui", () => {
 
     it("resque:queued (good)", async () => {
       const response = await specHelper.runAction("resque:queued", {
-        queue: "testQueue"
+        queue: "testQueue",
       });
       expect(response.jobs.length).toBe(3);
     });
 
     it("resque:queued (bad)", async () => {
       const response = await specHelper.runAction("resque:queued", {
-        queue: "xxx"
+        queue: "xxx",
       });
       expect(response.jobs.length).toBe(0);
     });
@@ -142,7 +142,7 @@ describe("ah-resque-ui", () => {
     it("resque:delQueue", async () => {
       await specHelper.runAction("resque:delQueue", { queue: "testQueue" });
       const response = await specHelper.runAction("resque:queued", {
-        queue: "testQueue"
+        queue: "testQueue",
       });
       expect(response.jobs.length).toBe(0);
     });
@@ -168,7 +168,7 @@ describe("ah-resque-ui", () => {
       let response;
       response = await specHelper.runAction("resque:delayedjobs", {
         start: 0,
-        stop: 1
+        stop: 1,
       });
       expect(response.timestampsCount).toBe(3);
       expect(Object.keys(response.delayedjobs).length).toBe(2);
@@ -177,7 +177,7 @@ describe("ah-resque-ui", () => {
 
       response = await specHelper.runAction("resque:delayedjobs", {
         start: 2,
-        stop: 999
+        stop: 999,
       });
       expect(response.timestampsCount).toBe(3);
       expect(Object.keys(response.delayedjobs).length).toBe(1);
@@ -208,7 +208,7 @@ describe("ah-resque-ui", () => {
     it("resque:resqueFailed (defaults)", async () => {
       const response = await specHelper.runAction("resque:resqueFailed");
       expect(response.failed.length).toBe(3);
-      response.failed.forEach(j => {
+      response.failed.forEach((j) => {
         expect(j.queue).toBe("testQueue");
         expect(j.error).toMatch("broken");
         expect(j.payload.args[0].fail).toBe(true);
@@ -219,7 +219,7 @@ describe("ah-resque-ui", () => {
       let response;
       response = await specHelper.runAction("resque:resqueFailed", {
         start: 0,
-        stop: 1
+        stop: 1,
       });
       expect(response.failed.length).toBe(2);
       expect(response.failed[0].payload.args[0].a).toBe(1);
@@ -227,7 +227,7 @@ describe("ah-resque-ui", () => {
 
       response = await specHelper.runAction("resque:resqueFailed", {
         start: 2,
-        stop: 99
+        stop: 99,
       });
       expect(response.failed.length).toBe(1);
       expect(response.failed[0].payload.args[0].c).toBe(3);

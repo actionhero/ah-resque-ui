@@ -24,7 +24,7 @@ function OverviewPage({ client }) {
     workers: {},
     stats: {},
     counts: { failed: 0, queues: 0, workers: 0 },
-    samples: []
+    samples: [],
   });
 
   useEffect(() => {
@@ -59,12 +59,12 @@ function OverviewPage({ client }) {
     );
     counts.failed = response.failedCount;
 
-    Object.keys(workers).forEach(workerName => {
+    Object.keys(workers).forEach((workerName) => {
       const worker = workers[workerName];
       if (typeof worker === "string") {
         workers[workerName] = {
           status: worker,
-          statusString: worker
+          statusString: worker,
         };
       } else {
         worker.delta = Math.round(
@@ -86,7 +86,7 @@ function OverviewPage({ client }) {
 
     for (const name in queues) {
       let found = false;
-      samples.forEach(sample => {
+      samples.forEach((sample) => {
         if (sample.id === name) {
           found = true;
         }
@@ -110,7 +110,7 @@ function OverviewPage({ client }) {
   }
 
   const chartData = [];
-  data.samples.forEach(series => {
+  data.samples.forEach((series) => {
     chartData.push(series);
   });
 
@@ -129,7 +129,7 @@ function OverviewPage({ client }) {
           <h3>Stats:</h3>
           <table className="table table-hover">
             <tbody>
-              {Object.keys(data.stats).map(k => {
+              {Object.keys(data.stats).map((k) => {
                 const v = data.stats[k];
                 if (k.indexOf(":") > 0) {
                   return null;
@@ -168,7 +168,7 @@ function OverviewPage({ client }) {
                 </td>
               </tr>
 
-              {Object.keys(data.queues).map(q => {
+              {Object.keys(data.queues).map((q) => {
                 return (
                   <tr key={q}>
                     <td>
@@ -193,7 +193,7 @@ function OverviewPage({ client }) {
               </tr>
             </thead>
             <tbody>
-              {Object.keys(data.workers).map(name => {
+              {Object.keys(data.workers).map((name) => {
                 const worker = data.workers[name];
                 return (
                   <tr key={name}>

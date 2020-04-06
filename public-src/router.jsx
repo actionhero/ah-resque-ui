@@ -23,37 +23,37 @@ export default function ApplicationRouter() {
         <Route
           exact
           path="/"
-          render={props => <Overview {...props} client={client} />}
+          render={(props) => <Overview {...props} client={client} />}
         />
         <Route
           exact
           path={["/queue/:queue", "/queue/:queue/:page"]}
-          render={props => <Queue {...props} client={client} />}
+          render={(props) => <Queue {...props} client={client} />}
         />
         <Route
           exact
           path={["/failed", "/failed/:page"]}
-          render={props => <Failed {...props} client={client} />}
+          render={(props) => <Failed {...props} client={client} />}
         />
         <Route
           exact
           path={["/delayed", "/delayed/:page"]}
-          render={props => <Delayed {...props} client={client} />}
+          render={(props) => <Delayed {...props} client={client} />}
         />
         <Route
           exact
           path="/workers"
-          render={props => <Workers {...props} client={client} />}
+          render={(props) => <Workers {...props} client={client} />}
         />
         <Route
           exact
           path="/locks"
-          render={props => <Locks {...props} client={client} />}
+          render={(props) => <Locks {...props} client={client} />}
         />
         <Route
           exact
           path="/redis"
-          render={props => <Redis {...props} client={client} />}
+          render={(props) => <Redis {...props} client={client} />}
         />
         <Route component={PageNotFound} />
       </Switch>

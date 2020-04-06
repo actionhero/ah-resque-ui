@@ -4,7 +4,7 @@ import Page from "../layouts/page";
 
 function LocksPage({ client }) {
   const [data, setData] = useState({
-    locks: []
+    locks: [],
   });
 
   useEffect(() => {
@@ -14,7 +14,7 @@ function LocksPage({ client }) {
   async function loadData() {
     const response = await client.action({}, "/api/1/resque/locks", "GET");
     const locks = [];
-    Object.keys(response.locks).forEach(function(l) {
+    Object.keys(response.locks).forEach(function (l) {
       locks.push({ lock: l, at: new Date(parseInt(response.locks[l]) * 1000) });
     });
     data.locks = locks;
@@ -46,7 +46,7 @@ function LocksPage({ client }) {
               </tr>
             </thead>
             <tbody>
-              {data.locks.map(l => {
+              {data.locks.map((l) => {
                 index++;
                 return (
                   <tr key={`${index}-${l.at.getTime()}`}>
