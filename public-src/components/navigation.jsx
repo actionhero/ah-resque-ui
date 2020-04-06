@@ -29,7 +29,10 @@ function Navigation() {
       <Navbar bg="light" expand="lg">
         <Navbar.Brand>
           <Link className="navbar-brand" to="/">
-            <img src="/resque/img/resque-logo.png" style={{ maxHeight: 30 }} />
+            <img
+              src="/public/resque/img/resque-logo.png"
+              style={{ maxHeight: 30 }}
+            />
           </Link>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
