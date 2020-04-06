@@ -9,7 +9,7 @@ function QueuePage({ client, history, match }) {
     jobs: [],
     queueLength: 0,
     perPage: 15,
-    page: parseInt(match.params.page || 0)
+    page: parseInt(match.params.page || 0),
   });
 
   useEffect(() => {
@@ -26,7 +26,7 @@ function QueuePage({ client, history, match }) {
       {
         queue: data.queue,
         start: data.page * data.perPage,
-        stop: data.page * data.perPage + (data.perPage - 1)
+        stop: data.page * data.perPage + (data.perPage - 1),
       },
       "/api/1/resque/queued"
     );
@@ -72,7 +72,7 @@ function QueuePage({ client, history, match }) {
               </tr>
             </thead>
             <tbody>
-              {data.jobs.map(job => {
+              {data.jobs.map((job) => {
                 index++;
 
                 return (
@@ -81,7 +81,7 @@ function QueuePage({ client, history, match }) {
                     <td>{job.class}</td>
                     <td>
                       <ul>
-                        {job.args.map(a => {
+                        {job.args.map((a) => {
                           argCounter++;
                           return (
                             <li key={`arg-${argCounter}`}>

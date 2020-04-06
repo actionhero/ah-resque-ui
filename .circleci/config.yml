@@ -40,13 +40,6 @@ jobs:
           paths:
             - ./node_modules
 
-  test-node-v8:
-    docker:
-      - image: circleci/node:8
-      - image: redis:4
-      - image: selenium/standalone-chrome:latest
-    <<: *shared-test-steps
-
   test-node-v10:
     docker:
       - image: circleci/node:10
@@ -67,10 +60,6 @@ workflows:
   test-all-node-versions:
     jobs:
       - build
-
-      - test-node-v8:
-          requires:
-            - build
 
       - test-node-v10:
           requires:

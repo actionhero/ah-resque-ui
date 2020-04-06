@@ -14,11 +14,11 @@ function FailedPage({ client, history, match }) {
       worker: "",
       error: "",
       payload: { args: {} },
-      renderedStack: ""
+      renderedStack: "",
     },
     perPage: 15,
     showModal: false,
-    page: parseInt(match.params.page || 0)
+    page: parseInt(match.params.page || 0),
   });
 
   useEffect(() => {
@@ -34,7 +34,7 @@ function FailedPage({ client, history, match }) {
     const response = await client.action(
       {
         start: data.page * data.perPage,
-        stop: data.page * data.perPage + (data.perPage - 1)
+        stop: data.page * data.perPage + (data.perPage - 1),
       },
       "/api/1/resque/resqueFailed"
     );
@@ -134,7 +134,7 @@ function FailedPage({ client, history, match }) {
               </tr>
             </thead>
             <tbody>
-              {data.failed.map(f => {
+              {data.failed.map((f) => {
                 index++;
 
                 return (
@@ -157,7 +157,7 @@ function FailedPage({ client, history, match }) {
                     <td>{f.worker}</td>
                     <td>
                       <ul>
-                        {f.payload.args.map(a => {
+                        {f.payload.args.map((a) => {
                           argCounter++;
                           return (
                             <li key={`arg-${argCounter}`}>

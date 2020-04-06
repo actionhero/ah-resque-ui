@@ -27,7 +27,7 @@ function BumpChart({ data }) {
         tickRotation: 0,
         legend: "",
         legendPosition: "middle",
-        legendOffset: -36
+        legendOffset: -36,
       }}
       axisBottom={{
         tickSize: 5,
@@ -35,7 +35,7 @@ function BumpChart({ data }) {
         tickRotation: 0,
         legend: "",
         legendPosition: "middle",
-        legendOffset: 32
+        legendOffset: 32,
       }}
     />
   );

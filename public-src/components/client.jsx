@@ -10,7 +10,7 @@ class Client {
 
   notify(message) {
     console.error(`[API ERROR] ${message}`);
-    this.notifiers.map(n => n(message));
+    this.notifiers.map((n) => n(message));
   }
 
   async action(data = { file: "" }, path, verb = "GET") {
@@ -27,8 +27,8 @@ class Client {
       method: verb,
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     };
 
     if (
@@ -60,13 +60,13 @@ class Client {
 
     return fetch(this.baseRoute + path, options)
       .then(parseJSON)
-      .then(function(response) {
+      .then(function (response) {
         if (response.error) {
           throw response.error;
         }
         return response;
       })
-      .catch(error => {
+      .catch((error) => {
         this.notify(error);
       });
   }

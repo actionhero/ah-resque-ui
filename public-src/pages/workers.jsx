@@ -7,7 +7,7 @@ function WorkersPage({ client }) {
   const [data, setData] = useState({
     workers: {},
     workerQueues: [],
-    counts: { workers: 0 }
+    counts: { workers: 0 },
   });
 
   useEffect(() => {
@@ -18,15 +18,15 @@ function WorkersPage({ client }) {
     let response = await client.action({}, "/api/1/resque/resqueDetails");
     const workers = response.resqueDetails.workers;
     const counts = {
-      workers: Object.keys(response.resqueDetails.workers).length
+      workers: Object.keys(response.resqueDetails.workers).length,
     };
 
-    Object.keys(workers).forEach(workerName => {
+    Object.keys(workers).forEach((workerName) => {
       var worker = workers[workerName];
       if (typeof worker === "string") {
         workers[workerName] = {
           status: worker,
-          statusString: worker
+          statusString: worker,
         };
       } else {
         worker.delta = Math.round(
@@ -45,7 +45,7 @@ function WorkersPage({ client }) {
 
     response = await client.action({}, "/api/1/resque/loadWorkerQueues");
     const workerQueues = [];
-    Object.keys(response.workerQueues).forEach(workerName => {
+    Object.keys(response.workerQueues).forEach((workerName) => {
       const parts = workerName.split(":");
       const id = parts.pop();
       const host = parts.join(":");
@@ -61,7 +61,7 @@ function WorkersPage({ client }) {
         host: host,
         queues: queues,
         worker: worker,
-        workerName: workerName
+        workerName: workerName,
       });
     });
 
@@ -104,14 +104,14 @@ function WorkersPage({ client }) {
               </tr>
             </thead>
             <tbody>
-              {data.workerQueues.map(w => {
+              {data.workerQueues.map((w) => {
                 return (
                   <tr key={w.workerName}>
                     <td>{w.id}</td>
                     <td>{w.host}</td>
                     <td>
                       <ul>
-                        {w.queues.map(q => {
+                        {w.queues.map((q) => {
                           return (
                             <li key={`${w}-${q}`}>
                               <Link to={`queue/${q}`}>{q}</Link>

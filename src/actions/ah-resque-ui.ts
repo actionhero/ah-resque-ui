@@ -60,7 +60,7 @@ export class ResqueForceCleanWorker extends ResqueAction {
     this.name = "resque:forceCleanWorker";
     this.description = "I remove a worker from resque";
     this.inputs = {
-      workerName: { required: true }
+      workerName: { required: true },
     };
   }
 
@@ -91,18 +91,18 @@ export class ResqueQueued extends ResqueAction {
     this.description = "I list enqueued jobs";
     this.inputs = {
       queue: {
-        required: true
+        required: true,
       },
       start: {
         required: true,
         formatter: parseInt,
-        default: 0
+        default: 0,
       },
       stop: {
         required: true,
         formatter: parseInt,
-        default: 99
-      }
+        default: 99,
+      },
     };
   }
 
@@ -118,7 +118,7 @@ export class ResqueDelQueue extends ResqueAction {
     this.name = "resque:delQueue";
     this.description = "I delete a queue";
     this.inputs = {
-      queue: { required: true }
+      queue: { required: true },
     };
   }
 
@@ -136,13 +136,13 @@ export class ResqueResqueFailed extends ResqueAction {
       start: {
         required: true,
         formatter: parseInt,
-        default: 0
+        default: 0,
       },
       stop: {
         required: true,
         formatter: parseInt,
-        default: 99
-      }
+        default: 99,
+      },
     };
   }
 
@@ -159,8 +159,8 @@ export class ResqueRemoveFailed extends ResqueAction {
     this.inputs = {
       id: {
         required: true,
-        formatter: parseInt
-      }
+        formatter: parseInt,
+      },
     };
   }
 
@@ -199,8 +199,8 @@ export class ResqueRetryAndRemoveFailed extends ResqueAction {
     this.inputs = {
       id: {
         required: true,
-        formatter: parseInt
-      }
+        formatter: parseInt,
+      },
     };
   }
 
@@ -250,7 +250,7 @@ export class ResqueDelLock extends ResqueAction {
     this.name = "resque:delLock";
     this.description = "I delete a lock";
     this.inputs = {
-      lock: { required: true }
+      lock: { required: true },
     };
   }
 
@@ -268,13 +268,13 @@ export class ResqueDelayedJobs extends ResqueAction {
       start: {
         required: true,
         formatter: parseInt,
-        default: 0
+        default: 0,
       },
       stop: {
         required: true,
         formatter: parseInt,
-        default: 99
-      }
+        default: 99,
+      },
     };
   }
 
@@ -313,12 +313,12 @@ export class ResqueDelDelayed extends ResqueAction {
     this.inputs = {
       timestamp: {
         required: true,
-        formatter: parseInt
+        formatter: parseInt,
       },
       count: {
         required: true,
-        formatter: parseInt
-      }
+        formatter: parseInt,
+      },
     };
   }
 
@@ -341,12 +341,12 @@ export class ResqueRunDelayed extends ResqueAction {
     this.inputs = {
       timestamp: {
         required: true,
-        formatter: parseInt
+        formatter: parseInt,
       },
       count: {
         required: true,
-        formatter: parseInt
-      }
+        formatter: parseInt,
+      },
     };
   }
 

@@ -9,10 +9,10 @@ function Page({ children, client }) {
   const [error, setError] = useState("");
 
   client.notifiers = [
-    error => {
+    (error) => {
       setError(error);
       setShowError(true);
-    }
+    },
   ];
 
   return (
