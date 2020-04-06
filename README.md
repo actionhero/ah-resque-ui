@@ -106,14 +106,12 @@ export class BasicAuthInitializer extends Initializer {
         if (!correctPassword) {
           throw "basic auth password not set up in BASIC_AUTH_PASSWORD env";
         }
-        const credentials = auth(connection.rawConnection.req);
+        const { res, req } = connection.rawConnection;
+        const credentials = auth(req);
         if (!credentials || credentials.pass !== correctPassword) {
-          connection.rawConnection.res.statusCode = 401;
-          connection.rawConnection.res.setHeader(
-            "WWW-Authenticate",
-            'Basic realm="Admin Access"'
-          );
-          connection.rawConnection.res.end("Access denied");
+          res.statusCode = 401;
+          res.setHeader("WWW-Authenticate", 'Basic realm="Admin Access"');
+          res.end("Access denied");
           data.toRender = false;
         }
       },
