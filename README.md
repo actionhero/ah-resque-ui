@@ -111,7 +111,7 @@ export class BasicAuthInitializer extends Initializer {
           connection.rawConnection.res.statusCode = 401;
           connection.rawConnection.res.setHeader(
             "WWW-Authenticate",
-            'Basic realm="Grouparoo Access"'
+            'Basic realm="Admin Access"'
           );
           connection.rawConnection.res.end("Access denied");
           return false;
