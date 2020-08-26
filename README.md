@@ -144,3 +144,4 @@ Now visit `http://localhost:8080/resque` in your browser
 - [Delicious Hat](https://www.delicioushat.com)
 - [TaskRabbit](https://www.taskrabbit.com)
 - [node-resque](https://github.com/taskrabbit/node-resque)
+- [resque-web](https://github.com/resque/resque-web)
