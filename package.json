@@ -30,7 +30,7 @@
     "@nivo/axes": "^0.62.0",
     "@nivo/bump": "^0.63.0",
     "@types/jest": "^26.0.14",
-    "@types/react": "^16.9.52",
+    "@types/react": "^17.0.0",
     "actionhero": "^24.0.0",
     "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0",
