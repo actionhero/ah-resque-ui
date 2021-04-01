@@ -27,7 +27,7 @@ references:
 jobs:
   build:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:14
     steps:
       - checkout
       - restore_cache:
@@ -42,14 +42,14 @@ jobs:
 
   test-node-v10:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:12
       - image: redis:4
       - image: selenium/standalone-chrome:latest
     <<: *shared-test-steps
 
   test-node-v12:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:14
       - image: redis:4
       - image: selenium/standalone-chrome:latest
     <<: *shared-test-steps
@@ -61,10 +61,10 @@ workflows:
     jobs:
       - build
 
-      - test-node-v10:
+      - test-node-v12:
           requires:
             - build
 
-      - test-node-v12:
+      - test-node-v14:
           requires:
             - build
