@@ -51,7 +51,7 @@
   "scripts": {
     "dev": "ts-node-dev --no-deps --transpile-only ./src/server.ts",
     "start": "node ./dist/server.js",
-    "lint": "prettier --check src public-src __tests__",
+    "lint": "prettier --check src public-src __tests__ '!public-src/public'",
     "pretest": "npm run prepare",
     "test": "jest",
     "build": "npm run ui:build && npm run api:build",
