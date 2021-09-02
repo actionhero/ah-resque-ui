@@ -35,7 +35,7 @@
     "actionhero": "^27.0.0",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
-    "jest": "^27.0.6",
+    "jest": "^27.1.0",
     "prettier": "^2.3.2",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.1",
