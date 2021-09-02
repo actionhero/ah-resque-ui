@@ -1,4 +1,15 @@
-import * as path from "path";
+import {
+  ResqueDelayedJobs,
+  ResqueDelLock,
+  ResqueDelQueue,
+  ResqueFailedCount,
+  ResqueLoadWorkerQueues,
+  ResqueLocks,
+  ResqueQueued,
+  ResqueRedisInfo,
+  ResqueResqueDetails,
+  ResqueResqueFailed,
+} from "../src/actions/ah-resque-ui";
 import { Process, task, api, specHelper } from "actionhero";
 
 const sleep = (zzz = 100) => {
@@ -17,6 +28,7 @@ describe("ah-resque-ui", () => {
     await api.redis.clients.client.flushdb();
     await app.start();
 
+    // @ts-ignore
     api.tasks.tasks.testTask = {
       name: "testTask",
       description: "testTask",
@@ -42,7 +54,9 @@ describe("ah-resque-ui", () => {
   });
 
   it("resque:redisInfo", async () => {
-    const response = await specHelper.runAction("resque:redisInfo");
+    const response = await specHelper.runAction<ResqueRedisInfo>(
+      "resque:redisInfo"
+    );
     const info = response.redisInfo.join("\n");
     expect(info).toMatch(/redis_version/);
     expect(info).toMatch(/used_memory/);
@@ -81,7 +95,7 @@ describe("ah-resque-ui", () => {
     });
 
     it("resque:locks", async () => {
-      const response = await specHelper.runAction("resque:locks");
+      const response = await specHelper.runAction<ResqueLocks>("resque:locks");
       expect(Object.keys(response.locks).length).toEqual(2);
       expect(response.locks["lock:lists:queueName:jobName:[{}]"]).toEqual(
         "123"
@@ -92,13 +106,18 @@ describe("ah-resque-ui", () => {
     });
 
     it("resque:delLock", async () => {
-      let response = await specHelper.runAction("resque:delLock", {
-        lock: "workerslock:lists:queueName:jobName:[{}]",
-      });
+      let response = await specHelper.runAction<ResqueDelLock>(
+        "resque:delLock",
+        {
+          lock: "workerslock:lists:queueName:jobName:[{}]",
+        }
+      );
       expect(response.count).toEqual(1);
-      response = await specHelper.runAction("resque:locks");
-      expect(Object.keys(response.locks).length).toEqual(1);
-      expect(response.locks["lock:lists:queueName:jobName:[{}]"]).toEqual(
+      let locksResponse = await specHelper.runAction<ResqueLocks>(
+        "resque:locks"
+      );
+      expect(Object.keys(locksResponse.locks).length).toEqual(1);
+      expect(locksResponse.locks["lock:lists:queueName:jobName:[{}]"]).toEqual(
         "123"
       );
     });
@@ -113,37 +132,52 @@ describe("ah-resque-ui", () => {
     });
 
     it("resque:resqueDetails", async () => {
-      const response = await specHelper.runAction("resque:resqueDetails");
+      const response = await specHelper.runAction<ResqueResqueDetails>(
+        "resque:resqueDetails"
+      );
       expect(response.resqueDetails.queues.testQueue.length).toEqual(3);
       expect(Object.keys(response.resqueDetails.workers).length).toEqual(1);
     });
 
     it("resque:loadWorkerQueues", async () => {
-      const response = await specHelper.runAction("resque:loadWorkerQueues");
+      const response = await specHelper.runAction<ResqueLoadWorkerQueues>(
+        "resque:loadWorkerQueues"
+      );
       const workerNames = Object.keys(response.workerQueues);
       expect(workerNames.length).toBe(1);
       expect(response.workerQueues[workerNames[0]]).toContain("*");
     });
 
     it("resque:queued (good)", async () => {
-      const response = await specHelper.runAction("resque:queued", {
-        queue: "testQueue",
-      });
+      const response = await specHelper.runAction<ResqueQueued>(
+        "resque:queued",
+        {
+          queue: "testQueue",
+        }
+      );
       expect(response.jobs.length).toBe(3);
     });
 
     it("resque:queued (bad)", async () => {
-      const response = await specHelper.runAction("resque:queued", {
-        queue: "xxx",
-      });
+      const response = await specHelper.runAction<ResqueQueued>(
+        "resque:queued",
+        {
+          queue: "xxx",
+        }
+      );
       expect(response.jobs.length).toBe(0);
     });
 
     it("resque:delQueue", async () => {
-      await specHelper.runAction("resque:delQueue", { queue: "testQueue" });
-      const response = await specHelper.runAction("resque:queued", {
+      await specHelper.runAction<ResqueDelQueue>("resque:delQueue", {
         queue: "testQueue",
       });
+      const response = await specHelper.runAction<ResqueQueued>(
+        "resque:queued",
+        {
+          queue: "testQueue",
+        }
+      );
       expect(response.jobs.length).toBe(0);
     });
   });
@@ -156,7 +190,9 @@ describe("ah-resque-ui", () => {
     });
 
     it("resque:delayedjobs (defaults)", async () => {
-      const response = await specHelper.runAction("resque:delayedjobs");
+      const response = await specHelper.runAction<ResqueDelayedJobs>(
+        "resque:delayedjobs"
+      );
       expect(response.timestampsCount).toBe(3);
       expect(Object.keys(response.delayedjobs).length).toBe(3);
       expect(response.delayedjobs["1000"].tasks[0].args[0].a).toBe(1);
@@ -201,14 +237,18 @@ describe("ah-resque-ui", () => {
     });
 
     it("resque:resqueFailedCount", async () => {
-      const response = await specHelper.runAction("resque:resqueFailedCount");
+      const response = await specHelper.runAction<ResqueFailedCount>(
+        "resque:resqueFailedCount"
+      );
       expect(response.failedCount).toBe(3);
     });
 
     it("resque:resqueFailed (defaults)", async () => {
-      const response = await specHelper.runAction("resque:resqueFailed");
+      const response = await specHelper.runAction<ResqueResqueFailed>(
+        "resque:resqueFailed"
+      );
       expect(response.failed.length).toBe(3);
-      response.failed.forEach((j) => {
+      response.failed.forEach((j: any) => {
         expect(j.queue).toBe("testQueue");
         expect(j.error).toMatch("broken");
         expect(j.payload.args[0].fail).toBe(true);
@@ -235,35 +275,47 @@ describe("ah-resque-ui", () => {
 
     it("resque:removeFailed", async () => {
       await specHelper.runAction("resque:removeFailed", { id: 1 });
-      const response = await specHelper.runAction("resque:resqueFailed");
+      const response = await specHelper.runAction<ResqueResqueFailed>(
+        "resque:resqueFailed"
+      );
       expect(response.failed.length).toBe(2);
-      expect(response.failed[0].payload.args[0].a).toBe(1);
-      expect(response.failed[1].payload.args[0].c).toBe(3);
+      expect((response.failed[0] as any).payload.args[0].a).toBe(1);
+      expect((response.failed[1] as any).payload.args[0].c).toBe(3);
     });
 
     it("resque:removeAllFailed", async () => {
       await specHelper.runAction("resque:removeAllFailed");
-      const response = await specHelper.runAction("resque:resqueFailed");
+      const response = await specHelper.runAction<ResqueResqueFailed>(
+        "resque:resqueFailed"
+      );
       expect(response.failed.length).toBe(0);
     });
 
     it("resque:retryAndRemoveFailed", async () => {
       await specHelper.runAction("resque:retryAndRemoveFailed", { id: 1 });
-      const response = await specHelper.runAction("resque:resqueFailed");
+      const response = await specHelper.runAction<ResqueResqueFailed>(
+        "resque:resqueFailed"
+      );
       expect(response.failed.length).toBe(2);
-      expect(response.failed[0].payload.args[0].a).toBe(1);
-      expect(response.failed[1].payload.args[0].c).toBe(3);
+      expect((response.failed[0] as any).payload.args[0].a).toBe(1);
+      expect((response.failed[1] as any).payload.args[0].c).toBe(3);
 
-      const details = await specHelper.runAction("resque:resqueDetails");
+      const details = await specHelper.runAction<ResqueResqueDetails>(
+        "resque:resqueDetails"
+      );
       expect(details.resqueDetails.queues.testQueue.length).toBe(1);
     });
 
     it("resque:retryAndRemoveAllFailed", async () => {
       await specHelper.runAction("resque:retryAndRemoveAllFailed");
-      const response = await specHelper.runAction("resque:resqueFailed");
+      const response = await specHelper.runAction<ResqueResqueFailed>(
+        "resque:resqueFailed"
+      );
       expect(response.failed.length).toBe(0);
 
-      const details = await specHelper.runAction("resque:resqueDetails");
+      const details = await specHelper.runAction<ResqueResqueDetails>(
+        "resque:resqueDetails"
+      );
       expect(details.resqueDetails.queues.testQueue.length).toBe(3);
     });
   });

@@ -32,7 +32,7 @@
     "@nivo/core": "^0.69.0",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.15",
-    "actionhero": "^26.0.5",
+    "actionhero": "^27.0.0",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
     "jest": "^27.0.6",
