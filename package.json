@@ -2,7 +2,7 @@
   "author": "Evan Tahler <evantahler@gmail.com>",
   "name": "ah-resque-ui",
   "description": "A resque administration website for actionhero",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
