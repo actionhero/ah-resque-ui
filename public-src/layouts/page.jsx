@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Container, Row, Col, Alert, Button } from "react-bootstrap";
+import { Container, Row, Col, Alert } from "react-bootstrap";
 import Navigation from "../components/navigation";
 import Footer from "../components/footer";
 
