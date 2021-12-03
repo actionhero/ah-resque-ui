@@ -102,8 +102,7 @@ export class AHResqueUIInitializer extends Initializer {
       config["ah-resque-ui"].middleware.length > 0
     ) {
       middleware.preProcessor = async (data) => {
-        for (const i in config["ah-resque-ui"].middleware) {
-          const middlewareName = config["ah-resque-ui"].middleware[i];
+        for (const middlewareName of config["ah-resque-ui"].middleware) {
           const middleware = api.actions.middleware[middlewareName];
           if (typeof middleware.preProcessor === "function") {
             await middleware.preProcessor(data);
@@ -112,8 +111,7 @@ export class AHResqueUIInitializer extends Initializer {
       };
 
       middleware.postProcessor = async (data) => {
-        for (const i in config["ah-resque-ui"].middleware) {
-          const middlewareName = config["ah-resque-ui"].middleware[i];
+        for (const middlewareName of config["ah-resque-ui"].middleware) {
           const middleware = api.actions.middleware[middlewareName];
           if (typeof middleware.postProcessor === "function") {
             await middleware.postProcessor(data);
