@@ -10,7 +10,7 @@ A resque administration website for actionhero
 ![https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/failed.png](https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/failed.png)
 ![https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/delayed.png](https://raw.githubusercontent.com/evantahler/ah-resque-ui/master/images/delayed.png)
 
-## Setup for ActionHero v20+
+## Setup for ActionHero v28+
 
 1. install
 
@@ -22,7 +22,7 @@ npm install --save ah-resque-ui
 
 ```ts
 export const DEFAULT = {
-  plugins: (config) => {
+  plugins: () => {
     return {
       "ah-resque-ui": { path: __dirname + "/../../node_modules/ah-resque-ui" },
     };
@@ -33,12 +33,20 @@ export const DEFAULT = {
 3. Create a new config file, `./src/config/ah-resque-ui.ts`
 
 ```ts
+const namespace = "ah-resque-ui";
+
+declare module "actionhero" {
+  export interface ActionheroConfigInterface {
+    [namespace]: ReturnType<typeof DEFAULT[typeof namespace]>;
+  }
+}
+
 export const DEFAULT = {
-  "ah-resque-ui": (config) => {
+  [namespace]: () => {
     return {
       // the name of the middleware(s) which will protect all actions in this plugin
-      // ie middleware: ['basic-auth', 'role-admin']
-      middleware: null,
+      // ie middleware: ['logged-in-session', 'role-admin']
+      middleware: [] as string[],
     };
   },
 };
@@ -73,8 +81,6 @@ post: [
   { path: '/resque/delDelayed',              action: 'resque:delDelayed'              },
   { path: '/resque/runDelayed',              action: 'resque:runDelayed'              },
 ]
-
-};
 ```
 
 ## Authentication Via Middleware
