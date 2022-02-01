@@ -29,7 +29,7 @@
     "@babel/preset-react": "^7.14.5",
     "@nivo/axes": "^0.69.1",
     "@nivo/bump": "^0.69.1",
-    "@nivo/core": "^0.69.0",
+    "@nivo/core": "^0.79.0",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.15",
     "actionhero": "^28.0.1",
